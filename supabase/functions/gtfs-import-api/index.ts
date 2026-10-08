@@ -66,6 +66,24 @@ function json(data: unknown, status = 200) {
   });
 }
 
+async function sha256Hex(s: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+async function checkRate(key: string, limit: number): Promise<boolean> {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/consume_transport_api_rate_limit`, {
+    method: "POST",
+    headers: adminHeaders(),
+    body: JSON.stringify({p_key: key,p_limit:limit,p_window_seconds:60}),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) throw new Error("import_rate_limiter_unavailable");
+  const rows = await response.json() as Array<{allowed: boolean}>;
+  if (!Array.isArray(rows) || rows.length < 1) throw new Error("import_rate_limiter_invalid");
+  return rows[0].allowed;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") {
     return json({ error: "method_not_allowed" }, 405);
@@ -77,7 +95,15 @@ Deno.serve(async (req: Request) => {
     return json({ error: "unauthorized" }, 401);
   }
 
-  const body = await req.json().catch(() => null) as Json | null;
+  const bodyText = await req.text().catch(() => "");
+  if (!bodyText || bodyText.length > 1_000_000) {
+    return json({ error: "invalid_or_oversized_json" }, 400);
+  }
+  let body: Json | null = null;
+  try {
+    const parsed: unknown = JSON.parse(bodyText);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) body = parsed as Json;
+  } catch { /* bad JSON */ }
   if (!body) return json({ error: "invalid_json" }, 400);
 
   const action = typeof body.action === "string" ? body.action : "";
@@ -92,9 +118,18 @@ Deno.serve(async (req: Request) => {
       ? body.params as Json
       : {};
 
-  const rpcBody = { p_token: importToken, ...params };
+  // Supplied params MUST NOT overwrite the token the caller presented.
+  const rpcBody = { ...params, p_token: importToken };
 
   try {
+    // Allow the normal importer (hundreds of batches), while limiting repeated
+    // guesses and accidental floods before the privileged token-gated RPC.
+    const globalRateKey = await sha256Hex("ballina-import-api-global");
+    const apparentIp = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "edge-unknown";
+    const perIpKey = await sha256Hex(`ballina-import-api|${apparentIp.slice(0,64)}`);
+    if (!(await checkRate(globalRateKey,900)) || !(await checkRate(perIpKey,300))) {
+      return json({ error: "rate_limited" }, 429);
+    }
     const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${rpcName}`, {
       method: "POST",
       headers: adminHeaders(),
@@ -107,7 +142,8 @@ Deno.serve(async (req: Request) => {
         error: "import_rpc_failed",
         rpc: rpcName,
         status: response.status,
-        detail: raw.slice(0, 2000),
+        // Keep raw Postgres errors server-side, not in the unauthenticated response.
+        // Even malformed tokens should never get hints about table structure.
       }, response.status >= 500 ? 502 : 400);
     }
     if (!raw) return json(null);
@@ -117,7 +153,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: "invalid_rpc_response", rpc: rpcName }, 502);
     }
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "unknown_error";
-    return json({ error: "import_rpc_transport_error", detail }, 502);
+    console.error("import_rpc_error",rpcName,error instanceof Error ? error.name : "unknown_error");
+    return json({ error: "import_rpc_transport_error" }, 502);
   }
 });

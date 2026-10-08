@@ -1,0 +1,32 @@
+name: Verify Ballina Move health (no import)
+
+on:
+  schedule:
+    - cron: '17 * * * *' # hourly read-only health monitoring; GTFS importer remains manual
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: 'Optional expected active GTFS version'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: sb_publishable_gpI4Uz43dqnMfkU0Ddh9Jw_8XrrEJjO
+      EXPECTED_VERSION: ${{ inputs.expected_version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Verify live backend independently of importer
+        run: python scripts/check_post_activation.py --retry-seconds 90 --poll-interval 30

@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import Any, Iterable, Iterator
 from zoneinfo import ZoneInfo
 
-IMPORTER_VERSION = "ballina-move-gtfs-importer/1.3.0"
+IMPORTER_VERSION = "ballina-move-gtfs-importer/1.4.0"
 DEFAULT_GTFS_URL = "https://www.transportforireland.ie/transitData/Data/GTFS_Realtime.zip"
 FEED_LABEL = "nta-realtime"
 BATCH_SIZE = 500
@@ -314,7 +314,7 @@ class Supabase:
         }, retries=2)
         return result if isinstance(result, dict) else None
 
-    def claim_import_lock(self, owner: str, ttl_seconds: int = 2700) -> dict[str, Any] | None:
+    def claim_import_lock(self, owner: str, ttl_seconds: int = 3600) -> dict[str, Any] | None:
         result = self.rpc("claim_gtfs_import_worker", {
             "p_token": self.import_token,
             "p_owner": owner,
@@ -900,6 +900,30 @@ def validate_upcoming_target_service(
         raise RuntimeError("monitored_target_no_service_next_7_days:" + ",".join(sorted(missing)))
 
 
+def validate_trip_chronology(stop_times_rows: list[dict[str, Any]]) -> None:
+    """Reject contradictions in selected GTFS trip clock-times before staging.
+
+    Blank times are allowed at non-timepoints, but any supplied time must not
+    move backwards within a trip. Times >24:00 are compared as service seconds.
+    """
+    by_trip: dict[str, list[dict[str, Any]]] = {}
+    for row in stop_times_rows:
+        by_trip.setdefault(str(row["trip_id"]), []).append(row)
+    for trip_id, rows in by_trip.items():
+        previous_departure_or_arrival: int | None = None
+        for idx, row in enumerate(sorted(rows, key=lambda r: int(r.get("stop_sequence", 0)))):
+            arrival = row.get("arrival_seconds")
+            departure = row.get("departure_seconds")
+            if arrival is not None and departure is not None and departure < arrival:
+                raise RuntimeError(f"gtfs_departure_before_arrival:{trip_id}:{row.get('stop_sequence', idx)}")
+            for clock in (arrival, departure):
+                if clock is None:
+                    continue
+                if previous_departure_or_arrival is not None and clock < previous_departure_or_arrival:
+                    raise RuntimeError(f"gtfs_trip_time_backwards:{trip_id}:{row.get('stop_sequence', idx)}")
+                previous_departure_or_arrival = clock
+
+
 def validate_subset(
     *,
     selected_routes: list[dict[str, Any]],
@@ -913,6 +937,7 @@ def validate_subset(
 ) -> None:
     if not selected_routes or not selected_stops or not chosen_trip_rows or not stop_times_rows:
         raise RuntimeError("empty_selected_gtfs_subset")
+    validate_trip_chronology(stop_times_rows)
 
     route_ids = {str(r["route_id"]) for r in selected_routes}
     trip_ids = {str(t["trip_id"]) for t in chosen_trip_rows}
@@ -994,6 +1019,11 @@ def load_config(sb: Supabase) -> tuple[list[Target], dict[str, RouteConfig], str
     return targets, routes, (str(active_version) if active_version else None)
 
 
+def can_reuse_http_validators(previous: dict[str, Any], active_version: str | None) -> bool:
+    """A 304 is safe only if the previously accepted feed remains active."""
+    return bool(active_version and previous.get("active_after") == active_version)
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     api_key = (
         os.environ.get("SUPABASE_PUBLISHABLE_KEY", "").strip()
@@ -1046,6 +1076,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             previous: dict[str, Any] = {}
             if not args.force and not args.dry_run:
                 previous = sb.previous_http_state(args.url, config_sha)
+                # A previously accepted ETag can only be reused when that exact
+                # feed is still active. This prevents false 304/no-op after a
+                # rollback or a manual feed replacement.
+                if not can_reuse_http_validators(previous, active_before):
+                    previous = {}
 
             downloaded = download(
                 args.url,
@@ -1055,6 +1090,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             )
 
             if downloaded.not_modified:
+                if not can_reuse_http_validators(previous, active_before):
+                    raise RuntimeError("unexpected_gtfs_http_304")
+                active_state = sb.feed_state(active_before)
+                if not active_state or not active_state.get("active"):
+                    raise RuntimeError("gtfs_http_304_but_feed_not_active")
+                # 304 does not mean a feed is still valid for today's services.
+                today = datetime.now(DUBLIN_TZ).date()
+                feed_end = active_state.get("feed_end_date")
+                if not feed_end or date.fromisoformat(str(feed_end)) < today:
+                    raise RuntimeError("gtfs_http_304_active_feed_expired")
                 sb.update_run(run_id, {
                     "status": "unchanged",
                     "completed_at": utcnow_iso(),
