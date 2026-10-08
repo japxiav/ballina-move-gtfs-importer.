@@ -1,0 +1,33 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {planDoorToDoor,applyBoardingEvidence,journeyBoardingDetails,proximityMeters}=require('../dist/index.js');
+const {readFileSync}=require('node:fs');
+const fixture=JSON.parse(readFileSync(new URL('../fixtures/nta-420-ballina-mayo-hospital-2026-10-08.json',`file://${__filename}`)));
+const {fromSupabaseTables}=require('../dist/index.js');
+const version=fixture.tables.feedVersion;
+const timetable=fromSupabaseTables(fixture.tables);
+const official=timetable.stops.find(s=>s.name==='Ballina Bus Stn');
+const hospital=timetable.stops.find(s=>s.name==='Mayo Hospital');
+const verifiedPoint={lat:official.lat+0.00035,lon:official.lon};
+const boardingReview={stopId:official.id,feedVersion:version,verifiedAt:'2026-10-07',sourceUrl:'https://example.org/evidence',reviewer:'reviewer',boardingPoint:verifiedPoint};
+const data=applyBoardingEvidence(timetable,[boardingReview]);
+const start={lat:54.1118,lon:-9.1613};
+const end={lat:hospital.lat,lon:hospital.lon};
+const router={walk:async(a,b)=>{
+ const dist=proximityMeters(a,b);
+ return dist>800?null:{provider:'MOCK_VERIFIED_TEST',distanceMeters:Math.ceil(dist),durationSeconds:Math.ceil(dist/1.3),geometry:[a,b]};
+}};
+test('real GTFS 420 route uses reviewed stop coordinate for access geometry and boarding details',async()=>{
+ const result=await planDoorToDoor(data,router,{origin:start,destination:end,serviceDate:'2026-10-08',departAfterSeconds:7*3600+40*60,maxTransfers:0,maxWalkingMeters:1600,limit:1},{maxRequestCount:6,maxOriginStops:2,maxDestinationStops:2,maxTransferPairs:0});
+ assert.equal(result.journeys.length,1);
+ const j=result.journeys[0];
+ const access=j.legs.find(l=>l.type==='walk'&&l.purpose==='access');
+ assert.deepEqual(access.to,verifiedPoint);
+ assert.deepEqual(access.geometry.at(-1),verifiedPoint);
+ const details=journeyBoardingDetails(j,data.stops);
+ assert.equal(details[0].boardingPointSource,'verified_override');
+ assert.deepEqual(details[0].boardingPoint,verifiedPoint);
+ assert.equal(details[0].walkingDistanceMeters,access.distanceMeters);
+ assert.equal(details[0].locationConfidence,'verified');
+ assert.deepEqual(details[0].coordinate,{lat:official.lat,lon:official.lon});
+});
