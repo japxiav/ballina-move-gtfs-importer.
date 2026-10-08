@@ -2,7 +2,9 @@
 
 Static GTFS importer for the National Transport Authority (Ireland) feed used by Ballina Move.
 
-Importer version: `1.3.0`.
+For rollout status and results of the staged hardening tests, see `docs/RELEASE_2026-10-08.md`. Some Supabase components are already deployed, while GitHub writes are awaiting upload. Do not assume all code is live.
+
+Importer version: `1.4.0` (candidate branch/release).
 
 ## Current rollout state
 
@@ -11,7 +13,7 @@ The automatic **daily schedule is intentionally disabled**. The workflow is manu
 1. `activate=false`: full forced download → local validation → staging upload → database validation → staging cleanup.
 2. `activate=true`: the same gates, followed by atomic activation and post-activation realtime/API checks.
 
-Only after that acceptance sequence should the daily 04:17 UTC schedule be enabled.
+Only after a future supervised acceptance sequence should the daily 04:17 UTC schedule be enabled. The 2026-10-08 activation succeeded but the old health gate had a JSON-path bug, fixed in this candidate release.
 
 ## Safety model
 
