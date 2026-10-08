@@ -1,0 +1,40 @@
+name: Ballina routing v0.9.9 candidate validation (no deployment)
+on:
+  push:
+    paths:
+      - 'routing/**'
+      - 'staging/**'
+      - '.github/workflows/routing-validation.yml'
+  pull_request:
+    paths:
+      - 'routing/**'
+      - 'staging/**'
+      - '.github/workflows/routing-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  routing-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'routing/package-lock.json'
+      - name: Install exact dependency versions
+        run: npm ci --ignore-scripts
+        working-directory: routing
+      - name: Run routing tests
+        run: npm test
+        working-directory: routing
+      - name: Regenerate private candidate artifact
+        run: node scripts/build_singlefile_candidate_099.cjs
+        working-directory: routing
+      - name: Verify compiled parity
+        run: npm run verify:artifact
+        working-directory: routing
+      - name: Verify sealed staging gate
+        run: node --test staging/tests/sealed_gate.test.cjs
