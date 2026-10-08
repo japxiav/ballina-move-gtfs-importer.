@@ -1,0 +1,322 @@
+{
+  "source": "Supabase active NTA GTFS read-only, 2026-10-08; actual Bus 445 trip 5913_64455 connecting to Bus 420 trip 5913_63105. No RT or local boarding verification.",
+  "service_date": "2026-10-08",
+  "feed_version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "tables": {
+    "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+    "stops": [
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5550501",
+        "stop_name": "Ballina Bus Stn",
+        "stop_lat": 54.11101,
+        "stop_lon": -9.1599,
+        "stop_code": "555051"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5517701",
+        "stop_name": "Corroy",
+        "stop_lat": 54.0673861889003,
+        "stop_lon": -9.18062962694072,
+        "stop_code": "551771"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5509801",
+        "stop_name": "Gortaskibbole",
+        "stop_lat": 54.04359,
+        "stop_lon": -9.17243,
+        "stop_code": "550981"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5533601",
+        "stop_name": "Knockmore",
+        "stop_lat": 54.0239411274655,
+        "stop_lon": -9.17466748823052,
+        "stop_code": "553361"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5544301",
+        "stop_name": "Cuing Beg",
+        "stop_lat": 53.9906,
+        "stop_lon": -9.175711,
+        "stop_code": "554431"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5544201",
+        "stop_name": "Pontoon",
+        "stop_lat": 53.97644,
+        "stop_lon": -9.21223,
+        "stop_code": "554421"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5519201",
+        "stop_name": "Cunnagher North",
+        "stop_lat": 53.933273,
+        "stop_lon": -9.234071,
+        "stop_code": "551921"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5346001",
+        "stop_name": "Ross West",
+        "stop_lat": 53.919839,
+        "stop_lon": -9.243555,
+        "stop_code": "534601"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5516501",
+        "stop_name": "Tawnylaheen",
+        "stop_lat": 53.892617,
+        "stop_lon": -9.26006,
+        "stop_code": "551651"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5557201",
+        "stop_name": "Castlebar",
+        "stop_lat": 53.85412,
+        "stop_lon": -9.303623,
+        "stop_code": "555721"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B151091",
+        "stop_name": "Mayo Hospital",
+        "stop_lat": 53.85184,
+        "stop_lon": -9.30599,
+        "stop_code": "15109"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B5549601",
+        "stop_name": "Ballycastle",
+        "stop_lat": 54.2792988854489,
+        "stop_lon": -9.36945324081909,
+        "stop_code": "554961"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B599901",
+        "stop_name": "Lackan",
+        "stop_lat": 54.229599,
+        "stop_lon": -9.28673,
+        "stop_code": "599901"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "stop_id": "8490B599971",
+        "stop_name": "Killala",
+        "stop_lat": 54.21374,
+        "stop_lon": -9.22073,
+        "stop_code": "599971"
+      }
+    ],
+    "routes": [
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "route_id": "2 420 c a",
+        "route_short_name": "420",
+        "route_long_name": "Ballina - Pontoon - Castlebar",
+        "route_type": 3
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "route_id": "2 445 c a",
+        "route_short_name": "445",
+        "route_long_name": "Ballina - Killala - Ballycastle",
+        "route_type": 3
+      }
+    ],
+    "trips": [
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "route_id": "2 420 c a",
+        "service_id": "66",
+        "trip_headsign": "Mayo Hospital"
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_64455",
+        "route_id": "2 445 c a",
+        "service_id": "66",
+        "trip_headsign": "Ballina"
+      }
+    ],
+    "stopTimes": [
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 1,
+        "stop_id": "8490B5550501",
+        "arrival_seconds": 38700,
+        "departure_seconds": 38700,
+        "pickup_type": 0,
+        "drop_off_type": 1
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 2,
+        "stop_id": "8490B5517701",
+        "arrival_seconds": 39060,
+        "departure_seconds": 39060,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 3,
+        "stop_id": "8490B5509801",
+        "arrival_seconds": 39180,
+        "departure_seconds": 39180,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 4,
+        "stop_id": "8490B5533601",
+        "arrival_seconds": 39300,
+        "departure_seconds": 39300,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 5,
+        "stop_id": "8490B5544301",
+        "arrival_seconds": 39660,
+        "departure_seconds": 39660,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 6,
+        "stop_id": "8490B5544201",
+        "arrival_seconds": 40020,
+        "departure_seconds": 40020,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 7,
+        "stop_id": "8490B5519201",
+        "arrival_seconds": 40380,
+        "departure_seconds": 40380,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 8,
+        "stop_id": "8490B5346001",
+        "arrival_seconds": 40500,
+        "departure_seconds": 40500,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 9,
+        "stop_id": "8490B5516501",
+        "arrival_seconds": 40680,
+        "departure_seconds": 40680,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 10,
+        "stop_id": "8490B5557201",
+        "arrival_seconds": 41340,
+        "departure_seconds": 41340,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_63105",
+        "stop_sequence": 11,
+        "stop_id": "8490B151091",
+        "arrival_seconds": 41580,
+        "departure_seconds": 41580,
+        "pickup_type": 1,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_64455",
+        "stop_id": "8490B5549601",
+        "stop_sequence": 1,
+        "arrival_seconds": 28500,
+        "departure_seconds": 28500,
+        "pickup_type": 0,
+        "drop_off_type": 1
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_64455",
+        "stop_id": "8490B599901",
+        "stop_sequence": 2,
+        "arrival_seconds": 29040,
+        "departure_seconds": 29040,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_64455",
+        "stop_id": "8490B599971",
+        "stop_sequence": 3,
+        "arrival_seconds": 29640,
+        "departure_seconds": 29640,
+        "pickup_type": 0,
+        "drop_off_type": 0
+      },
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "trip_id": "5913_64455",
+        "stop_id": "8490B5550501",
+        "stop_sequence": 4,
+        "arrival_seconds": 30600,
+        "departure_seconds": 30600,
+        "pickup_type": 1,
+        "drop_off_type": 0
+      }
+    ],
+    "calendars": [
+      {
+        "version": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+        "service_id": "66",
+        "start_date": "2026-10-08",
+        "end_date": "2026-10-08",
+        "monday": false,
+        "tuesday": false,
+        "wednesday": false,
+        "thursday": true,
+        "friday": false,
+        "saturday": false,
+        "sunday": false
+      }
+    ],
+    "calendarDates": []
+  }
+}
