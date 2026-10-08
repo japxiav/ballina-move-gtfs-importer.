@@ -83,45 +83,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           EXPECTED_VERSION: ${{ steps.importer.outputs.version }}
         run: |
-          python - <<'PY'
-          import json, os, time, urllib.parse, urllib.request
-
-          base = os.environ["SUPABASE_URL"].rstrip("/") + "/functions/v1/transport-api"
-          key = os.environ["SUPABASE_PUBLISHABLE_KEY"]
-          expected = os.environ.get("EXPECTED_VERSION", "")
-          headers = {"apikey": key, "Accept": "application/json"}
-
-          # Give v8 enough time for both alternating GTFS-RT channels to run.
-          time.sleep(130)
-
-          def get(params):
-              url = base + "?" + urllib.parse.urlencode(params)
-              req = urllib.request.Request(url, headers=headers)
-              with urllib.request.urlopen(req, timeout=20) as response:
-                  return json.loads(response.read().decode("utf-8"))
-
-          health = get({"action": "health"})
-          if health.get("status") != "ok":
-              raise SystemExit(f"health_not_ok:{health}")
-
-          active = health.get("active_feed") or {}
-          if expected and active.get("version") != expected:
-              raise SystemExit(
-                  f"active_feed_mismatch:expected={expected}:actual={active.get('version')}"
-              )
-
-          runs = health.get("latest_runs") or []
-          if len(runs) < 2 or any(r.get("status") != "ok" for r in runs[:2]):
-              raise SystemExit(f"collector_not_healthy:{runs}")
-
-          departures = get({"action": "departures", "limit": "5"})
-          if not isinstance(departures.get("departures"), list):
-              raise SystemExit("departure_api_invalid_response")
-
-          print(json.dumps({
-              "status": "post_activation_ok",
-              "active_feed": active.get("version"),
-              "collector_runs": runs[:2],
-              "departure_count": len(departures.get("departures") or []),
-          }, sort_keys=True))
-          PY
+          # Let both alternating channels collect after the feed switch.
+          sleep 65
+          python scripts/check_post_activation.py --retry-seconds 180 --poll-interval 20
