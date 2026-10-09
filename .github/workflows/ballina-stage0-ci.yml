@@ -1,0 +1,128 @@
+name: Ballina Move Stage 0 independent validation (no deploy)
+
+# Upload the audit-stage0/ directory to the dedicated audit/stage0-ci branch,
+# then upload THIS workflow last. Its first push executes the two independent gates.
+on:
+  push:
+    branches:
+      - audit/stage0-ci
+    paths:
+      - audit-stage0/**
+      - .github/workflows/ballina-stage0-ci.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ballina-stage0-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONNOUSERSITE: '1'
+      CI: 'true'
+      # Never pass Supabase or NTA credentials to this job.
+    steps:
+      - name: Checkout audit-only branch (tooling, not source baseline)
+        uses: actions/checkout@v4
+        with:
+          path: audit-tools
+          persist-credentials: false
+
+      - name: Checkout exact frozen GitHub main commit (101 files expected)
+        uses: actions/checkout@v4
+        with:
+          repository: japxiav/ballina-move-gtfs-importer.
+          ref: 4e4c6d36bc7542b8258ccf6efde70944f1add592
+          path: main-checkout
+          persist-credentials: false
+
+      - name: Configure Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Configure Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Runtime versions and output folder
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/reports"
+          {
+            echo "CI SHA: $GITHUB_SHA"
+            echo "Pinned baseline: 4e4c6d36bc7542b8258ccf6efde70944f1add592"
+            node --version
+            npm --version
+            python --version
+            git --version
+            sha256sum audit-tools/audit-stage0/tools/run_stage0.py
+            sha256sum audit-tools/audit-stage0/ci/verify_full_github_main.py
+          } | tee "$GITHUB_WORKSPACE/reports/runtime_versions.log"
+
+      - name: Gate v3 self-tests (20 negative/positive controls)
+        id: selftests
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -B -m unittest discover -s audit-tools/audit-stage0/tests -v \
+            2>&1 | tee "$GITHUB_WORKSPACE/reports/gate_self_tests.log"
+
+      - name: Verify all four frozen archives and contents
+        id: archives
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -B audit-tools/audit-stage0/tools/run_stage0.py --verify-only \
+            2>&1 | tee "$GITHUB_WORKSPACE/reports/four_archives.log"
+
+      - name: G0-04 exact main commit, 101 blobs, executed worktree, Python tests
+        id: fullmain
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -B audit-tools/audit-stage0/ci/verify_full_github_main.py \
+            --checkout "$GITHUB_WORKSPACE/main-checkout" \
+            --output "$GITHUB_WORKSPACE/reports/full_main.json" \
+            2>&1 | tee "$GITHUB_WORKSPACE/reports/full_main.log"
+
+      - name: Stage 0 strict npm lockfile, TypeScript 5.9.3 and regressions
+        id: strict
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -B audit-tools/audit-stage0/tools/run_stage0.py \
+            --require-exact --output-dir "$GITHUB_WORKSPACE/reports/stage0_strict" \
+            2>&1 | tee "$GITHUB_WORKSPACE/reports/stage0_strict_console.log"
+
+      - name: Upload complete diagnostic logs (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ballina-stage0-audit-logs
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Enforce formal stage 0 acceptance
+        if: always()
+        env:
+          SELFTESTS: ${{ steps.selftests.outcome }}
+          ARCHIVES: ${{ steps.archives.outcome }}
+          FULLMAIN: ${{ steps.fullmain.outcome }}
+          STRICT: ${{ steps.strict.outcome }}
+        run: |
+          echo "Gate self-tests: $SELFTESTS"
+          echo "Archive hashes: $ARCHIVES"
+          echo "Full main checkout: $FULLMAIN"
+          echo "TypeScript 5.9.3 strict gate: $STRICT"
+          test "$SELFTESTS" = success
+          test "$ARCHIVES" = success
+          test "$FULLMAIN" = success
+          test "$STRICT" = success
+          echo 'STAGE0_CI_GATES_PASSED (does not authorize production release)'
