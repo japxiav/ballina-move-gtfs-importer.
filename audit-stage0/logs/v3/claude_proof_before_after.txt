@@ -1,0 +1,18 @@
+G0-04 original proof against frozen v2 (exit 0 is undesirable):
+exit=0
+Tracked worktree file modified: True
+Gate accepted original: True
+Gate accepted modified: True
+Identical verification outputs: True
+G0-04 REPRODUCED: verifies objects in HEAD, not the working-tree files executed by tests
+
+G0-04 original proof against new v3 (exit 1 expected on modified worktree):
+exit=1
+Traceback (most recent call last):
+  File "/mnt/data/Ballina_Move_G0-04_Prova_Negativa_2026-10-09(2).py", line 32, in <module>
+    after=gate.check(repo)
+  File "/mnt/data/ballina_gate_v3_work/ci/verify_full_github_main.py", line 153, in check
+    worktree_count = _verify_worktree(root, expected)
+  File "/mnt/data/ballina_gate_v3_work/ci/verify_full_github_main.py", line 128, in _verify_worktree
+    raise RuntimeError('Executed worktree differs from committed blob: ' + rel)
+RuntimeError: Executed worktree differs from committed blob: import_gtfs.py

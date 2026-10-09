@@ -1,0 +1,25 @@
+test_all_four_archives_and_inner_entries_match (test_gate_v2.Stage0VerifierNegativeTests.test_all_four_archives_and_inner_entries_match) ... ok
+test_changed_zip_comment_is_rejected_even_with_valid_crc (test_gate_v2.Stage0VerifierNegativeTests.test_changed_zip_comment_is_rejected_even_with_valid_crc) ... ok
+test_duplicated_test_name_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_duplicated_test_name_is_rejected) ... ok
+test_expected_red_diagnostics_are_accepted (test_gate_v2.Stage0VerifierNegativeTests.test_expected_red_diagnostics_are_accepted) ... ok
+test_modified_manifest_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_modified_manifest_is_rejected) ... ok
+test_six_import_failures_are_not_accepted_as_expected_red (test_gate_v2.Stage0VerifierNegativeTests.test_six_import_failures_are_not_accepted_as_expected_red) ... ok
+test_wrong_assertion_operator_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_wrong_assertion_operator_is_rejected) ... ok
+test_01_clean_worktree_accepted (test_gate_v3.GateWorktreeTests.test_01_clean_worktree_accepted) ... ok
+test_02_g004_independent_proof_tracked_file_modified (test_gate_v3.GateWorktreeTests.test_02_g004_independent_proof_tracked_file_modified) ... ok
+test_03_staged_file_modification_rejected (test_gate_v3.GateWorktreeTests.test_03_staged_file_modification_rejected) ... ok
+test_04_deleted_tracked_file_rejected (test_gate_v3.GateWorktreeTests.test_04_deleted_tracked_file_rejected) ... ok
+test_05_untracked_source_file_rejected (test_gate_v3.GateWorktreeTests.test_05_untracked_source_file_rejected) ... ok
+test_06_ignored_python_file_rejected (test_gate_v3.GateWorktreeTests.test_06_ignored_python_file_rejected) ... ok
+test_07_ignored_pyc_file_rejected (test_gate_v3.GateWorktreeTests.test_07_ignored_pyc_file_rejected) ... ok
+test_08_executable_permission_changed_rejected (test_gate_v3.GateWorktreeTests.test_08_executable_permission_changed_rejected) ... ok
+test_09_replaced_regular_file_with_symlink_rejected (test_gate_v3.GateWorktreeTests.test_09_replaced_regular_file_with_symlink_rejected) ... ok
+test_10_committed_symlink_target_change_rejected (test_gate_v3.GateWorktreeTests.test_10_committed_symlink_target_change_rejected) ... ok
+test_11_modification_during_test_run_detected_afterward (test_gate_v3.GateWorktreeTests.test_11_modification_during_test_run_detected_afterward) ... ok
+test_12_output_inside_checkout_is_rejected_before_execution (test_gate_v3.GateWorktreeTests.test_12_output_inside_checkout_is_rejected_before_execution) ... ok
+test_13_restored_file_is_accepted (test_gate_v3.GateWorktreeTests.test_13_restored_file_is_accepted) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.360s
+
+OK

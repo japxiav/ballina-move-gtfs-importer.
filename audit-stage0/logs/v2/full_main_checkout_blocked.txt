@@ -1,0 +1,4 @@
+Full main commit checker was compiled and invoked without a checkout.
+Expected outcome: BLOCKED because Git checkout 4e4c6d36bc7542b8258ccf6efde70944f1add592 is not present in this environment.
+Remote git clone attempt: Could not resolve host: github.com.
+No 101/101 source verification or importer Python suite was executed in this package run.

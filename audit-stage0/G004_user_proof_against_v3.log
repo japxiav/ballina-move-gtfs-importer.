@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/data/Ballina_Move_G0-04_Prova_Negativa_2026-10-09(2).py", line 32, in <module>
+    after=gate.check(repo)
+  File "/mnt/data/ballina_gate_v3_work/ci/verify_full_github_main.py", line 153, in check
+    worktree_count = _verify_worktree(root, expected)
+  File "/mnt/data/ballina_gate_v3_work/ci/verify_full_github_main.py", line 128, in _verify_worktree
+    raise RuntimeError('Executed worktree differs from committed blob: ' + rel)
+RuntimeError: Executed worktree differs from committed blob: import_gtfs.py

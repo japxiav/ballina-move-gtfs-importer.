@@ -1,0 +1,12 @@
+test_all_four_archives_and_inner_entries_match (test_gate_v2.Stage0VerifierNegativeTests.test_all_four_archives_and_inner_entries_match) ... ok
+test_changed_zip_comment_is_rejected_even_with_valid_crc (test_gate_v2.Stage0VerifierNegativeTests.test_changed_zip_comment_is_rejected_even_with_valid_crc) ... ok
+test_duplicated_test_name_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_duplicated_test_name_is_rejected) ... ok
+test_expected_red_diagnostics_are_accepted (test_gate_v2.Stage0VerifierNegativeTests.test_expected_red_diagnostics_are_accepted) ... ok
+test_modified_manifest_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_modified_manifest_is_rejected) ... ok
+test_six_import_failures_are_not_accepted_as_expected_red (test_gate_v2.Stage0VerifierNegativeTests.test_six_import_failures_are_not_accepted_as_expected_red) ... ok
+test_wrong_assertion_operator_is_rejected (test_gate_v2.Stage0VerifierNegativeTests.test_wrong_assertion_operator_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.050s
+
+OK

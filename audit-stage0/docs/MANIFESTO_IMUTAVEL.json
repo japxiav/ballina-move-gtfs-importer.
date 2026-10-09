@@ -1,0 +1,975 @@
+{
+  "manifest_version": 1,
+  "sha256_source": "SHA-256 of original ZIP bytes and of each uncompressed entry",
+  "remote_main_sha": "4e4c6d36bc7542b8258ccf6efde70944f1add592",
+  "warning": "v099 83-file ZIP is PARTIAL, not entire 101-file GitHub tree",
+  "archives": {
+    "Ballina_Move_v0.10.0_AUDITORIA_RODADA3_COMPLETO.zip": {
+      "sha256": "94b52715e4842d73cdf9a48e23c75815bd3fccd4756bc4796e1f438ee1ffa7a2",
+      "file_count": 96,
+      "files": {
+        ".github/workflows/routing-validation.yml": {
+          "sha256": "6aa3956868a263eee2d26a75bfa2c98cf0c78e5ec5eaae13913c5caedd2ce004",
+          "bytes": 1213
+        },
+        "AUDITORIA_INDEPENDENTE_RODADA_3.md": {
+          "sha256": "d8491c68a94728250fcd31dc49b6920043b05d617efd5f07ec74ebce93bea2fe",
+          "bytes": 5282
+        },
+        "COMO_ENVIAR_RODADA_3.md": {
+          "sha256": "bbb1b6729d647adaa56420bc20055a8c1f371a62638158cf71926ae8e6a94623",
+          "bytes": 868
+        },
+        "routing/.gitignore": {
+          "sha256": "3afe0c4627838a9b3bbaaa424a9291b026122640e6e10c3d3fd1c409841781c4",
+          "bytes": 63
+        },
+        "routing/README.md": {
+          "sha256": "cd12038c3abe4814652d00c24138298fb5ff4c8b322290064c45f5930093cddc",
+          "bytes": 14334
+        },
+        "routing/README_RAIL_0.10.0.md": {
+          "sha256": "b989ef8b43309bc25bf6cf45ed02622facdfa8133d041d14551de2cc350b081c",
+          "bytes": 3615
+        },
+        "routing/README_RELEASE_0.9.9.md": {
+          "sha256": "0201fac143f7b6f887e9fc9d45a999dfb1cb34bb4d086da860c95ad76d5c6c1f",
+          "bytes": 3530
+        },
+        "routing/api/local-server.cjs": {
+          "sha256": "64ebc15c9f89afd6c747fa14341c2f2748947297331da19e6a6fa92cab1bfd7e",
+          "bytes": 2076
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts": {
+          "sha256": "e6ea5327d1ff1cc1b7f6b6e4eb99943294356f82eeac8ec0ecf5d6d019ce7d35",
+          "bytes": 122350
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.3-candidate.ts": {
+          "sha256": "4fdd7fd6b7dfb75f283c37b196acc4424d1aa699d97fdb9d1372c18809a477fb",
+          "bytes": 71916
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.6-candidate.ts": {
+          "sha256": "ba6c9900b075ec4999d024f336be36873976d863aea0005168e365352f827a09",
+          "bytes": 84224
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.7-candidate.ts": {
+          "sha256": "df13696f6fbc3579fbba353c10f3f8f51881eb962bb50e662ed407ab3b184edb",
+          "bytes": 96105
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.8-candidate.ts": {
+          "sha256": "426d1c8eca718415617eab5a43c245b5cea367dc87f4fb99d7aed495a813261f",
+          "bytes": 101073
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.9-candidate.ts": {
+          "sha256": "1f6e8f75656957536341c3d97d3590d485a5f022bc67d20b7da7c5085d7b651f",
+          "bytes": 105022
+        },
+        "routing/fixtures/nta-420-ballina-mayo-hospital-2026-10-08.json": {
+          "sha256": "b3afbb715fedf773f552da7bc6e0349b42d0c99db23c1a8c1e753811dea03b8c",
+          "bytes": 7862
+        },
+        "routing/fixtures/nta-445-to-420-real-connection-2026-10-08.json": {
+          "sha256": "27f51ab5c608ea278e1ce9794ac3a689ab843c1ff7fa5533f291ddf66789ceaa",
+          "bytes": 10498
+        },
+        "routing/package-lock.json": {
+          "sha256": "742c6c278576945b0f7253012bf1e45a7116a9989701915ba3e2359f53075515",
+          "bytes": 823
+        },
+        "routing/package.json": {
+          "sha256": "ba51c0bbb3db332d2b0cdbe07e37a903e50cd45319edb27f0e739b9ca603b12e",
+          "bytes": 946
+        },
+        "routing/scripts/benchmark_v097.cjs": {
+          "sha256": "b55fb3e192aa9ff83e23a7ca5a38a2328b9852d0c42f1db7375c3a5b27fe2993",
+          "bytes": 1630
+        },
+        "routing/scripts/build_singlefile_candidate.cjs": {
+          "sha256": "c4e35523d6d21bea64426bd80012dd9d602b8db3e0a8ee81415170b7840de22e",
+          "bytes": 1710
+        },
+        "routing/scripts/build_singlefile_candidate_010.cjs": {
+          "sha256": "10e10f0b224e725e518aba0aa1dffc8e0127906767ea95676c556faf49c82a2d",
+          "bytes": 2051
+        },
+        "routing/scripts/build_singlefile_candidate_099.cjs": {
+          "sha256": "10eba67acbd8fd18a885e93115f95a5407b8ae7ecc01d593ec1c70788dbd9995",
+          "bytes": 1710
+        },
+        "routing/scripts/verify_singlefile_parity.cjs": {
+          "sha256": "9198ab4b40613aa4668c155ea0ef034da5c1c193750a01532c9d27d707e5a286",
+          "bytes": 1507
+        },
+        "routing/scripts/verify_singlefile_parity_010.cjs": {
+          "sha256": "7a0aede41dd5aa8d5ce26bd58ce21f287d1eee5c2fd6fa5068ad1eeb89671aec",
+          "bytes": 1577
+        },
+        "routing/scripts/verify_singlefile_parity_099.cjs": {
+          "sha256": "22b761735742ed4d35dcceb7dd30c69c15a9ecfe266bff9311b74723455fe483",
+          "bytes": 1507
+        },
+        "routing/src/boarding.ts": {
+          "sha256": "a179c9d1ed688e69d79caa27ea91a76588b3596512ead4c7b1a61422bf35efea",
+          "bytes": 1972
+        },
+        "routing/src/boardingEvidence.ts": {
+          "sha256": "8b5d32c6b7a02856ba73c621624c89f6f7ade6784dd0cefc39a6be7445ba4c51",
+          "bytes": 5034
+        },
+        "routing/src/connections.ts": {
+          "sha256": "e90857a0782aed5aaaf70851eb3e2dedd57e39e198a0a29589e7f5db45141144",
+          "bytes": 3339
+        },
+        "routing/src/engine.ts": {
+          "sha256": "4c40b72bfc22918bc3fb16bd9f64db8817f74535fee3fdec2e447a615223e896",
+          "bytes": 20690
+        },
+        "routing/src/gtfsSnapshot.ts": {
+          "sha256": "85b07daa40eea61370db0051ae97199aed3cc1ba77a2749f4e6d113fd58ba5cf",
+          "bytes": 6553
+        },
+        "routing/src/httpApi.ts": {
+          "sha256": "7810fca0d3c588b06b439bbeda8421df318dcfb4889c8e505803affe698ed711",
+          "bytes": 20660
+        },
+        "routing/src/index.ts": {
+          "sha256": "76300029a7e96894a3b1aa8b98effa6be199f1c5c358129b453d9ce262f988ee",
+          "bytes": 453
+        },
+        "routing/src/irishRail.ts": {
+          "sha256": "32ebb91fd60c494f98554f785355bf698ec09c359d717e5799ffadece44ec38e",
+          "bytes": 10285
+        },
+        "routing/src/map.ts": {
+          "sha256": "6aaada3406ee78661de571d9b1e5db3857d5db2490f8a7b9edc08c56f914d26d",
+          "bytes": 1341
+        },
+        "routing/src/nearbyStops.ts": {
+          "sha256": "76f4904f8b5471d321a6b464c4152ae1e6d842f433c759e77a454a2229aa61d7",
+          "bytes": 1757
+        },
+        "routing/src/pedestrian.ts": {
+          "sha256": "78d879207c4f10ee92b6d66b37af07f2c58f9d6da60837306e9df50d28d45a87",
+          "bytes": 15430
+        },
+        "routing/src/planner.ts": {
+          "sha256": "548c9f0f88a10d5e5c7c877d26153cd280815853f4712c76f0c5360f59505a33",
+          "bytes": 12858
+        },
+        "routing/src/supabaseAdapter.ts": {
+          "sha256": "1d3e7e0e5d797c56ba426953d7da64273f72a9ce4caaa7e73fed1889817bd94e",
+          "bytes": 2643
+        },
+        "routing/src/supabaseLimiter.ts": {
+          "sha256": "758bc8a438ec3215cc143be18070eda4f9a7dee2739ce97d50e4cb3dc296553b",
+          "bytes": 2049
+        },
+        "routing/src/time.ts": {
+          "sha256": "811d657678037c8402bb7b6614d84858ae24660fcc28f939b8f692d3403e48bc",
+          "bytes": 2377
+        },
+        "routing/src/types.ts": {
+          "sha256": "d6958e7589caa6cda9d1fc33f547f9f7fe70133eb65c769e72b1170ae800f3d0",
+          "bytes": 5650
+        },
+        "routing/supabase/functions/ballina-routing-preview/deno.json": {
+          "sha256": "671920f9e86e8620695b89c0328206cb79c2ae66dd7bf466a0644e20d1cfd9f1",
+          "bytes": 36
+        },
+        "routing/supabase/functions/ballina-routing-preview/index.ts": {
+          "sha256": "cc0c2d6ddfce8d5e4c28557fd90a4b3cf1206e47e6e2ab18b5984710b728cf15",
+          "bytes": 5130
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/boarding.ts": {
+          "sha256": "ceecc4004d5fd393dde504527bb35f3a2004fc6fabd53bae52666e15adb1aa7e",
+          "bytes": 1975
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/boardingEvidence.ts": {
+          "sha256": "1604d21fb58833819a6e1ce956b8316a87548d303e0e08ba8911296863707035",
+          "bytes": 5040
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/connections.ts": {
+          "sha256": "ee156bf9ccba6c48c32c2bbc46a8f2a6837e7e14a11bd076638cad2252ace865",
+          "bytes": 3345
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/engine.ts": {
+          "sha256": "d578801876c0ea738242ac32a2ad87946dc47d148b4c957486b4a1ad725c91f2",
+          "bytes": 20699
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/gtfsSnapshot.ts": {
+          "sha256": "e06e72e2acfe8fab016bb9e95a9dee7292b5a6f9ccf32afbc67da0217b0d0bb4",
+          "bytes": 6559
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/httpApi.ts": {
+          "sha256": "ee49a0c9ce66a7842b726688c30c092a24b76d895a3ca2b4e22a0093f721854c",
+          "bytes": 20687
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/index.ts": {
+          "sha256": "0c54bbc1573e66f0e67ad1bc3ee1b2170b1a40261c0fa2c5b61acafe536e3e51",
+          "bytes": 498
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/irishRail.ts": {
+          "sha256": "32ebb91fd60c494f98554f785355bf698ec09c359d717e5799ffadece44ec38e",
+          "bytes": 10285
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/map.ts": {
+          "sha256": "469c50962290a2f7e63ebb7597913d068251e0e644c83f1a7567c33f2fd4f91b",
+          "bytes": 1347
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/nearbyStops.ts": {
+          "sha256": "1651b67206983de2b89a8876f1beb988e1e1173f3a9aeea06bdf239a280d529d",
+          "bytes": 1763
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/pedestrian.ts": {
+          "sha256": "180f4229794f185d0ab5861ccd47a35140df9eed72a3f77b13b268e4da90d8b8",
+          "bytes": 15436
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/planner.ts": {
+          "sha256": "545db827d2fa0283d1a4d547e57e40f4ca6cc243c88384e2c4f7ccc2352d860d",
+          "bytes": 12873
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/supabaseAdapter.ts": {
+          "sha256": "4bf2c5b0e05071df9aba9948ccf9f0faa408a4139fe9f293e49122fea366f64f",
+          "bytes": 2646
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/supabaseLimiter.ts": {
+          "sha256": "758bc8a438ec3215cc143be18070eda4f9a7dee2739ce97d50e4cb3dc296553b",
+          "bytes": 2049
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/time.ts": {
+          "sha256": "c6cf3e0c6d1d254e1b3f07e4757b82f726a953e55fb83988077ace447b8ab0c0",
+          "bytes": 2380
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/types.ts": {
+          "sha256": "d6958e7589caa6cda9d1fc33f547f9f7fe70133eb65c769e72b1170ae800f3d0",
+          "bytes": 5650
+        },
+        "routing/tests/adversarial097.test.cjs": {
+          "sha256": "e8f2d36ab8f07743e4bf564c539514ffad2025259612755da522d824b5e7743b",
+          "bytes": 10571
+        },
+        "routing/tests/audit_round2.test.cjs": {
+          "sha256": "b5d0ac4661090ec801d223254f0c9c145f150ea9186a465337e8a372b95b4b78",
+          "bytes": 5814
+        },
+        "routing/tests/audit_round3.test.cjs": {
+          "sha256": "23caa0fb8896a4bf29636ba5ff195c01134004b106380a73e25faac85f6834a2",
+          "bytes": 3151
+        },
+        "routing/tests/boardingVerifiedPointRegression.test.cjs": {
+          "sha256": "c484a62b0f3c549c04f10ae2754cab880baf6aa94ddef02884475927d46aa071",
+          "bytes": 2159
+        },
+        "routing/tests/combinedFixes098.test.cjs": {
+          "sha256": "72eb3a6e0c6a04b132f31db4d3639ecaf83c79d9c3935bbbe72034328b9135f0",
+          "bytes": 4560
+        },
+        "routing/tests/completeJourneys.test.cjs": {
+          "sha256": "05c2ffa0e4efa2df97550f82db1627c24e8485569313bb659a46c97245952ec8",
+          "bytes": 10838
+        },
+        "routing/tests/departurePareto093.test.cjs": {
+          "sha256": "6bc75b565fde4eec7b2a18bf2d834ed86c6e67d82abe62bc59af511a458cf1c2",
+          "bytes": 3906
+        },
+        "routing/tests/deployArtifact010.test.cjs": {
+          "sha256": "013afb1965b5eaedda436d24e66a5935eecd5ca998415892952765f0d4bc8ca6",
+          "bytes": 3662
+        },
+        "routing/tests/deployArtifact096.test.cjs": {
+          "sha256": "25791ff622626d70461d1e723641b98d723c44c42535b79946e242f488e821e7",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact097.test.cjs": {
+          "sha256": "1e7b9a0fa049148212c97042ab89530a93461e3140a9bb36a0686e9262b0a4f6",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact098.test.cjs": {
+          "sha256": "62dd9e851580f08ce28ea3fbead2ec43b372521f01b404c71b437d87eba0d723",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact099.test.cjs": {
+          "sha256": "9b6519a9f838d60be1c8dddae54ca0606024c8bfd8d69ba52f0ab83e2bd7ac5d",
+          "bytes": 1921
+        },
+        "routing/tests/doorToDoor.test.cjs": {
+          "sha256": "72cbd815e7d35ca9b5b5c841bb5db032613c1e9e1ae5ea9038ba552a08f5a6ad",
+          "bytes": 6888
+        },
+        "routing/tests/edgePreview.test.cjs": {
+          "sha256": "d1b265f208121f6b2253c65a430ecba5005df6221296d8bb4a3b8df35fa153f2",
+          "bytes": 1479
+        },
+        "routing/tests/edgeSourceParity.test.cjs": {
+          "sha256": "ffb58d249c2e68bb284335496da77a1c54c85fa307d4b797b833c7d908999dd4",
+          "bytes": 866
+        },
+        "routing/tests/engine-regression.test.cjs": {
+          "sha256": "aa7414c7e3bd5f5e94d5388ae86cda85c332b2a91c585558e2584cbc861dbf2b",
+          "bytes": 7572
+        },
+        "routing/tests/engine.test.cjs": {
+          "sha256": "8dd2c46b76152688746c2ca42240ce587c2d06c4acabab47d8ab863c1c597a8a",
+          "bytes": 7636
+        },
+        "routing/tests/gtfsSnapshot.test.cjs": {
+          "sha256": "8e5e5201164cf1c5ec98e51c7254d8eba2ce312f3cc6ed768c6edf4502534bca",
+          "bytes": 4469
+        },
+        "routing/tests/hardening094.test.cjs": {
+          "sha256": "056e5aefd8ee51d8761d9e551a5256f2c7f6eac2f156f781bd32846656be8d37",
+          "bytes": 10704
+        },
+        "routing/tests/hardening095.test.cjs": {
+          "sha256": "d6a0078fceddef11506970348b04ffa57e04f3653b9f65858c97957e262a11a3",
+          "bytes": 9294
+        },
+        "routing/tests/httpApi.test.cjs": {
+          "sha256": "dc589a836a67ebdbded1cdbbf2bc2b71d9e781aad8a0af53a6885da39bcbfa10",
+          "bytes": 7331
+        },
+        "routing/tests/independent_risks.test.cjs": {
+          "sha256": "c53acf48a8717a695f8e544ed3f1d3f882d17813e146c5e35fd0b1caf0710aff",
+          "bytes": 9448
+        },
+        "routing/tests/irishRail010.test.cjs": {
+          "sha256": "c71c1f3b2098d6e72b70a3fbd667c5f636abaff081635c8d2742c5391786f020",
+          "bytes": 4180
+        },
+        "routing/tests/multimodal08.test.cjs": {
+          "sha256": "71c9c5e06808117d6645908239ed09a6c6bf8b02da3b625d536a5918bb13c950",
+          "bytes": 8766
+        },
+        "routing/tests/pedestrian.test.cjs": {
+          "sha256": "0d0bf7c10c602f905805a05a825180aa43a41ea4cf9a9057391d1ad9229cb468",
+          "bytes": 4485
+        },
+        "routing/tests/pilot09.test.cjs": {
+          "sha256": "7b57c97e5a6a2f0c572a359541b1dcbeb9ba6e1c10cb08e6ef9bd70a48715c25",
+          "bytes": 9876
+        },
+        "routing/tests/railEntrypointAuthenticatedRegression.test.cjs": {
+          "sha256": "cef0eba8e23f2d61e9455b045344b60786046c6e356710ff030981a85f902624",
+          "bytes": 10083
+        },
+        "routing/tests/railIntegration010.test.cjs": {
+          "sha256": "babab6193d84185716f46d8fcd80ced6b36f3a482a2aeeeab304cf2891090a30",
+          "bytes": 11238
+        },
+        "routing/tests/realGtfs.test.cjs": {
+          "sha256": "9737491a5a278b2ff0e47c1b9c9b32356c96fe78e59e8c2ad0881eaa58d3a3dc",
+          "bytes": 3247
+        },
+        "routing/tests/realWalkMetricsIntegration.test.cjs": {
+          "sha256": "55189e0e8b18fa90e49e22a65b738f58977fb31a5650a6e0d79f190b6c33f77f",
+          "bytes": 2538
+        },
+        "routing/tests/reauditFixes099.test.cjs": {
+          "sha256": "9e3953c97011f22622ca86a266d74cfd05d4a4da4da465b32ad7628368d4d0b2",
+          "bytes": 6901
+        },
+        "routing/tests/snapAccounting096.test.cjs": {
+          "sha256": "7658aae15db40e1df420a2c1672efb471e4446346be978c9949e8b63fbcf9cc1",
+          "bytes": 6233
+        },
+        "routing/tests/supabaseLimiter.test.cjs": {
+          "sha256": "cfe46cf494548906c3e561c4383eb269649a402d6b559fe2ac28f8237390ba87",
+          "bytes": 2283
+        },
+        "routing/tests/verifiedPlannerIntegration.test.cjs": {
+          "sha256": "d212b82c7322abbe6c11b931667aea21f53c55f9f3c4f170845b2b29eb0bec45",
+          "bytes": 2243
+        },
+        "routing/tsconfig.json": {
+          "sha256": "cbaf2a7d54bc97181707d6d3e2837922e56e2170af4701e41ddb53d6bb8e1673",
+          "bytes": 335
+        },
+        "staging/ballina-routing-v099-staging/index.ts": {
+          "sha256": "24b20113a4ab643bb3d47b88e9a62be85d070ebfe3516c42c73e71e1dd68b9ab",
+          "bytes": 1122
+        },
+        "staging/tests/sealed_gate.test.cjs": {
+          "sha256": "e9048778ec793899004e12b8f0f7b977b4e696be476dcf1bbf799a8c26000790",
+          "bytes": 1644
+        }
+      }
+    },
+    "Ballina_Move_v0.9.9_UPLOAD_GITHUB_83_ARQUIVOS.zip": {
+      "sha256": "f994fb99f556c62a4ee785fd32656c712f9d71ea7c95818668f5f656c6eb3ebd",
+      "file_count": 83,
+      "files": {
+        ".github/workflows/routing-validation.yml": {
+          "sha256": "f483ef4146d16f738a7a8168f76a74a33b96a813f0c1a307a43b6cb8d7062092",
+          "bytes": 1207
+        },
+        "INSTRUCOES_UPLOAD_GITHUB.md": {
+          "sha256": "0401c507ff63ed9109e59da15572bb6efdba60b8b962e1fd63d50da454076634",
+          "bytes": 1166
+        },
+        "routing/.gitignore": {
+          "sha256": "3afe0c4627838a9b3bbaaa424a9291b026122640e6e10c3d3fd1c409841781c4",
+          "bytes": 63
+        },
+        "routing/README.md": {
+          "sha256": "cd12038c3abe4814652d00c24138298fb5ff4c8b322290064c45f5930093cddc",
+          "bytes": 14334
+        },
+        "routing/README_RELEASE_0.9.9.md": {
+          "sha256": "0201fac143f7b6f887e9fc9d45a999dfb1cb34bb4d086da860c95ad76d5c6c1f",
+          "bytes": 3530
+        },
+        "routing/api/local-server.cjs": {
+          "sha256": "64ebc15c9f89afd6c747fa14341c2f2748947297331da19e6a6fa92cab1bfd7e",
+          "bytes": 2076
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.3-candidate.ts": {
+          "sha256": "4fdd7fd6b7dfb75f283c37b196acc4424d1aa699d97fdb9d1372c18809a477fb",
+          "bytes": 71916
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.6-candidate.ts": {
+          "sha256": "ba6c9900b075ec4999d024f336be36873976d863aea0005168e365352f827a09",
+          "bytes": 84224
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.7-candidate.ts": {
+          "sha256": "df13696f6fbc3579fbba353c10f3f8f51881eb962bb50e662ed407ab3b184edb",
+          "bytes": 96105
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.8-candidate.ts": {
+          "sha256": "426d1c8eca718415617eab5a43c245b5cea367dc87f4fb99d7aed495a813261f",
+          "bytes": 101073
+        },
+        "routing/artifacts/ballina-routing-preview-singlefile-v0.9.9-candidate.ts": {
+          "sha256": "1f6e8f75656957536341c3d97d3590d485a5f022bc67d20b7da7c5085d7b651f",
+          "bytes": 105022
+        },
+        "routing/fixtures/nta-420-ballina-mayo-hospital-2026-10-08.json": {
+          "sha256": "b3afbb715fedf773f552da7bc6e0349b42d0c99db23c1a8c1e753811dea03b8c",
+          "bytes": 7862
+        },
+        "routing/fixtures/nta-445-to-420-real-connection-2026-10-08.json": {
+          "sha256": "27f51ab5c608ea278e1ce9794ac3a689ab843c1ff7fa5533f291ddf66789ceaa",
+          "bytes": 10498
+        },
+        "routing/package-lock.json": {
+          "sha256": "65a9afc1e97c68b5665474036c38974a4c7fe8069e46a8e8ad5213e6e5030d22",
+          "bytes": 821
+        },
+        "routing/package.json": {
+          "sha256": "53b20dafc5f4893538572e39c4dd73a4e4bbf39dcc745915933174680b33655d",
+          "bytes": 951
+        },
+        "routing/scripts/benchmark_v097.cjs": {
+          "sha256": "b55fb3e192aa9ff83e23a7ca5a38a2328b9852d0c42f1db7375c3a5b27fe2993",
+          "bytes": 1630
+        },
+        "routing/scripts/build_singlefile_candidate.cjs": {
+          "sha256": "c4e35523d6d21bea64426bd80012dd9d602b8db3e0a8ee81415170b7840de22e",
+          "bytes": 1710
+        },
+        "routing/scripts/build_singlefile_candidate_099.cjs": {
+          "sha256": "10eba67acbd8fd18a885e93115f95a5407b8ae7ecc01d593ec1c70788dbd9995",
+          "bytes": 1710
+        },
+        "routing/scripts/verify_singlefile_parity.cjs": {
+          "sha256": "9198ab4b40613aa4668c155ea0ef034da5c1c193750a01532c9d27d707e5a286",
+          "bytes": 1507
+        },
+        "routing/scripts/verify_singlefile_parity_099.cjs": {
+          "sha256": "22b761735742ed4d35dcceb7dd30c69c15a9ecfe266bff9311b74723455fe483",
+          "bytes": 1507
+        },
+        "routing/src/boarding.ts": {
+          "sha256": "a179c9d1ed688e69d79caa27ea91a76588b3596512ead4c7b1a61422bf35efea",
+          "bytes": 1972
+        },
+        "routing/src/boardingEvidence.ts": {
+          "sha256": "8b5d32c6b7a02856ba73c621624c89f6f7ade6784dd0cefc39a6be7445ba4c51",
+          "bytes": 5034
+        },
+        "routing/src/connections.ts": {
+          "sha256": "2fac0665d2652159986b665caa2c6590fef7b3975cd0fd96f91bb999e639ed5c",
+          "bytes": 3293
+        },
+        "routing/src/engine.ts": {
+          "sha256": "4c40b72bfc22918bc3fb16bd9f64db8817f74535fee3fdec2e447a615223e896",
+          "bytes": 20690
+        },
+        "routing/src/gtfsSnapshot.ts": {
+          "sha256": "85b07daa40eea61370db0051ae97199aed3cc1ba77a2749f4e6d113fd58ba5cf",
+          "bytes": 6553
+        },
+        "routing/src/httpApi.ts": {
+          "sha256": "c8d305c37ac9b090f103a6243a7f18dbaad790847518e5fea5e8a495f4faa288",
+          "bytes": 16261
+        },
+        "routing/src/index.ts": {
+          "sha256": "6131dc16dbacaf7f4f1b6ce1651d8b43794cfe022406cdc84195acc99ad45544",
+          "bytes": 423
+        },
+        "routing/src/map.ts": {
+          "sha256": "6aaada3406ee78661de571d9b1e5db3857d5db2490f8a7b9edc08c56f914d26d",
+          "bytes": 1341
+        },
+        "routing/src/nearbyStops.ts": {
+          "sha256": "76f4904f8b5471d321a6b464c4152ae1e6d842f433c759e77a454a2229aa61d7",
+          "bytes": 1757
+        },
+        "routing/src/pedestrian.ts": {
+          "sha256": "78d879207c4f10ee92b6d66b37af07f2c58f9d6da60837306e9df50d28d45a87",
+          "bytes": 15430
+        },
+        "routing/src/planner.ts": {
+          "sha256": "9859862d66a66b8d083b221fdc2e12209cf6d453a14305363e98863532d46e28",
+          "bytes": 12527
+        },
+        "routing/src/supabaseAdapter.ts": {
+          "sha256": "1d3e7e0e5d797c56ba426953d7da64273f72a9ce4caaa7e73fed1889817bd94e",
+          "bytes": 2643
+        },
+        "routing/src/supabaseLimiter.ts": {
+          "sha256": "758bc8a438ec3215cc143be18070eda4f9a7dee2739ce97d50e4cb3dc296553b",
+          "bytes": 2049
+        },
+        "routing/src/time.ts": {
+          "sha256": "811d657678037c8402bb7b6614d84858ae24660fcc28f939b8f692d3403e48bc",
+          "bytes": 2377
+        },
+        "routing/src/types.ts": {
+          "sha256": "d6958e7589caa6cda9d1fc33f547f9f7fe70133eb65c769e72b1170ae800f3d0",
+          "bytes": 5650
+        },
+        "routing/supabase/functions/ballina-routing-preview/deno.json": {
+          "sha256": "671920f9e86e8620695b89c0328206cb79c2ae66dd7bf466a0644e20d1cfd9f1",
+          "bytes": 36
+        },
+        "routing/supabase/functions/ballina-routing-preview/index.ts": {
+          "sha256": "6bc26ffb2b663d92d883450ba9db07dd2a1d7b7b0d4b837ff0e5b342b440dccc",
+          "bytes": 4018
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/boarding.ts": {
+          "sha256": "ceecc4004d5fd393dde504527bb35f3a2004fc6fabd53bae52666e15adb1aa7e",
+          "bytes": 1975
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/boardingEvidence.ts": {
+          "sha256": "1604d21fb58833819a6e1ce956b8316a87548d303e0e08ba8911296863707035",
+          "bytes": 5040
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/connections.ts": {
+          "sha256": "a4f06adb6262159db983964084777afb34b1782998d1d7c432a3e60f38d16ab3",
+          "bytes": 3299
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/engine.ts": {
+          "sha256": "d578801876c0ea738242ac32a2ad87946dc47d148b4c957486b4a1ad725c91f2",
+          "bytes": 20699
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/gtfsSnapshot.ts": {
+          "sha256": "e06e72e2acfe8fab016bb9e95a9dee7292b5a6f9ccf32afbc67da0217b0d0bb4",
+          "bytes": 6559
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/httpApi.ts": {
+          "sha256": "17b7c852cdef05a544f0a23526c3eed25b22beb3e859eaa765b8266b97cca182",
+          "bytes": 16285
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/index.ts": {
+          "sha256": "37e15d807f528a552bd383f00525fb2da763d51733f3ba3656268940ba967dc6",
+          "bytes": 465
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/map.ts": {
+          "sha256": "469c50962290a2f7e63ebb7597913d068251e0e644c83f1a7567c33f2fd4f91b",
+          "bytes": 1347
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/nearbyStops.ts": {
+          "sha256": "1651b67206983de2b89a8876f1beb988e1e1173f3a9aeea06bdf239a280d529d",
+          "bytes": 1763
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/pedestrian.ts": {
+          "sha256": "180f4229794f185d0ab5861ccd47a35140df9eed72a3f77b13b268e4da90d8b8",
+          "bytes": 15436
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/planner.ts": {
+          "sha256": "3a0280dc2ddcd043a03161510e77a9cf746046765fecf382bb25a86a64f73bb3",
+          "bytes": 12542
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/supabaseAdapter.ts": {
+          "sha256": "4bf2c5b0e05071df9aba9948ccf9f0faa408a4139fe9f293e49122fea366f64f",
+          "bytes": 2646
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/supabaseLimiter.ts": {
+          "sha256": "758bc8a438ec3215cc143be18070eda4f9a7dee2739ce97d50e4cb3dc296553b",
+          "bytes": 2049
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/time.ts": {
+          "sha256": "c6cf3e0c6d1d254e1b3f07e4757b82f726a953e55fb83988077ace447b8ab0c0",
+          "bytes": 2380
+        },
+        "routing/supabase/functions/ballina-routing-preview/src/types.ts": {
+          "sha256": "d6958e7589caa6cda9d1fc33f547f9f7fe70133eb65c769e72b1170ae800f3d0",
+          "bytes": 5650
+        },
+        "routing/tests/adversarial097.test.cjs": {
+          "sha256": "e8f2d36ab8f07743e4bf564c539514ffad2025259612755da522d824b5e7743b",
+          "bytes": 10571
+        },
+        "routing/tests/boardingVerifiedPointRegression.test.cjs": {
+          "sha256": "c484a62b0f3c549c04f10ae2754cab880baf6aa94ddef02884475927d46aa071",
+          "bytes": 2159
+        },
+        "routing/tests/combinedFixes098.test.cjs": {
+          "sha256": "72eb3a6e0c6a04b132f31db4d3639ecaf83c79d9c3935bbbe72034328b9135f0",
+          "bytes": 4560
+        },
+        "routing/tests/completeJourneys.test.cjs": {
+          "sha256": "05c2ffa0e4efa2df97550f82db1627c24e8485569313bb659a46c97245952ec8",
+          "bytes": 10838
+        },
+        "routing/tests/departurePareto093.test.cjs": {
+          "sha256": "6bc75b565fde4eec7b2a18bf2d834ed86c6e67d82abe62bc59af511a458cf1c2",
+          "bytes": 3906
+        },
+        "routing/tests/deployArtifact096.test.cjs": {
+          "sha256": "25791ff622626d70461d1e723641b98d723c44c42535b79946e242f488e821e7",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact097.test.cjs": {
+          "sha256": "1e7b9a0fa049148212c97042ab89530a93461e3140a9bb36a0686e9262b0a4f6",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact098.test.cjs": {
+          "sha256": "62dd9e851580f08ce28ea3fbead2ec43b372521f01b404c71b437d87eba0d723",
+          "bytes": 1921
+        },
+        "routing/tests/deployArtifact099.test.cjs": {
+          "sha256": "9b6519a9f838d60be1c8dddae54ca0606024c8bfd8d69ba52f0ab83e2bd7ac5d",
+          "bytes": 1921
+        },
+        "routing/tests/doorToDoor.test.cjs": {
+          "sha256": "72cbd815e7d35ca9b5b5c841bb5db032613c1e9e1ae5ea9038ba552a08f5a6ad",
+          "bytes": 6888
+        },
+        "routing/tests/edgePreview.test.cjs": {
+          "sha256": "1d20448846e29e3eb554d44d06c90663cd6414247aa827f410a5738d3caa850b",
+          "bytes": 1468
+        },
+        "routing/tests/edgeSourceParity.test.cjs": {
+          "sha256": "ffb58d249c2e68bb284335496da77a1c54c85fa307d4b797b833c7d908999dd4",
+          "bytes": 866
+        },
+        "routing/tests/engine-regression.test.cjs": {
+          "sha256": "aa7414c7e3bd5f5e94d5388ae86cda85c332b2a91c585558e2584cbc861dbf2b",
+          "bytes": 7572
+        },
+        "routing/tests/engine.test.cjs": {
+          "sha256": "8dd2c46b76152688746c2ca42240ce587c2d06c4acabab47d8ab863c1c597a8a",
+          "bytes": 7636
+        },
+        "routing/tests/gtfsSnapshot.test.cjs": {
+          "sha256": "8e5e5201164cf1c5ec98e51c7254d8eba2ce312f3cc6ed768c6edf4502534bca",
+          "bytes": 4469
+        },
+        "routing/tests/hardening094.test.cjs": {
+          "sha256": "056e5aefd8ee51d8761d9e551a5256f2c7f6eac2f156f781bd32846656be8d37",
+          "bytes": 10704
+        },
+        "routing/tests/hardening095.test.cjs": {
+          "sha256": "d6a0078fceddef11506970348b04ffa57e04f3653b9f65858c97957e262a11a3",
+          "bytes": 9294
+        },
+        "routing/tests/httpApi.test.cjs": {
+          "sha256": "dc589a836a67ebdbded1cdbbf2bc2b71d9e781aad8a0af53a6885da39bcbfa10",
+          "bytes": 7331
+        },
+        "routing/tests/independent_risks.test.cjs": {
+          "sha256": "c53acf48a8717a695f8e544ed3f1d3f882d17813e146c5e35fd0b1caf0710aff",
+          "bytes": 9448
+        },
+        "routing/tests/multimodal08.test.cjs": {
+          "sha256": "71c9c5e06808117d6645908239ed09a6c6bf8b02da3b625d536a5918bb13c950",
+          "bytes": 8766
+        },
+        "routing/tests/pedestrian.test.cjs": {
+          "sha256": "0d0bf7c10c602f905805a05a825180aa43a41ea4cf9a9057391d1ad9229cb468",
+          "bytes": 4485
+        },
+        "routing/tests/pilot09.test.cjs": {
+          "sha256": "7b57c97e5a6a2f0c572a359541b1dcbeb9ba6e1c10cb08e6ef9bd70a48715c25",
+          "bytes": 9876
+        },
+        "routing/tests/realGtfs.test.cjs": {
+          "sha256": "9737491a5a278b2ff0e47c1b9c9b32356c96fe78e59e8c2ad0881eaa58d3a3dc",
+          "bytes": 3247
+        },
+        "routing/tests/realWalkMetricsIntegration.test.cjs": {
+          "sha256": "55189e0e8b18fa90e49e22a65b738f58977fb31a5650a6e0d79f190b6c33f77f",
+          "bytes": 2538
+        },
+        "routing/tests/reauditFixes099.test.cjs": {
+          "sha256": "9e3953c97011f22622ca86a266d74cfd05d4a4da4da465b32ad7628368d4d0b2",
+          "bytes": 6901
+        },
+        "routing/tests/snapAccounting096.test.cjs": {
+          "sha256": "7658aae15db40e1df420a2c1672efb471e4446346be978c9949e8b63fbcf9cc1",
+          "bytes": 6233
+        },
+        "routing/tests/supabaseLimiter.test.cjs": {
+          "sha256": "cfe46cf494548906c3e561c4383eb269649a402d6b559fe2ac28f8237390ba87",
+          "bytes": 2283
+        },
+        "routing/tests/verifiedPlannerIntegration.test.cjs": {
+          "sha256": "d212b82c7322abbe6c11b931667aea21f53c55f9f3c4f170845b2b29eb0bec45",
+          "bytes": 2243
+        },
+        "routing/tsconfig.json": {
+          "sha256": "cbaf2a7d54bc97181707d6d3e2837922e56e2170af4701e41ddb53d6bb8e1673",
+          "bytes": 335
+        },
+        "staging/ballina-routing-v099-staging/index.ts": {
+          "sha256": "24b20113a4ab643bb3d47b88e9a62be85d070ebfe3516c42c73e71e1dd68b9ab",
+          "bytes": 1122
+        },
+        "staging/tests/sealed_gate.test.cjs": {
+          "sha256": "e9048778ec793899004e12b8f0f7b977b4e696be476dcf1bbf799a8c26000790",
+          "bytes": 1644
+        }
+      }
+    },
+    "Ballina_Move_Auditoria_Integral_PARTE_2_2026-10-09.zip": {
+      "sha256": "6e77f272f3aabdbdf73c6f2d7f299b30148b9a80f534d74776959586e26e7fc6",
+      "file_count": 13,
+      "files": {
+        "COMO_USAR.md": {
+          "sha256": "8d97566e5f3be5b2f3adfe17c134491e353684366ebdc8dd2bfd59c6eb57fed7",
+          "bytes": 811
+        },
+        "RELATORIO_AUDITORIA_PARTE_2.md": {
+          "sha256": "59ff4636b151ddef55a66c0e9007da28d8121eab37d395be60663fb523065f1f",
+          "bytes": 12659
+        },
+        "adversarial/data_and_cache_checks.cjs": {
+          "sha256": "f51e9a3b7a4d21cf131e85774c35241d80631716a6652470ada4100ff5774e3c",
+          "bytes": 1674
+        },
+        "adversarial/parte2_regressions.test.cjs": {
+          "sha256": "2fd94ef38383f44f456e5e483ab31a0690ebb8be33af0044dc40937197dd529b",
+          "bytes": 5594
+        },
+        "adversarial/parte2_regressions_results.log": {
+          "sha256": "238b87143ed84921bb617776db9225f22430d446496572ab5b363bfc201650ba",
+          "bytes": 5085
+        },
+        "adversarial/reference_20000.cjs": {
+          "sha256": "0fdde210c75565330733c782fba404d25608ffe6593e30e8770c01c38550eb4f",
+          "bytes": 3418
+        },
+        "adversarial/reference_20000.log": {
+          "sha256": "b3d0fd957f2050ab0f5665ac83e34f5dc9af19fd7483ab257a5220e5756bc897",
+          "bytes": 79
+        },
+        "adversarial/reference_vs_engine.cjs": {
+          "sha256": "a4f557b3ab4bd30cc637bee6fa2c54cee44eb8168af85b758e4bb539797a9b4c",
+          "bytes": 3416
+        },
+        "adversarial/slow_body.cjs": {
+          "sha256": "3d6c0c4705c564a31d27540874b0437ac6666feed7cb1fd1510e1b90bdf859f8",
+          "bytes": 1299
+        },
+        "adversarial/snapshot_version_switch.cjs": {
+          "sha256": "3cb9cb31a3e83fb305907d00951fff98d988be00de8d831e189eee77da78de6b",
+          "bytes": 1605
+        },
+        "adversarial/targeted_counterexamples.cjs": {
+          "sha256": "eb24cf043f550680c099d07f6b7cd2db51bd9fa52c77ab988d36a76ed0d91ebc",
+          "bytes": 4466
+        },
+        "logs/baseline_tests.log": {
+          "sha256": "f8ab2eea602460a450d9cd6dd3e5b254a3051a48d369cabd0f4604749bb5eba8",
+          "bytes": 53700
+        },
+        "logs/build.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      }
+    },
+    "Ballina_Move_META_AUDITORIA_EVIDENCIAS_INDEPENDENTES_2026-10-09.zip": {
+      "sha256": "52e19531a44de11520299da314952638fa1861842442d7f07bf5dbe375e87cc8",
+      "file_count": 17,
+      "files": {
+        "RELATORIO_META_AUDITORIA.md": {
+          "sha256": "ad0e106f4757f85b10ed341cc09c722948232873671853a2cfacb1b8a234219f",
+          "bytes": 13680
+        },
+        "independent_checks.cjs": {
+          "sha256": "361d1bb8b5897f577307704515c6a6ab96e17ef75bfde504dbc8e7fb5313a2de",
+          "bytes": 7113
+        },
+        "results/RESULTS.json": {
+          "sha256": "97f50f5e24711898420c05f8baa7bf16cd82784e0ef11651139e228f004e6672",
+          "bytes": 2471
+        },
+        "results/adversarial_replay.log": {
+          "sha256": "83e7a25cc6ccc001c4a383d8516ec51752acf5b0d71be809b2129888067cc225",
+          "bytes": 5288
+        },
+        "results/artifact_parity.log": {
+          "sha256": "dc40789e47e94621789b2d20c0c387236f58c19620304ea862e590f528210fc2",
+          "bytes": 216
+        },
+        "results/baseline_node_tests.log": {
+          "sha256": "c3e081dc2e17b1e6eb6bf15a25ab3b7453bf6ca55d0096b109b9a71bd3e0b73c",
+          "bytes": 56561
+        },
+        "results/baseline_v099_partial_node_tests.log": {
+          "sha256": "5516235934295ebfe0d2d1eed89b70cd360a5883caa9c1c4b78ccd5a03132b32",
+          "bytes": 47087
+        },
+        "results/independent_checks.log": {
+          "sha256": "759e3a154352c94e92a90443744eb13f4c8ef87b187c0cf0676e5ff85d7d39ca",
+          "bytes": 1014
+        },
+        "results/portability_change.txt": {
+          "sha256": "7c16d6b204883fc266ecf25ab96775028647f9cdc21493a07de8036194cbb731",
+          "bytes": 278
+        },
+        "results/reference_20000.log": {
+          "sha256": "65adb0fcea8c5aa0cf2b37010229aefcc96385c57cc92fe696576b5a5a18d472",
+          "bytes": 216
+        },
+        "results/reference_counterexamples.json": {
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "bytes": 2
+        },
+        "results/sealed_staging.log": {
+          "sha256": "f366e2b05ad0594cc4431d4ca724d448ccdf2e6901cb3900044db5a775b922a7",
+          "bytes": 1328
+        },
+        "results/source_hash_check.json": {
+          "sha256": "6fd468ced4f0985c4115b2e4233b2ee7c506dfe7b24187439d283d6951da97e0",
+          "bytes": 167
+        },
+        "results/tsc_build.log": {
+          "sha256": "1221fcce6e69304881bf850f8ff26128a6b9c077f03b1f7f5fdc8aaf1b891798",
+          "bytes": 99
+        },
+        "results/tsc_build_v099_partial.log": {
+          "sha256": "1221fcce6e69304881bf850f8ff26128a6b9c077f03b1f7f5fdc8aaf1b891798",
+          "bytes": 99
+        },
+        "results/verify_only.log": {
+          "sha256": "d5d971add94da7fd5143aff3763caba1a70a0534c0bcd3418736972e94260dfb",
+          "bytes": 1289
+        },
+        "results/xml_corpus.log": {
+          "sha256": "9d608f84e75be8630d2a92f3bd2c0431766022960191332ea262a2ced0af136d",
+          "bytes": 1337
+        }
+      }
+    }
+  },
+  "diff_between_archived_files": {
+    "only_candidate": [
+      "AUDITORIA_INDEPENDENTE_RODADA_3.md",
+      "COMO_ENVIAR_RODADA_3.md",
+      "routing/README_RAIL_0.10.0.md",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts",
+      "routing/scripts/build_singlefile_candidate_010.cjs",
+      "routing/scripts/verify_singlefile_parity_010.cjs",
+      "routing/src/irishRail.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/irishRail.ts",
+      "routing/tests/audit_round2.test.cjs",
+      "routing/tests/audit_round3.test.cjs",
+      "routing/tests/deployArtifact010.test.cjs",
+      "routing/tests/irishRail010.test.cjs",
+      "routing/tests/railEntrypointAuthenticatedRegression.test.cjs",
+      "routing/tests/railIntegration010.test.cjs"
+    ],
+    "only_v099_partial": [
+      "INSTRUCOES_UPLOAD_GITHUB.md"
+    ],
+    "same_path_changed": [
+      ".github/workflows/routing-validation.yml",
+      "routing/package-lock.json",
+      "routing/package.json",
+      "routing/src/connections.ts",
+      "routing/src/httpApi.ts",
+      "routing/src/index.ts",
+      "routing/src/planner.ts",
+      "routing/supabase/functions/ballina-routing-preview/index.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/connections.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/httpApi.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/index.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/planner.ts",
+      "routing/tests/edgePreview.test.cjs"
+    ],
+    "same_path_unchanged": [
+      "routing/.gitignore",
+      "routing/README.md",
+      "routing/README_RELEASE_0.9.9.md",
+      "routing/api/local-server.cjs",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.9.3-candidate.ts",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.9.6-candidate.ts",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.9.7-candidate.ts",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.9.8-candidate.ts",
+      "routing/artifacts/ballina-routing-preview-singlefile-v0.9.9-candidate.ts",
+      "routing/fixtures/nta-420-ballina-mayo-hospital-2026-10-08.json",
+      "routing/fixtures/nta-445-to-420-real-connection-2026-10-08.json",
+      "routing/scripts/benchmark_v097.cjs",
+      "routing/scripts/build_singlefile_candidate.cjs",
+      "routing/scripts/build_singlefile_candidate_099.cjs",
+      "routing/scripts/verify_singlefile_parity.cjs",
+      "routing/scripts/verify_singlefile_parity_099.cjs",
+      "routing/src/boarding.ts",
+      "routing/src/boardingEvidence.ts",
+      "routing/src/engine.ts",
+      "routing/src/gtfsSnapshot.ts",
+      "routing/src/map.ts",
+      "routing/src/nearbyStops.ts",
+      "routing/src/pedestrian.ts",
+      "routing/src/supabaseAdapter.ts",
+      "routing/src/supabaseLimiter.ts",
+      "routing/src/time.ts",
+      "routing/src/types.ts",
+      "routing/supabase/functions/ballina-routing-preview/deno.json",
+      "routing/supabase/functions/ballina-routing-preview/src/boarding.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/boardingEvidence.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/engine.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/gtfsSnapshot.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/map.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/nearbyStops.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/pedestrian.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/supabaseAdapter.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/supabaseLimiter.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/time.ts",
+      "routing/supabase/functions/ballina-routing-preview/src/types.ts",
+      "routing/tests/adversarial097.test.cjs",
+      "routing/tests/boardingVerifiedPointRegression.test.cjs",
+      "routing/tests/combinedFixes098.test.cjs",
+      "routing/tests/completeJourneys.test.cjs",
+      "routing/tests/departurePareto093.test.cjs",
+      "routing/tests/deployArtifact096.test.cjs",
+      "routing/tests/deployArtifact097.test.cjs",
+      "routing/tests/deployArtifact098.test.cjs",
+      "routing/tests/deployArtifact099.test.cjs",
+      "routing/tests/doorToDoor.test.cjs",
+      "routing/tests/edgeSourceParity.test.cjs",
+      "routing/tests/engine-regression.test.cjs",
+      "routing/tests/engine.test.cjs",
+      "routing/tests/gtfsSnapshot.test.cjs",
+      "routing/tests/hardening094.test.cjs",
+      "routing/tests/hardening095.test.cjs",
+      "routing/tests/httpApi.test.cjs",
+      "routing/tests/independent_risks.test.cjs",
+      "routing/tests/multimodal08.test.cjs",
+      "routing/tests/pedestrian.test.cjs",
+      "routing/tests/pilot09.test.cjs",
+      "routing/tests/realGtfs.test.cjs",
+      "routing/tests/realWalkMetricsIntegration.test.cjs",
+      "routing/tests/reauditFixes099.test.cjs",
+      "routing/tests/snapAccounting096.test.cjs",
+      "routing/tests/supabaseLimiter.test.cjs",
+      "routing/tests/verifiedPlannerIntegration.test.cjs",
+      "routing/tsconfig.json",
+      "staging/ballina-routing-v099-staging/index.ts",
+      "staging/tests/sealed_gate.test.cjs"
+    ]
+  }
+}

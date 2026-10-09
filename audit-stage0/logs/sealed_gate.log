@@ -1,0 +1,49 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/node --test staging/tests/sealed_gate.test.cjs
+exit=0 elapsed_wall_s=0.11942
+
+TAP version 13
+# Subtest: sealed staging exposes only a harmless health response
+ok 1 - sealed staging exposes only a harmless health response
+  ---
+  duration_ms: 4.159468
+  type: 'test'
+  ...
+# Subtest: POST /v1/journeys denied without any outbound fetch
+ok 2 - POST /v1/journeys denied without any outbound fetch
+  ---
+  duration_ms: 0.66521
+  type: 'test'
+  ...
+# Subtest: GET /v1/nearby-stops denied without any outbound fetch
+ok 3 - GET /v1/nearby-stops denied without any outbound fetch
+  ---
+  duration_ms: 1.290388
+  type: 'test'
+  ...
+# Subtest: GET /unrecognized denied without any outbound fetch
+ok 4 - GET /unrecognized denied without any outbound fetch
+  ---
+  duration_ms: 0.51914
+  type: 'test'
+  ...
+# Subtest: OPTIONS /v1/journeys denied without any outbound fetch
+ok 5 - OPTIONS /v1/journeys denied without any outbound fetch
+  ---
+  duration_ms: 0.515204
+  type: 'test'
+  ...
+# Subtest: staging gate contains no API secret or external client integration
+ok 6 - staging gate contains no API secret or external client integration
+  ---
+  duration_ms: 0.285329
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.290516

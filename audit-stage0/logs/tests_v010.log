@@ -1,0 +1,1489 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/node --test /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/adversarial097.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/audit_round2.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/audit_round3.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/boardingVerifiedPointRegression.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/combinedFixes098.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/completeJourneys.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/departurePareto093.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/deployArtifact010.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/deployArtifact096.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/deployArtifact097.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/deployArtifact098.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/deployArtifact099.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/doorToDoor.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/edgePreview.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/edgeSourceParity.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/engine-regression.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/engine.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/gtfsSnapshot.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/hardening094.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/hardening095.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/httpApi.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/independent_risks.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/irishRail010.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/multimodal08.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/pedestrian.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/pilot09.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/railEntrypointAuthenticatedRegression.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/railIntegration010.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/realGtfs.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/realWalkMetricsIntegration.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/reauditFixes099.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/snapAccounting096.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/supabaseLimiter.test.cjs /tmp/ballina-stage0-y1b802a_/candidate/routing/tests/verifiedPlannerIntegration.test.cjs
+exit=0 elapsed_wall_s=4.0805
+
+TAP version 13
+# Subtest: topology selection keeps useful stop number 5 with only 4 pedestrian candidates
+ok 1 - topology selection keeps useful stop number 5 with only 4 pedestrian candidates
+  ---
+  duration_ms: 9.208044
+  type: 'test'
+  ...
+# Subtest: topology selection keeps useful stop number 6 with only 4 pedestrian candidates
+ok 2 - topology selection keeps useful stop number 6 with only 4 pedestrian candidates
+  ---
+  duration_ms: 1.540394
+  type: 'test'
+  ...
+# Subtest: topology selection keeps useful stop number 7 with only 4 pedestrian candidates
+ok 3 - topology selection keeps useful stop number 7 with only 4 pedestrian candidates
+  ---
+  duration_ms: 0.664798
+  type: 'test'
+  ...
+# Subtest: does not prune the less-uncertain itinerary despite later arrival
+ok 4 - does not prune the less-uncertain itinerary despite later arrival
+  ---
+  duration_ms: 0.165899
+  type: 'test'
+  ...
+# Subtest: risk inferred from walk legs before the journey summary is calculated
+ok 5 - risk inferred from walk legs before the journey summary is calculated
+  ---
+  duration_ms: 0.110336
+  type: 'test'
+  ...
+# Subtest: first boarding cannot exceed 18-hour horizon even when earlier stops on same trip fit
+ok 6 - first boarding cannot exceed 18-hour horizon even when earlier stops on same trip fit
+  ---
+  duration_ms: 0.231047
+  type: 'test'
+  ...
+# Subtest: walking calls are concurrent but never exceed a worker pool of 2
+ok 7 - walking calls are concurrent but never exceed a worker pool of 2
+  ---
+  duration_ms: 87.041953
+  type: 'test'
+  ...
+# Subtest: request-level deadline prevents serial provider delay accumulation
+ok 8 - request-level deadline prevents serial provider delay accumulation
+  ---
+  duration_ms: 112.054866
+  type: 'test'
+  ...
+# Subtest: provider budget remains strict with concurrent workers
+ok 9 - provider budget remains strict with concurrent workers
+  ---
+  duration_ms: 1.116808
+  type: 'test'
+  ...
+# Subtest: time-impossible transfers do not hide a fifth, genuinely direct route
+ok 10 - time-impossible transfers do not hide a fifth, genuinely direct route
+  ---
+  duration_ms: 1.892964
+  type: 'test'
+  ...
+# Subtest: concurrent walking completion order does not change candidate ordering
+ok 11 - concurrent walking completion order does not change candidate ordering
+  ---
+  duration_ms: 24.490073
+  type: 'test'
+  ...
+# Subtest: the 24-label cap reserves a less-uncertain alternative even after 25 earlier arrivals
+ok 12 - the 24-label cap reserves a less-uncertain alternative even after 25 earlier arrivals
+  ---
+  duration_ms: 1.531551
+  type: 'test'
+  ...
+# Subtest: a contradictory summary cannot mask a snap warning present in a walk leg
+ok 13 - a contradictory summary cannot mask a snap warning present in a walk leg
+  ---
+  duration_ms: 0.163446
+  type: 'test'
+  ...
+# Subtest: audit-2: valid XML ampersand adjacent to letters must decode without 503
+ok 14 - audit-2: valid XML ampersand adjacent to letters must decode without 503
+  ---
+  duration_ms: 3.232036
+  type: 'test'
+  ...
+# Subtest: audit-2: truncated root must fail closed rather than announce zero trains
+ok 15 - audit-2: truncated root must fail closed rather than announce zero trains
+  ---
+  duration_ms: 0.461934
+  type: 'test'
+  ...
+# Subtest: audit-2: XML comment must not inject ghost trains into station board
+ok 16 - audit-2: XML comment must not inject ghost trains into station board
+  ---
+  duration_ms: 0.17918
+  type: 'test'
+  ...
+# Subtest: audit-2: GTFS rail stations independent of paid Stadia key, authenticated
+ok 17 - audit-2: GTFS rail stations independent of paid Stadia key, authenticated
+  ---
+  duration_ms: 59.439278
+  type: 'test'
+  ...
+# Subtest: audit-2: empty self-closing official station board remains a legal zero-result response
+ok 18 - audit-2: empty self-closing official station board remains a legal zero-result response
+  ---
+  duration_ms: 0.205298
+  type: 'test'
+  ...
+# Subtest: audit-2: concurrent requests for same Irish Rail station share one in-flight fetch
+ok 19 - audit-2: concurrent requests for same Irish Rail station share one in-flight fetch
+  ---
+  duration_ms: 35.243838
+  type: 'test'
+  ...
+# Subtest: audit-2: failed coalesced upstream request is not permanently cached
+ok 20 - audit-2: failed coalesced upstream request is not permanently cached
+  ---
+  duration_ms: 11.450453
+  type: 'test'
+  ...
+# Subtest: audit-3: XML parser must reject unclosed unknown tag despite valid root and train
+ok 21 - audit-3: XML parser must reject unclosed unknown tag despite valid root and train
+  ---
+  duration_ms: 2.379825
+  type: 'test'
+  ...
+# Subtest: audit-3: XML parser must not interpret nested object as direct train record
+ok 22 - audit-3: XML parser must not interpret nested object as direct train record
+  ---
+  duration_ms: 0.416566
+  type: 'test'
+  ...
+# Subtest: audit-3: XML parser must reject mismatched field names despite a usable Traincode
+ok 23 - audit-3: XML parser must reject mismatched field names despite a usable Traincode
+  ---
+  duration_ms: 0.315764
+  type: 'test'
+  ...
+# Subtest: audit-3: full station client timeout covers a fetcher that ignores AbortSignal
+ok 24 - audit-3: full station client timeout covers a fetcher that ignores AbortSignal
+  ---
+  duration_ms: 121.256991
+  type: 'test'
+  ...
+# Subtest: audit-3: official-style namespaced XML with empty optional values is accepted
+ok 25 - audit-3: official-style namespaced XML with empty optional values is accepted
+  ---
+  duration_ms: 3.749368
+  type: 'test'
+  ...
+# Subtest: audit-3: unknown wrapper text may not turn into valid zero train count
+ok 26 - audit-3: unknown wrapper text may not turn into valid zero train count
+  ---
+  duration_ms: 0.325098
+  type: 'test'
+  ...
+# Subtest: audit-3: late upstream response after timeout cannot poison future cache
+ok 27 - audit-3: late upstream response after timeout cannot poison future cache
+  ---
+  duration_ms: 228.047108
+  type: 'test'
+  ...
+# Subtest: boarded walk is attached to separately verified point even when GTFS coordinate is 38m away
+ok 28 - boarded walk is attached to separately verified point even when GTFS coordinate is 38m away
+  ---
+  duration_ms: 1.974987
+  type: 'test'
+  ...
+# Subtest: without validated evidence, side and platform remain unverified
+ok 29 - without validated evidence, side and platform remain unverified
+  ---
+  duration_ms: 0.158307
+  type: 'test'
+  ...
+# Subtest: combined: direct planner honours the request walking cap even without explicit options
+ok 30 - combined: direct planner honours the request walking cap even without explicit options
+  ---
+  duration_ms: 4.110826
+  type: 'test'
+  ...
+# Subtest: combined: optional direct walk runs on spare budget, and remains visible
+ok 31 - combined: optional direct walk runs on spare budget, and remains visible
+  ---
+  duration_ms: 0.524127
+  type: 'test'
+  ...
+# Subtest: combined: transfer geodesic above entire walk budget never gets billed
+ok 32 - combined: transfer geodesic above entire walk budget never gets billed
+  ---
+  duration_ms: 0.416066
+  type: 'test'
+  ...
+# Subtest: combined: zero-budget result explicitly exposes incomplete optional routing
+ok 33 - combined: zero-budget result explicitly exposes incomplete optional routing
+  ---
+  duration_ms: 0.2527
+  type: 'test'
+  ...
+# Subtest: combined: candidate-limited discovery is acknowledged in aggregate coverage metadata
+ok 34 - combined: candidate-limited discovery is acknowledged in aggregate coverage metadata
+  ---
+  duration_ms: 8.318727
+  type: 'test'
+  ...
+# Subtest: combined: preserve a second lower-walking history, not only the absolute minimum
+ok 35 - combined: preserve a second lower-walking history, not only the absolute minimum
+  ---
+  duration_ms: 2.35616
+  type: 'test'
+  ...
+# Subtest: combined: 4 future hourly departures survive the Pareto final filter
+ok 36 - combined: 4 future hourly departures survive the Pareto final filter
+  ---
+  duration_ms: 0.311328
+  type: 'test'
+  ...
+# Subtest: bus -> same bus station -> second bus -> walk: gives precise second boarding stop
+ok 37 - bus -> same bus station -> second bus -> walk: gives precise second boarding stop
+  ---
+  duration_ms: 3.881713
+  type: 'test'
+  ...
+# Subtest: bus -> station -> REAL pedestrian transfer leg -> second bus -> walk: show both stops
+ok 38 - bus -> station -> REAL pedestrian transfer leg -> second bus -> walk: show both stops
+  ---
+  duration_ms: 1.2308
+  type: 'test'
+  ...
+# Subtest: does not invent a walk between nearby but disconnected boarding stops
+ok 39 - does not invent a walk between nearby but disconnected boarding stops
+  ---
+  duration_ms: 0.569675
+  type: 'test'
+  ...
+# Subtest: rejects a second bus departing before the actual transfer walk and buffer
+ok 40 - rejects a second bus departing before the actual transfer walk and buffer
+  ---
+  duration_ms: 1.330529
+  type: 'test'
+  ...
+# Subtest: walk -> bus -> walk remains available without any transfers
+ok 41 - walk -> bus -> walk remains available without any transfers
+  ---
+  duration_ms: 0.464167
+  type: 'test'
+  ...
+# Subtest: walking budget must not discard later transit path with much shorter walk
+ok 42 - walking budget must not discard later transit path with much shorter walk
+  ---
+  duration_ms: 0.693852
+  type: 'test'
+  ...
+# Subtest: identical origin at terminal generates a zero-length access without paid walking calls
+ok 43 - identical origin at terminal generates a zero-length access without paid walking calls
+  ---
+  duration_ms: 9.056957
+  type: 'test'
+  ...
+# Subtest: connections detail rejects walked geometry ending at a different platform stop
+ok 44 - connections detail rejects walked geometry ending at a different platform stop
+  ---
+  duration_ms: 0.549005
+  type: 'test'
+  ...
+# Subtest: real 420 GTFS stop and schedule accepts synthetic incoming station connection
+ok 45 - real 420 GTFS stop and schedule accepts synthetic incoming station connection
+  ---
+  duration_ms: 1.194875
+  type: 'test'
+  ...
+# Subtest: private HTTP API includes second-stop transfer instructions and never claims guarantee
+ok 46 - private HTTP API includes second-stop transfer instructions and never claims guarantee
+  ---
+  duration_ms: 31.019122
+  type: 'test'
+  ...
+# Subtest: BUG REGRESSION: 4 hourly 420 services expose NEXT 3 departures, not only first
+ok 47 - BUG REGRESSION: 4 hourly 420 services expose NEXT 3 departures, not only first
+  ---
+  duration_ms: 3.714831
+  type: 'test'
+  ...
+# Subtest: HTTP post-ranking Pareto does not erase remaining scheduled departures
+ok 48 - HTTP post-ranking Pareto does not erase remaining scheduled departures
+  ---
+  duration_ms: 0.726592
+  type: 'test'
+  ...
+# Subtest: a first departure missed due to walk+boarding buffer is excluded; next departures still shown
+ok 49 - a first departure missed due to walk+boarding buffer is excluded; next departures still shown
+  ---
+  duration_ms: 2.231613
+  type: 'test'
+  ...
+# Subtest: Pareto still rejects strictly inferior 440 transfer with no later leave time
+ok 50 - Pareto still rejects strictly inferior 440 transfer with no later leave time
+  ---
+  duration_ms: 0.160611
+  type: 'test'
+  ...
+# Subtest: later departure is a real tradeoff and does not dominate earlier arrival
+ok 51 - later departure is a real tradeoff and does not dominate earlier arrival
+  ---
+  duration_ms: 0.161393
+  type: 'test'
+  ...
+# Subtest: walking-only alternative has an honest leave time without invented boarding buffer
+ok 52 - walking-only alternative has an honest leave time without invented boarding buffer
+  ---
+  duration_ms: 0.32604
+  type: 'test'
+  ...
+# Subtest: v0.10.0 16-module single-file candidate fails closed even with rail provider flag enabled
+ok 53 - v0.10.0 16-module single-file candidate fails closed even with rail provider flag enabled
+  ---
+  duration_ms: 362.013558
+  type: 'test'
+  ...
+# Subtest: outer private preview gate recognizes rail endpoint but denies incorrect private token before network
+ok 54 - outer private preview gate recognizes rail endpoint but denies incorrect private token before network
+  ---
+  duration_ms: 191.768204
+  type: 'test'
+  ...
+# Subtest: exact v0.9.6 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+ok 55 - exact v0.9.6 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+  ---
+  duration_ms: 344.018458
+  type: 'test'
+  ...
+# Subtest: exact v0.9.7 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+ok 56 - exact v0.9.7 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+  ---
+  duration_ms: 305.7261
+  type: 'test'
+  ...
+# Subtest: exact v0.9.8 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+ok 57 - exact v0.9.8 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+  ---
+  duration_ms: 506.424247
+  type: 'test'
+  ...
+# Subtest: exact v0.9.9 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+ok 58 - exact v0.9.9 single-file artifact fails closed and makes ZERO outbound fetches without dedicated token
+  ---
+  duration_ms: 469.672394
+  type: 'test'
+  ...
+# Subtest: real NTA line 420 via orchestration: access, 08:00 ride, 08:52 alight, egress
+ok 59 - real NTA line 420 via orchestration: access, 08:00 ride, 08:52 alight, egress
+  ---
+  duration_ms: 11.965145
+  type: 'test'
+  ...
+# Subtest: no validated walking paths means no journey, even when GTFS has a bus
+ok 60 - no validated walking paths means no journey, even when GTFS has a bus
+  ---
+  duration_ms: 0.974935
+  type: 'test'
+  ...
+# Subtest: provider failures propagate instead of falling back to invented straight line
+ok 61 - provider failures propagate instead of falling back to invented straight line
+  ---
+  duration_ms: 1.152702
+  type: 'test'
+  ...
+# Subtest: stop side is unverified without dated, attributable evidence
+ok 62 - stop side is unverified without dated, attributable evidence
+  ---
+  duration_ms: 0.265829
+  type: 'test'
+  ...
+# Subtest: bad sources, unknown stops and far-away coordinates are rejected
+ok 63 - bad sources, unknown stops and far-away coordinates are rejected
+  ---
+  duration_ms: 0.556837
+  type: 'test'
+  ...
+# Subtest: verified physical boarding point is routed to rather than official coordinate; official remains intact
+ok 64 - verified physical boarding point is routed to rather than official coordinate; official remains intact
+  ---
+  duration_ms: 1.251199
+  type: 'test'
+  ...
+# Subtest: regional transfer pairs do not depend on unordered stops input
+ok 65 - regional transfer pairs do not depend on unordered stops input
+  ---
+  duration_ms: 9.67854
+  type: 'test'
+  ...
+# Subtest: disallow train unless explicitly enabled in door-to-door planner
+ok 66 - disallow train unless explicitly enabled in door-to-door planner
+  ---
+  duration_ms: 8.972243
+  type: 'test'
+  ...
+# Subtest: private routing preview never exposes the paid planner to publishable clients
+ok 67 - private routing preview never exposes the paid planner to publishable clients
+  ---
+  duration_ms: 0.97171
+  type: 'test'
+  ...
+# Subtest: Deno graph has all the local TypeScript modules it references
+ok 68 - Deno graph has all the local TypeScript modules it references
+  ---
+  duration_ms: 3.796794
+  type: 'test'
+  ...
+# Subtest: all duplicated Supabase Edge modules match the engine source except required Deno .ts extensions
+ok 69 - all duplicated Supabase Edge modules match the engine source except required Deno .ts extensions
+  ---
+  duration_ms: 6.874047
+  type: 'test'
+  ...
+# Subtest: regression: direct-with-more-walking survives a same-stop lower-walking transfer
+ok 70 - regression: direct-with-more-walking survives a same-stop lower-walking transfer
+  ---
+  duration_ms: 2.76196
+  type: 'test'
+  ...
+# Subtest: regression: same state comparison is independent of insertion order
+ok 71 - regression: same state comparison is independent of insertion order
+  ---
+  duration_ms: 0.250356
+  type: 'test'
+  ...
+# Subtest: a state with superior metrics and a less restrictive history removes another
+ok 72 - a state with superior metrics and a less restrictive history removes another
+  ---
+  duration_ms: 0.309545
+  type: 'test'
+  ...
+# Subtest: later arrival with less walking is a real Pareto tradeoff
+ok 73 - later arrival with less walking is a real Pareto tradeoff
+  ---
+  duration_ms: 0.151097
+  type: 'test'
+  ...
+# Subtest: same last trip but different past vehicles are not interchangeable
+ok 74 - same last trip but different past vehicles are not interchangeable
+  ---
+  duration_ms: 0.224057
+  type: 'test'
+  ...
+# Subtest: same last trip and equal metrics but fewer prior rides takes precedence
+ok 75 - same last trip and equal metrics but fewer prior rides takes precedence
+  ---
+  duration_ms: 0.173541
+  type: 'test'
+  ...
+# Subtest: exact duplicate labels are not repeated
+ok 76 - exact duplicate labels are not repeated
+  ---
+  duration_ms: 0.139599
+  type: 'test'
+  ...
+# Subtest: different last trips must not dominate each other
+ok 77 - different last trips must not dominate each other
+  ---
+  duration_ms: 0.224808
+  type: 'test'
+  ...
+# Subtest: walking-heavy candidate cannot dominate less-walking candidate
+ok 78 - walking-heavy candidate cannot dominate less-walking candidate
+  ---
+  duration_ms: 0.336085
+  type: 'test'
+  ...
+# Subtest: slower candidate cannot dominate faster candidate
+ok 79 - slower candidate cannot dominate faster candidate
+  ---
+  duration_ms: 0.384838
+  type: 'test'
+  ...
+# Subtest: higher boarding count cannot dominate lower count
+ok 80 - higher boarding count cannot dominate lower count
+  ---
+  duration_ms: 0.152409
+  type: 'test'
+  ...
+# Subtest: bounded frontier never holds more than 24 labels per stop
+ok 81 - bounded frontier never holds more than 24 labels per stop
+  ---
+  duration_ms: 1.65085
+  type: 'test'
+  ...
+# Subtest: final ranking removes a strictly worse transfer
+ok 82 - final ranking removes a strictly worse transfer
+  ---
+  duration_ms: 0.236305
+  type: 'test'
+  ...
+# Subtest: final ranking preserves earlier arrival with longer walk
+ok 83 - final ranking preserves earlier arrival with longer walk
+  ---
+  duration_ms: 0.075644
+  type: 'test'
+  ...
+# Subtest: final ranking preserves less walking with later arrival
+ok 84 - final ranking preserves less walking with later arrival
+  ---
+  duration_ms: 0.068032
+  type: 'test'
+  ...
+# Subtest: final ranking removes a strictly worse transfer at equal walking and arrival
+ok 85 - final ranking removes a strictly worse transfer at equal walking and arrival
+  ---
+  duration_ms: 0.202985
+  type: 'test'
+  ...
+# Subtest: final ranking does not mutate input order
+ok 86 - final ranking does not mutate input order
+  ---
+  duration_ms: 0.099339
+  type: 'test'
+  ...
+# Subtest: integration fixture: schedule-only 420 Ballina to Mayo Hospital can be planned
+ok 87 - integration fixture: schedule-only 420 Ballina to Mayo Hospital can be planned
+  ---
+  duration_ms: 1.879944
+  type: 'test'
+  ...
+# Subtest: integration fixture: a stop prohibiting boarding cannot be used
+ok 88 - integration fixture: a stop prohibiting boarding cannot be used
+  ---
+  duration_ms: 0.229505
+  type: 'test'
+  ...
+# Subtest: integration fixture: inactive weekday service cannot be used
+ok 89 - integration fixture: inactive weekday service cannot be used
+  ---
+  duration_ms: 0.618379
+  type: 'test'
+  ...
+# Subtest: integration fixture: unreachable walking distance is rejected
+ok 90 - integration fixture: unreachable walking distance is rejected
+  ---
+  duration_ms: 0.221203
+  type: 'test'
+  ...
+# Subtest: integration fixture: boarding after departure is rejected
+ok 91 - integration fixture: boarding after departure is rejected
+  ---
+  duration_ms: 0.266851
+  type: 'test'
+  ...
+# Subtest: integration fixture: DST transition day is intentionally rejected
+ok 92 - integration fixture: DST transition day is intentionally rejected
+  ---
+  duration_ms: 0.355454
+  type: 'test'
+  ...
+# Subtest: scheduled 2-leg itinerary with exact GTFS stops and route labels
+ok 93 - scheduled 2-leg itinerary with exact GTFS stops and route labels
+  ---
+  duration_ms: 4.895265
+  type: 'test'
+  ...
+# Subtest: departure time and boarding buffer prevents impossible trip
+ok 94 - departure time and boarding buffer prevents impossible trip
+  ---
+  duration_ms: 0.866111
+  type: 'test'
+  ...
+# Subtest: transfer buffer prevents risky close connection
+ok 95 - transfer buffer prevents risky close connection
+  ---
+  duration_ms: 1.935167
+  type: 'test'
+  ...
+# Subtest: pickup_type=1 means passenger cannot board there
+ok 96 - pickup_type=1 means passenger cannot board there
+  ---
+  duration_ms: 0.330566
+  type: 'test'
+  ...
+# Subtest: drop_off_type=1 prevents invalid transfer / alight
+ok 97 - drop_off_type=1 prevents invalid transfer / alight
+  ---
+  duration_ms: 0.524077
+  type: 'test'
+  ...
+# Subtest: type 2 on-demand pickup not proposed as regular stop
+ok 98 - type 2 on-demand pickup not proposed as regular stop
+  ---
+  duration_ms: 0.260401
+  type: 'test'
+  ...
+# Subtest: calendar weekday excludes Sunday
+ok 99 - calendar weekday excludes Sunday
+  ---
+  duration_ms: 0.338548
+  type: 'test'
+  ...
+# Subtest: calendar dates override calendar for added and removed service
+ok 100 - calendar dates override calendar for added and removed service
+  ---
+  duration_ms: 0.615384
+  type: 'test'
+  ...
+# Subtest: reject missing pedestrian paths rather than invent a straight line
+ok 101 - reject missing pedestrian paths rather than invent a straight line
+  ---
+  duration_ms: 0.564157
+  type: 'test'
+  ...
+# Subtest: reject pedestrian path that misses real stop by over 25m
+ok 102 - reject pedestrian path that misses real stop by over 25m
+  ---
+  duration_ms: 0.571819
+  type: 'test'
+  ...
+# Subtest: walk-distance cap checked before finding journey
+ok 103 - walk-distance cap checked before finding journey
+  ---
+  duration_ms: 0.331248
+  type: 'test'
+  ...
+# Subtest: inter-stop transfer only with supplied real walking path
+ok 104 - inter-stop transfer only with supplied real walking path
+  ---
+  duration_ms: 0.522765
+  type: 'test'
+  ...
+# Subtest: unverified GTFS point must not invent boarding side
+ok 105 - unverified GTFS point must not invent boarding side
+  ---
+  duration_ms: 0.268934
+  type: 'test'
+  ...
+# Subtest: GTFS 25-hour clock handled as elapsed service seconds (not time-of-day truncation)
+ok 106 - GTFS 25-hour clock handled as elapsed service seconds (not time-of-day truncation)
+  ---
+  duration_ms: 0.30653
+  type: 'test'
+  ...
+# Subtest: strictly reject impossible non-monotonic trip sequence
+ok 107 - strictly reject impossible non-monotonic trip sequence
+  ---
+  duration_ms: 0.177116
+  type: 'test'
+  ...
+# Subtest: GTFS parser and date validation
+ok 108 - GTFS parser and date validation
+  ---
+  duration_ms: 0.512791
+  type: 'test'
+  ...
+# Subtest: DST transition deliberately rejected until timezone-safe service-date conversion is implemented
+ok 109 - DST transition deliberately rejected until timezone-safe service-date conversion is implemented
+  ---
+  duration_ms: 0.31908
+  type: 'test'
+  ...
+# Subtest: wrong feed timezone intentionally rejected
+ok 110 - wrong feed timezone intentionally rejected
+  ---
+  duration_ms: 0.141192
+  type: 'test'
+  ...
+# Subtest: no trips with no valid service, no phantom trip
+ok 111 - no trips with no valid service, no phantom trip
+  ---
+  duration_ms: 0.730918
+  type: 'test'
+  ...
+# Subtest: never suggests alighting and re-boarding identical vehicle as extra transfer
+ok 112 - never suggests alighting and re-boarding identical vehicle as extra transfer
+  ---
+  duration_ms: 0.298629
+  type: 'test'
+  ...
+# Subtest: maxTransfers=0 finds only direct trips
+ok 113 - maxTransfers=0 finds only direct trips
+  ---
+  duration_ms: 0.257537
+  type: 'test'
+  ...
+# Subtest: loads all pages, never just first PostgREST page
+ok 114 - loads all pages, never just first PostgREST page
+  ---
+  duration_ms: 34.784997
+  type: 'test'
+  ...
+# Subtest: fails closed if version flips during reading
+ok 115 - fails closed if version flips during reading
+  ---
+  duration_ms: 2.816872
+  type: 'test'
+  ...
+# Subtest: fails closed on any failed page without leaking response details
+ok 116 - fails closed on any failed page without leaking response details
+  ---
+  duration_ms: 0.740463
+  type: 'test'
+  ...
+# Subtest: rejects truncated graph missing a GTFS stop
+ok 117 - rejects truncated graph missing a GTFS stop
+  ---
+  duration_ms: 1.296508
+  type: 'test'
+  ...
+# Subtest: rejects a mixed-version page
+ok 118 - rejects a mixed-version page
+  ---
+  duration_ms: 1.091851
+  type: 'test'
+  ...
+# Subtest: rejects untrusted options and HTTP endpoint
+ok 119 - rejects untrusted options and HTTP endpoint
+  ---
+  duration_ms: 0.283856
+  type: 'test'
+  ...
+# Subtest: exact maxRows is valid, one additional row must be rejected
+ok 120 - exact maxRows is valid, one additional row must be rejected
+  ---
+  duration_ms: 1.878762
+  type: 'test'
+  ...
+# Subtest: overnight: yesterday service with 25:05 boarding becomes 01:05 today, not hidden
+ok 121 - overnight: yesterday service with 25:05 boarding becomes 01:05 today, not hidden
+  ---
+  duration_ms: 3.581771
+  type: 'test'
+  ...
+# Subtest: overnight: tomorrow active 00:20 trip visible after 23:50, with correct service date
+ok 122 - overnight: tomorrow active 00:20 trip visible after 23:50, with correct service date
+  ---
+  duration_ms: 0.45951
+  type: 'test'
+  ...
+# Subtest: ordinary morning query never fabricates tomorrow morning as current-day transport
+ok 123 - ordinary morning query never fabricates tomorrow morning as current-day transport
+  ---
+  duration_ms: 0.693332
+  type: 'test'
+  ...
+# Subtest: removed exception on preceding day never leaks 25h GTFS trip into next day
+ok 124 - removed exception on preceding day never leaks 25h GTFS trip into next day
+  ---
+  duration_ms: 0.510887
+  type: 'test'
+  ...
+# Subtest: service dates use calendar arithmetic rather than local DST offsets
+ok 125 - service dates use calendar arithmetic rather than local DST offsets
+  ---
+  duration_ms: 0.477137
+  type: 'test'
+  ...
+# Subtest: endpoint matching accepts 16m for a stop but rejects >25m stop drift
+ok 126 - endpoint matching accepts 16m for a stop but rejects >25m stop drift
+  ---
+  duration_ms: 0.801755
+  type: 'test'
+  ...
+# Subtest: preview rejects publishable and administrative project keys as paid API credentials
+ok 127 - preview rejects publishable and administrative project keys as paid API credentials
+  ---
+  duration_ms: 111.791463
+  type: 'test'
+  ...
+# Subtest: preview accepts only its own long separate configured secret, not clients or browser origins
+ok 128 - preview accepts only its own long separate configured secret, not clients or browser origins
+  ---
+  duration_ms: 22.455285
+  type: 'test'
+  ...
+# Subtest: preview refuses any paid routes if preview token absent or too short
+ok 129 - preview refuses any paid routes if preview token absent or too short
+  ---
+  duration_ms: 15.77652
+  type: 'test'
+  ...
+# Subtest: preview GET health never invokes paid planner
+ok 130 - preview GET health never invokes paid planner
+  ---
+  duration_ms: 18.459942
+  type: 'test'
+  ...
+# Subtest: database failure emits sanitized telemetry with an ID matching the 503 response
+ok 131 - database failure emits sanitized telemetry with an ID matching the 503 response
+  ---
+  duration_ms: 18.467083
+  type: 'test'
+  ...
+# Subtest: telemetry recorder failure never leaks data or breaks the sanitized response
+ok 132 - telemetry recorder failure never leaks data or breaks the sanitized response
+  ---
+  duration_ms: 1.059562
+  type: 'test'
+  ...
+# Subtest: snapshot uses bounded parallel paging when PostgREST supplies exact Content-Range
+ok 133 - snapshot uses bounded parallel paging when PostgREST supplies exact Content-Range
+  ---
+  duration_ms: 16.624345
+  type: 'test'
+  ...
+# Subtest: snapshot never accepts a stale or inconsistent counted response
+ok 134 - snapshot never accepts a stale or inconsistent counted response
+  ---
+  duration_ms: 6.984112
+  type: 'test'
+  ...
+# Subtest: house setback of ~40m accepted but stop setback of ~40m rejected; only bucketed telemetry
+ok 135 - house setback of ~40m accepted but stop setback of ~40m rejected; only bucketed telemetry
+  ---
+  duration_ms: 23.040214
+  type: 'test'
+  ...
+# Subtest: router drift recorder failure never affects accepted walking leg
+ok 136 - router drift recorder failure never affects accepted walking leg
+  ---
+  duration_ms: 0.496526
+  type: 'test'
+  ...
+# Subtest: walk candidates pass explicit user/stop roles, never guessing stop tolerance at a house
+ok 137 - walk candidates pass explicit user/stop roles, never guessing stop tolerance at a house
+  ---
+  duration_ms: 1.323879
+  type: 'test'
+  ...
+# Subtest: planner accepts user snap 40m on access but rejects 40m at boarding stop
+ok 138 - planner accepts user snap 40m on access but rejects 40m at boarding stop
+  ---
+  duration_ms: 2.347978
+  type: 'test'
+  ...
+# Subtest: late GTFS service-day crossing has explicit raw service seconds and calendar offsets
+ok 139 - late GTFS service-day crossing has explicit raw service seconds and calendar offsets
+  ---
+  duration_ms: 0.851279
+  type: 'test'
+  ...
+# Subtest: snapshot mismatch and invalid count errors have distinct sanitized telemetry codes
+ok 140 - snapshot mismatch and invalid count errors have distinct sanitized telemetry codes
+  ---
+  duration_ms: 25.0347
+  type: 'test'
+  ...
+# Subtest: abort timeout is categorized without exposing upstream messages
+ok 141 - abort timeout is categorized without exposing upstream messages
+  ---
+  duration_ms: 1.598532
+  type: 'test'
+  ...
+# Subtest: Monday after clock change explicitly signals excluded Sunday services
+ok 142 - Monday after clock change explicitly signals excluded Sunday services
+  ---
+  duration_ms: 2.598594
+  type: 'test'
+  ...
+# Subtest: TypeScript dependency is resolved from project modules rather than Node executable path
+ok 143 - TypeScript dependency is resolved from project modules rather than Node executable path
+  ---
+  duration_ms: 201.677008
+  type: 'test'
+  ...
+# Subtest: journey response tells passenger about unverified street-snap gaps without claiming a fully walkable path
+ok 144 - journey response tells passenger about unverified street-snap gaps without claiming a fully walkable path
+  ---
+  duration_ms: 5.376097
+  type: 'test'
+  ...
+# Subtest: tomorrow service date retains request-relative board seconds and service-relative zero-day offset
+ok 145 - tomorrow service date retains request-relative board seconds and service-relative zero-day offset
+  ---
+  duration_ms: 0.490267
+  type: 'test'
+  ...
+# Subtest: real GTFS fixture served through API has 08:00/08:52 420 route, unverified boarding
+ok 146 - real GTFS fixture served through API has 08:00/08:52 420 route, unverified boarding
+  ---
+  duration_ms: 42.530924
+  type: 'test'
+  ...
+# Subtest: no private credentials exposed, even when provider fails
+ok 147 - no private credentials exposed, even when provider fails
+  ---
+  duration_ms: 3.056097
+  type: 'test'
+  ...
+# Subtest: database errors are sanitized
+ok 148 - database errors are sanitized
+  ---
+  duration_ms: 1.28431
+  type: 'test'
+  ...
+# Subtest: blocks browser origin absent from allowlist before any provider calls
+ok 149 - blocks browser origin absent from allowlist before any provider calls
+  ---
+  duration_ms: 0.948565
+  type: 'test'
+  ...
+# Subtest: allowed origin receives specific CORS response; preflight cannot reach provider
+ok 150 - allowed origin receives specific CORS response; preflight cannot reach provider
+  ---
+  duration_ms: 1.99703
+  type: 'test'
+  ...
+# Subtest: rejects oversized bodies without invoking providers
+ok 151 - rejects oversized bodies without invoking providers
+  ---
+  duration_ms: 0.867153
+  type: 'test'
+  ...
+# Subtest: rejects malformed JSON and unsupported type
+ok 152 - rejects malformed JSON and unsupported type
+  ---
+  duration_ms: 0.811589
+  type: 'test'
+  ...
+# Subtest: invalid route coordinates, unknown keys, and budgets are rejected before walking
+ok 153 - invalid route coordinates, unknown keys, and budgets are rejected before walking
+  ---
+  duration_ms: 4.743726
+  type: 'test'
+  ...
+# Subtest: rejects DST transition day before charging walking provider
+ok 154 - rejects DST transition day before charging walking provider
+  ---
+  duration_ms: 0.851839
+  type: 'test'
+  ...
+# Subtest: client and global limits enforced independently; no extra walks at limit
+ok 155 - client and global limits enforced independently; no extra walks at limit
+  ---
+  duration_ms: 10.414826
+  type: 'test'
+  ...
+# Subtest: shared limiter failures fail closed
+ok 156 - shared limiter failures fail closed
+  ---
+  duration_ms: 0.351808
+  type: 'test'
+  ...
+# Subtest: route endpoint is POST-only, health explicitly does not guarantee realtime
+ok 157 - route endpoint is POST-only, health explicitly does not guarantee realtime
+  ---
+  duration_ms: 0.416906
+  type: 'test'
+  ...
+# Subtest: snapshot cache coalesces concurrent loads, respects TTL, rejects failures
+ok 158 - snapshot cache coalesces concurrent loads, respects TTL, rejects failures
+  ---
+  duration_ms: 0.472861
+  type: 'test'
+  ...
+# FINDING radius_default_journeys 1 widened_journeys 1 walk_meters 1890
+# FINDING state_25_retained true labels 24 min_walk 50
+# FINDING early_departure_overprioritized 1 all_5_journeys 1 valid_trip t4
+# FINDING direct_budget_starvation transfer_count_with_direct 4 without 4 direct false
+# FINDING avoidable_metered_walk_calls 0 valid_access_paths 0 straight_distance_to_closest 278
+# FINDING twenty_five_feeders 1 only_25th_feeder 1 route feeder24,connection
+# Subtest: REGRESSION: 2.5km walking allowance should include a stop 1.89km away
+ok 159 - REGRESSION: 2.5km walking allowance should include a stop 1.89km away
+  ---
+  duration_ms: 10.702073
+  type: 'test'
+  ...
+# Subtest: REGRESSION: 24 label cap prunes later label even when it has the least walking
+ok 160 - REGRESSION: 24 label cap prunes later label even when it has the least walking
+  ---
+  duration_ms: 1.873574
+  type: 'test'
+  ...
+# Subtest: REGRESSION: stop preference counts early bus that passenger cannot physically reach
+ok 161 - REGRESSION: stop preference counts early bus that passenger cannot physically reach
+  ---
+  duration_ms: 3.775602
+  type: 'test'
+  ...
+# Subtest: REGRESSION: optional direct walk consumes paid call that silently drops final transfer
+ok 162 - REGRESSION: optional direct walk consumes paid call that silently drops final transfer
+  ---
+  duration_ms: 2.51696
+  type: 'test'
+  ...
+# Subtest: REGRESSION: paid walking calls are made for stops farther than the entire walking allowance
+ok 163 - REGRESSION: paid walking calls are made for stops farther than the entire walking allowance
+  ---
+  duration_ms: 12.835102
+  type: 'test'
+  ...
+# Subtest: REGRESSION: 24-label truncation can erase the only feasible door-to-door connection
+ok 164 - REGRESSION: 24-label truncation can erase the only feasible door-to-door connection
+  ---
+  duration_ms: 3.999038
+  type: 'test'
+  ...
+# Subtest: Irish Rail XML station board extracts fields but does not falsely certify realtime
+ok 165 - Irish Rail XML station board extracts fields but does not falsely certify realtime
+  ---
+  duration_ms: 4.189684
+  type: 'test'
+  ...
+# Subtest: Irish Rail empty response is accepted as zero current station calls, not as cancelled trains
+ok 166 - Irish Rail empty response is accepted as zero current station calls, not as cancelled trains
+  ---
+  duration_ms: 0.387352
+  type: 'test'
+  ...
+# Subtest: rejects DTD/entity attacks, wrong XML, huge body, and invalid record
+ok 167 - rejects DTD/entity attacks, wrong XML, huge body, and invalid record
+  ---
+  duration_ms: 0.581193
+  type: 'test'
+  ...
+# Subtest: upstream station request always goes to fixed Irish Rail HTTPS host; responses cached
+ok 168 - upstream station request always goes to fixed Irish Rail HTTPS host; responses cached
+  ---
+  duration_ms: 26.488974
+  type: 'test'
+  ...
+# Subtest: upstream error does not cache a fake successful station board
+ok 169 - upstream error does not cache a fake successful station board
+  ---
+  duration_ms: 0.560783
+  type: 'test'
+  ...
+# Subtest: oversized streaming upstream response is rejected before full body is buffered
+ok 170 - oversized streaming upstream response is rejected before full body is buffered
+  ---
+  duration_ms: 1.09783
+  type: 'test'
+  ...
+# Subtest: prematurely aborted Irish Rail upstream request does not create fake cached realtime rows
+ok 171 - prematurely aborted Irish Rail upstream request does not create fake cached realtime rows
+  ---
+  duration_ms: 0.302194
+  type: 'test'
+  ...
+# Subtest: REAL 445 -> 420: both trips, same-day calendar, no fabricated incoming bus
+ok 172 - REAL 445 -> 420: both trips, same-day calendar, no fabricated incoming bus
+  ---
+  duration_ms: 4.735674
+  type: 'test'
+  ...
+# Subtest: REAL 445/420: miss the first bus => no fictitious connection
+ok 173 - REAL 445/420: miss the first bus => no fictitious connection
+  ---
+  duration_ms: 0.467523
+  type: 'test'
+  ...
+# Subtest: REAL 445/420: a late arrival makes the existing trip disappear, never reverse chronology
+ok 174 - REAL 445/420: a late arrival makes the existing trip disappear, never reverse chronology
+  ---
+  duration_ms: 1.288886
+  type: 'test'
+  ...
+# Subtest: walk-only route requires actual pedestrian result and no GTFS trip
+ok 175 - walk-only route requires actual pedestrian result and no GTFS trip
+  ---
+  duration_ms: 0.548645
+  type: 'test'
+  ...
+# Subtest: no phantom walk-only itinerary if pedestrian geometry does not reach destination
+ok 176 - no phantom walk-only itinerary if pedestrian geometry does not reach destination
+  ---
+  duration_ms: 0.385039
+  type: 'test'
+  ...
+# Subtest: door-to-door direct walk uses provider only when within explicit maximum
+ok 177 - door-to-door direct walk uses provider only when within explicit maximum
+  ---
+  duration_ms: 3.715732
+  type: 'test'
+  ...
+# Subtest: provider direct walk over stated maximum is never recommended
+ok 178 - provider direct walk over stated maximum is never recommended
+  ---
+  duration_ms: 1.799072
+  type: 'test'
+  ...
+# Subtest: mixed rail + bus itinerary is opt-in, not silently enabled to passengers
+ok 179 - mixed rail + bus itinerary is opt-in, not silently enabled to passengers
+  ---
+  duration_ms: 11.707097
+  type: 'test'
+  ...
+# Subtest: real 445 -> 420 with synthetic first and last walking legs has coherent end-to-end ETA
+ok 180 - real 445 -> 420 with synthetic first and last walking legs has coherent end-to-end ETA
+  ---
+  duration_ms: 0.654944
+  type: 'test'
+  ...
+# Subtest: three transport rides require two transfers, and return all three boarding instructions
+ok 181 - three transport rides require two transfers, and return all three boarding instructions
+  ---
+  duration_ms: 1.130999
+  type: 'test'
+  ...
+# Subtest: Valhalla polyline6 yields correct coordinates, not 100x rounding errors
+ok 182 - Valhalla polyline6 yields correct coordinates, not 100x rounding errors
+  ---
+  duration_ms: 1.562958
+  type: 'test'
+  ...
+# Subtest: Stadia walking API adapter calls pedestrian and keeps API key only in server request
+ok 183 - Stadia walking API adapter calls pedestrian and keeps API key only in server request
+  ---
+  duration_ms: 23.505577
+  type: 'test'
+  ...
+# Subtest: Stadia adapter never invents route on unreachable/invalid response
+ok 184 - Stadia adapter never invents route on unreachable/invalid response
+  ---
+  duration_ms: 0.673011
+  type: 'test'
+  ...
+# Subtest: walk construction calls provider within budget, never uses geodesic length as path
+ok 185 - walk construction calls provider within budget, never uses geodesic length as path
+  ---
+  duration_ms: 1.200843
+  type: 'test'
+  ...
+# Subtest: MapLibre overlay only plots proven pedestrian geometry and station markers, not fictional bus street polyline
+ok 186 - MapLibre overlay only plots proven pedestrian geometry and station markers, not fictional bus street polyline
+  ---
+  duration_ms: 0.385469
+  type: 'test'
+  ...
+# Subtest: Supabase row adapter uses actual database column names and rejects cross-version rows
+ok 187 - Supabase row adapter uses actual database column names and rejects cross-version rows
+  ---
+  duration_ms: 0.483907
+  type: 'test'
+  ...
+# Subtest: pilot nearby: Ballina Bus Station is found, but distance is never described as walking
+ok 188 - pilot nearby: Ballina Bus Station is found, but distance is never described as walking
+  ---
+  duration_ms: 23.906784
+  type: 'test'
+  ...
+# Subtest: pilot nearby: arrival-only stop cannot be presented as a place to board
+ok 189 - pilot nearby: arrival-only stop cannot be presented as a place to board
+  ---
+  duration_ms: 0.250777
+  type: 'test'
+  ...
+# Subtest: pilot nearby: routes must have regular pickup, not request-only or dropoff-only
+ok 190 - pilot nearby: routes must have regular pickup, not request-only or dropoff-only
+  ---
+  duration_ms: 0.258939
+  type: 'test'
+  ...
+# Subtest: pilot nearby: radius filter and stable max limit
+ok 191 - pilot nearby: radius filter and stable max limit
+  ---
+  duration_ms: 0.723808
+  type: 'test'
+  ...
+# Subtest: pilot nearby: rejects spoofing, duplicate parameters, huge radius, bad coordinates and unknown params
+ok 192 - pilot nearby: rejects spoofing, duplicate parameters, huge radius, bad coordinates and unknown params
+  ---
+  duration_ms: 2.753025
+  type: 'test'
+  ...
+# Subtest: pilot nearby: rejects POST, never invokes routing provider
+ok 193 - pilot nearby: rejects POST, never invokes routing provider
+  ---
+  duration_ms: 0.334333
+  type: 'test'
+  ...
+# Subtest: pilot nearby: fail closed if the shared limiter rejects
+ok 194 - pilot nearby: fail closed if the shared limiter rejects
+  ---
+  duration_ms: 0.263276
+  type: 'test'
+  ...
+# Subtest: pilot nearby: database exceptions stay private
+ok 195 - pilot nearby: database exceptions stay private
+  ---
+  duration_ms: 0.678259
+  type: 'test'
+  ...
+# Subtest: pilot nearby: does not show unserved stops or rail-only stops as nearby buses
+ok 196 - pilot nearby: does not show unserved stops or rail-only stops as nearby buses
+  ---
+  duration_ms: 0.420141
+  type: 'test'
+  ...
+# Subtest: pilot preferences sort confirmed journey candidates but never fabricate new services
+ok 197 - pilot preferences sort confirmed journey candidates but never fabricate new services
+  ---
+  duration_ms: 0.598549
+  type: 'test'
+  ...
+# Subtest: pilot POST accepts preference, responds with preference and legacy contract preserved
+ok 198 - pilot POST accepts preference, responds with preference and legacy contract preserved
+  ---
+  duration_ms: 21.482793
+  type: 'test'
+  ...
+# Subtest: edge request forwarding keeps method and body for POST and GET
+ok 199 - edge request forwarding keeps method and body for POST and GET
+  ---
+  duration_ms: 0.930397
+  type: 'test'
+  ...
+# Subtest: pilot hourly paid budget blocks the thirteenth itinerary, never touches map provider
+ok 200 - pilot hourly paid budget blocks the thirteenth itinerary, never touches map provider
+  ---
+  duration_ms: 11.967068
+  type: 'test'
+  ...
+# Subtest: engine prioritizes less walking before trimming results (not just sorting fastest shortlist)
+ok 201 - engine prioritizes less walking before trimming results (not just sorting fastest shortlist)
+  ---
+  duration_ms: 0.916437
+  type: 'test'
+  ...
+# Subtest: real bundled entrypoint returns GTFS rail stations after valid private authentication
+ok 202 - real bundled entrypoint returns GTFS rail stations after valid private authentication
+  ---
+  duration_ms: 351.227024
+  type: 'test'
+  ...
+# Subtest: real bundled entrypoint routes station-board to rail handler, not nearby-stops
+ok 203 - real bundled entrypoint routes station-board to rail handler, not nearby-stops
+  ---
+  duration_ms: 145.042856
+  type: 'test'
+  ...
+# Subtest: rail entrypoint invalid private token fails before ALL external calls
+ok 204 - rail entrypoint invalid private token fails before ALL external calls
+  ---
+  duration_ms: 122.617882
+  type: 'test'
+  ...
+# Subtest: previously supported nearby-stops endpoint remains available with auth
+ok 205 - previously supported nearby-stops endpoint remains available with auth
+  ---
+  duration_ms: 78.861252
+  type: 'test'
+  ...
+# Subtest: rail paths keep method and query validation after outer private gate
+ok 206 - rail paths keep method and query validation after outer private gate
+  ---
+  duration_ms: 107.993959
+  type: 'test'
+  ...
+# Subtest: valid private request serves mocked official station XML through the complete entrypoint
+ok 207 - valid private request serves mocked official station XML through the complete entrypoint
+  ---
+  duration_ms: 98.762139
+  type: 'test'
+  ...
+# Subtest: boarding note for same GTFS station names the actual next transport mode
+ok 208 - boarding note for same GTFS station names the actual next transport mode
+  ---
+  duration_ms: 10.683925
+  type: 'test'
+  ...
+# Subtest: same GTFS station: official 3-minute Manulla rail-to-rail interchange survives
+ok 209 - same GTFS station: official 3-minute Manulla rail-to-rail interchange survives
+  ---
+  duration_ms: 5.163007
+  type: 'test'
+  ...
+# Subtest: one second shorter than minimum transfer buffer is correctly rejected
+ok 210 - one second shorter than minimum transfer buffer is correctly rejected
+  ---
+  duration_ms: 0.780482
+  type: 'test'
+  ...
+# Subtest: scheduled rail is opt-in and rail-only mode does not select bus legs
+ok 211 - scheduled rail is opt-in and rail-only mode does not select bus legs
+  ---
+  duration_ms: 59.254157
+  type: 'test'
+  ...
+# Subtest: invalid modes rejected before any route or paid provider is called
+ok 212 - invalid modes rejected before any route or paid provider is called
+  ---
+  duration_ms: 5.424048
+  type: 'test'
+  ...
+# Subtest: rail station unknown or provider not configured fails without remote fetch
+ok 213 - rail station unknown or provider not configured fails without remote fetch
+  ---
+  duration_ms: 0.900143
+  type: 'test'
+  ...
+# Subtest: rail station lookup only accepts GTFS-served rail stations, never arbitrary upstream names
+ok 214 - rail station lookup only accepts GTFS-served rail stations, never arbitrary upstream names
+  ---
+  duration_ms: 2.268267
+  type: 'test'
+  ...
+# Subtest: rail station board is GET-only and shared provider limiter is enforced
+ok 215 - rail station board is GET-only and shared provider limiter is enforced
+  ---
+  duration_ms: 0.535976
+  type: 'test'
+  ...
+# Subtest: bus -> verified walking transfer -> train works, but NEVER invents a railway connection
+ok 216 - bus -> verified walking transfer -> train works, but NEVER invents a railway connection
+  ---
+  duration_ms: 4.893612
+  type: 'test'
+  ...
+# Subtest: identical coordinates with DIFFERENT GTFS station IDs never prove walkable rail transfer
+ok 217 - identical coordinates with DIFFERENT GTFS station IDs never prove walkable rail transfer
+  ---
+  duration_ms: 1.494064
+  type: 'test'
+  ...
+# Subtest: rail station directory is GTFS-sourced and excludes bus-only stops
+ok 218 - rail station directory is GTFS-sourced and excludes bus-only stops
+  ---
+  duration_ms: 1.126031
+  type: 'test'
+  ...
+# Subtest: rail stations reject arbitrary query strings and do not call provider
+ok 219 - rail stations reject arbitrary query strings and do not call provider
+  ---
+  duration_ms: 0.327662
+  type: 'test'
+  ...
+# Subtest: GTFS from production: bus 420 Ballina Bus Stn 08:00 -> Mayo Hospital 08:52 on Thursday 2026-10-08
+ok 220 - GTFS from production: bus 420 Ballina Bus Stn 08:00 -> Mayo Hospital 08:52 on Thursday 2026-10-08
+  ---
+  duration_ms: 3.640069
+  type: 'test'
+  ...
+# Subtest: GTFS from production: bus 420 passes Castlebar at scheduled 08:48
+ok 221 - GTFS from production: bus 420 passes Castlebar at scheduled 08:48
+  ---
+  duration_ms: 0.56582
+  type: 'test'
+  ...
+# Subtest: GTFS pickup/dropoff: terminal Mayo Hospital is not a pickup stop
+ok 222 - GTFS pickup/dropoff: terminal Mayo Hospital is not a pickup stop
+  ---
+  duration_ms: 0.276765
+  type: 'test'
+  ...
+# Subtest: GTFS calendar: historical Thu fixture must not be projected onto Fri
+ok 223 - GTFS calendar: historical Thu fixture must not be projected onto Fri
+  ---
+  duration_ms: 1.215275
+  type: 'test'
+  ...
+# Subtest: GTFS stops: displays official coordinate but never invented side/platform
+ok 224 - GTFS stops: displays official coordinate but never invented side/platform
+  ---
+  duration_ms: 0.142885
+  type: 'test'
+  ...
+# Subtest: recorded 366s real walking time + 90s boarding buffer connects 07:50 origin to 08:00 bus 420
+ok 225 - recorded 366s real walking time + 90s boarding buffer connects 07:50 origin to 08:00 bus 420
+  ---
+  duration_ms: 7.041218
+  type: 'test'
+  ...
+# Subtest: recorded 366s walking cannot catch 08:00 bus if departure is 07:53
+ok 226 - recorded 366s walking cannot catch 08:00 bus if departure is 07:53
+  ---
+  duration_ms: 2.017621
+  type: 'test'
+  ...
+# Subtest: BM-098-A: distinct vehicles on SAME line may transfer via provider-verified walk
+ok 227 - BM-098-A: distinct vehicles on SAME line may transfer via provider-verified walk
+  ---
+  duration_ms: 16.205004
+  type: 'test'
+  ...
+# Subtest: BM-098-B: different stop IDs with coincident coordinates MUST NOT synthesize walk
+ok 228 - BM-098-B: different stop IDs with coincident coordinates MUST NOT synthesize walk
+  ---
+  duration_ms: 2.127796
+  type: 'test'
+  ...
+# Subtest: BM-098-C: timetable with zero active services spends zero transit walks
+ok 229 - BM-098-C: timetable with zero active services spends zero transit walks
+  ---
+  duration_ms: 0.406931
+  type: 'test'
+  ...
+# Subtest: BM-098-C guard: walk-only stays available on a day without transit
+ok 230 - BM-098-C guard: walk-only stays available on a day without transit
+  ---
+  duration_ms: 0.566781
+  type: 'test'
+  ...
+# Subtest: BM-098-C guard: active single-day service is NOT rejected by preflight
+ok 231 - BM-098-C guard: active single-day service is NOT rejected by preflight
+  ---
+  duration_ms: 0.671869
+  type: 'test'
+  ...
+# Subtest: BM-098-A guard: when transfers are disabled no paid transfer walks are attempted
+ok 232 - BM-098-A guard: when transfers are disabled no paid transfer walks are attempted
+  ---
+  duration_ms: 0.618199
+  type: 'test'
+  ...
+# Subtest: GTFS overnight 25:15 from yesterday still counts as service today
+ok 233 - GTFS overnight 25:15 from yesterday still counts as service today
+  ---
+  duration_ms: 0.867053
+  type: 'test'
+  ...
+# Subtest: tomorrow service in the requested 18h window stays reachable
+ok 234 - tomorrow service in the requested 18h window stays reachable
+  ---
+  duration_ms: 0.571519
+  type: 'test'
+  ...
+# Subtest: new same-route transfers do not crowd out legacy cross-line transfer at one-call budget
+ok 235 - new same-route transfers do not crowd out legacy cross-line transfer at one-call budget
+  ---
+  duration_ms: 1.74394
+  type: 'test'
+  ...
+# Subtest: a snapped 40m house entrance consumes extra walking budget and ETA, with no fictional line
+ok 236 - a snapped 40m house entrance consumes extra walking budget and ETA, with no fictional line
+  ---
+  duration_ms: 28.174226
+  type: 'test'
+  ...
+# Subtest: walking threshold refuses a route whose conservative connector pushes it over 175m
+ok 237 - walking threshold refuses a route whose conservative connector pushes it over 175m
+  ---
+  duration_ms: 2.455209
+  type: 'test'
+  ...
+# Subtest: 50m provisional cap fails closed for 60m house snap, while drift is still reported without coordinates
+ok 238 - 50m provisional cap fails closed for 60m house snap, while drift is still reported without coordinates
+  ---
+  duration_ms: 0.776236
+  type: 'test'
+  ...
+# Subtest: only >25m user snap needs explicit confirmation, stop-only gap has no user confirmation
+ok 239 - only >25m user snap needs explicit confirmation, stop-only gap has no user confirmation
+  ---
+  duration_ms: 0.937739
+  type: 'test'
+  ...
+# Subtest: HTTP response carries snapped point and confirmation warning, never treats gap as routable geometry
+ok 240 - HTTP response carries snapped point and confirmation warning, never treats gap as routable geometry
+  ---
+  duration_ms: 25.97393
+  type: 'test'
+  ...
+# Subtest: Supabase limiter hashes bucket and posts atomic RPC with private server-side credentials
+ok 241 - Supabase limiter hashes bucket and posts atomic RPC with private server-side credentials
+  ---
+  duration_ms: 30.294151
+  type: 'test'
+  ...
+# Subtest: does not silently allow routing when rate limiter returns HTTP error or malformed data
+ok 242 - does not silently allow routing when rate limiter returns HTTP error or malformed data
+  ---
+  duration_ms: 5.048904
+  type: 'test'
+  ...
+# Subtest: blocks arbitrary Supabase endpoints and invalid rate limit parameters
+ok 243 - blocks arbitrary Supabase endpoints and invalid rate limit parameters
+  ---
+  duration_ms: 0.416105
+  type: 'test'
+  ...
+# Subtest: preview rate limiter supports fixed one-hour provider cost ceiling
+ok 244 - preview rate limiter supports fixed one-hour provider cost ceiling
+  ---
+  duration_ms: 1.931281
+  type: 'test'
+  ...
+# Subtest: real GTFS 420 route uses reviewed stop coordinate for access geometry and boarding details
+ok 245 - real GTFS 420 route uses reviewed stop coordinate for access geometry and boarding details
+  ---
+  duration_ms: 6.103109
+  type: 'test'
+  ...
+1..245
+# tests 245
+# suites 0
+# pass 245
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4044.822894

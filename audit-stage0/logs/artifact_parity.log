@@ -1,0 +1,4 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/node scripts/verify_singlefile_parity_010.cjs
+exit=0 elapsed_wall_s=0.23047
+
+Compiled source vs v0.10.0 single-file candidate: 16/16 module tokens match; mismatches: []

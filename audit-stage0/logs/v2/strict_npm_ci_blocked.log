@@ -1,0 +1,6 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/npm ci --ignore-scripts --no-audit --no-fund
+exit=1 elapsed_wall_s=0.22269
+
+npm error code ENOTCACHED
+npm error request to https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz failed: cache mode is 'only-if-cached' but no cached response is available.
+npm error A complete log of this run can be found in: /home/oai/.npm/_logs/2026-10-09T02_06_58_379Z-debug-0.log

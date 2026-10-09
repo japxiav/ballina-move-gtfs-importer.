@@ -1,0 +1,8 @@
+{
+  "ci/verify_full_github_main.py": "2e8ed8ebf97babfcd611a88ad955ecd2246d7b902efabb0d2063f125fa23ba90",
+  "tests/test_gate_v3.py": "e450b3af97a47f9be9ccfa1e8e3f517981e22d5e8b256af7df4506ba484d7b48",
+  "GATE_V3_LEIA_PRIMEIRO.md": "3c1d37672726765993abc0c1a7f76fced08374ff780cda4bb484fedf9a2d2a13",
+  "CHECKPOINT_V3.md": "656e8104deee1eb02351e29b218d974c35e5a54a397e3da2a9098ab9c1c88e97",
+  "docs/G0_04_VERIFICATION_DETAILS.md": "2ce6c66d0a89aedf1da29c4c21dd9997741c16264018bf1255457ef4da858eda",
+  "logs/v3/G004_original_independent_proof.py": "6978509a6e10c75d6e5e5aa883dec2d08ee3c7d0458b1f58facd6e0521484a22"
+}

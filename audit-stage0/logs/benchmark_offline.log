@@ -1,0 +1,31 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/node tools/benchmark_offline.cjs
+exit=0 elapsed_wall_s=0.19806
+
+{
+  "metric_kind": "offline_synthetic_250_iterations",
+  "runtime": "v22.16.0",
+  "fixture": "2 trips; 4 stops; bus -> walk -> rail; mocked pedestrian provider",
+  "network_calls": 0,
+  "synthetic_router_calls": 2500,
+  "core": {
+    "samples": 250,
+    "p50_ms": 0.0397,
+    "p95_ms": 0.1397,
+    "p99_ms": 0.2426,
+    "min_ms": 0.0353,
+    "max_ms": 0.3337
+  },
+  "door_to_door": {
+    "samples": 250,
+    "p50_ms": 0.2036,
+    "p95_ms": 0.4413,
+    "p99_ms": 0.7532,
+    "min_ms": 0.1618,
+    "max_ms": 1.1932
+  },
+  "total_core_journeys": 250,
+  "total_door_journeys": 250,
+  "heap_used_bytes": 5655056,
+  "rss_bytes": 43761664,
+  "warning": "Not Supabase Edge CPU, cold start, real-provider latency or representative production traffic"
+}

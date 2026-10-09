@@ -1,0 +1,10 @@
+$ /opt/nvm/versions/node/v22.16.0/bin/node independent_checks.cjs
+exit=0 elapsed_wall_s=0.29368
+
+{"finding":"A01","oracleJourneys":1,"plannerJourneys":0,"providerTransferCalls":0,"walkMeters":900,"walkSeconds":720,"geometricDistanceApproxM":834}
+{"finding":"A02","shortOnly":1,"both":0,"feasibleEgressMeters":120,"infeasibleEgressMeters":900,"slowSeconds":720,"fastSeconds":690,"reachability":"accepted-array-contract; real provider returns <=1 route per stop"}
+{"finding":"A03","requestSignalAborted":true,"completed160msAfterAbort":false,"finishedAfterExplicitStreamClose":true}
+{"finding":"A04","validServiceCount":1,"caseMismatch":{"accepted":true,"serviceCount":1},"qualifiedClosingWithoutOpening":{"accepted":true,"serviceCount":1}}
+{"finding":"A05","unquotedAttribute":{"accepted":true,"serviceCount":1},"duplicateAttribute":{"accepted":true,"serviceCount":1}}
+{"finding":"A06","routeModes":[{"type":0,"observed":"bus"},{"type":2,"observed":"rail"},{"type":3,"observed":"bus"},{"type":4,"observed":"bus"},{"type":5,"observed":"bus"},{"type":999,"observed":"bus"}]}
+{"independentChecks":6,"success":true}

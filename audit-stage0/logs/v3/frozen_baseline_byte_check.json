@@ -1,0 +1,56 @@
+[
+  {
+    "path": "docs/MANIFESTO_IMUTAVEL.json",
+    "v2_sha256": "e3aed949beed20801a11158639bb59265f652e1a4efeeb7ade02221770056911",
+    "v3_sha256": "e3aed949beed20801a11158639bb59265f652e1a4efeeb7ade02221770056911",
+    "byte_identical": true
+  },
+  {
+    "path": "docs/package-lock_v010_travado.json",
+    "v2_sha256": "742c6c278576945b0f7253012bf1e45a7116a9989701915ba3e2359f53075515",
+    "v3_sha256": "742c6c278576945b0f7253012bf1e45a7116a9989701915ba3e2359f53075515",
+    "byte_identical": true
+  },
+  {
+    "path": "docs/package_v010_travado.json",
+    "v2_sha256": "ba51c0bbb3db332d2b0cdbe07e37a903e50cd45319edb27f0e739b9ca603b12e",
+    "v3_sha256": "ba51c0bbb3db332d2b0cdbe07e37a903e50cd45319edb27f0e739b9ca603b12e",
+    "byte_identical": true
+  },
+  {
+    "path": "tools/run_stage0.py",
+    "v2_sha256": "66387171473180aeebdb121e123d0221497f149c3a55aba16867e2291a785852",
+    "v3_sha256": "66387171473180aeebdb121e123d0221497f149c3a55aba16867e2291a785852",
+    "byte_identical": true
+  },
+  {
+    "path": "tests/test_gate_v2.py",
+    "v2_sha256": "1513c8ce621db8464fa694ba086e555f205b6633ef88faf59564eab09ec226e4",
+    "v3_sha256": "1513c8ce621db8464fa694ba086e555f205b6633ef88faf59564eab09ec226e4",
+    "byte_identical": true
+  },
+  {
+    "path": "archives/Ballina_Move_Auditoria_Integral_PARTE_2_2026-10-09.zip",
+    "v2_sha256": "6e77f272f3aabdbdf73c6f2d7f299b30148b9a80f534d74776959586e26e7fc6",
+    "v3_sha256": "6e77f272f3aabdbdf73c6f2d7f299b30148b9a80f534d74776959586e26e7fc6",
+    "byte_identical": true
+  },
+  {
+    "path": "archives/Ballina_Move_META_AUDITORIA_EVIDENCIAS_INDEPENDENTES_2026-10-09.zip",
+    "v2_sha256": "52e19531a44de11520299da314952638fa1861842442d7f07bf5dbe375e87cc8",
+    "v3_sha256": "52e19531a44de11520299da314952638fa1861842442d7f07bf5dbe375e87cc8",
+    "byte_identical": true
+  },
+  {
+    "path": "archives/Ballina_Move_v0.10.0_AUDITORIA_RODADA3_COMPLETO.zip",
+    "v2_sha256": "94b52715e4842d73cdf9a48e23c75815bd3fccd4756bc4796e1f438ee1ffa7a2",
+    "v3_sha256": "94b52715e4842d73cdf9a48e23c75815bd3fccd4756bc4796e1f438ee1ffa7a2",
+    "byte_identical": true
+  },
+  {
+    "path": "archives/Ballina_Move_v0.9.9_UPLOAD_GITHUB_83_ARQUIVOS.zip",
+    "v2_sha256": "f994fb99f556c62a4ee785fd32656c712f9d71ea7c95818668f5f656c6eb3ebd",
+    "v3_sha256": "f994fb99f556c62a4ee785fd32656c712f9d71ea7c95818668f5f656c6eb3ebd",
+    "byte_identical": true
+  }
+]

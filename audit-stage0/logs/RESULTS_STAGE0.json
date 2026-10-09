@@ -1,0 +1,88 @@
+{
+  "stage": "0",
+  "meaning": "candidate unchanged; expected six failing contract tests preserve proof of old defects",
+  "github_main_commit": "4e4c6d36bc7542b8258ccf6efde70944f1add592",
+  "github_main_local_archive": "PARTIAL; 83 files, not authenticated full repository",
+  "candidate_archive_sha256": "94b52715e4842d73cdf9a48e23c75815bd3fccd4756bc4796e1f438ee1ffa7a2",
+  "versions": {
+    "python": "3.13.5",
+    "node": "v22.16.0",
+    "typescript": "Version 5.8.3",
+    "typescript_matches_lockfile": false
+  },
+  "exact_dependency_gate": "PENDING - this run used installed nonmatching TypeScript",
+  "baselines": [
+    {
+      "file": "Ballina_Move_v0.10.0_AUDITORIA_RODADA3_COMPLETO.zip",
+      "sha256": "94b52715e4842d73cdf9a48e23c75815bd3fccd4756bc4796e1f438ee1ffa7a2",
+      "entries": 96,
+      "matches_expected": true
+    },
+    {
+      "file": "Ballina_Move_v0.9.9_UPLOAD_GITHUB_83_ARQUIVOS.zip",
+      "sha256": "f994fb99f556c62a4ee785fd32656c712f9d71ea7c95818668f5f656c6eb3ebd",
+      "entries": 83,
+      "matches_expected": true
+    },
+    {
+      "file": "Ballina_Move_Auditoria_Integral_PARTE_2_2026-10-09.zip",
+      "sha256": "6e77f272f3aabdbdf73c6f2d7f299b30148b9a80f534d74776959586e26e7fc6",
+      "entries": 13,
+      "matches_expected": true
+    },
+    {
+      "file": "Ballina_Move_META_AUDITORIA_EVIDENCIAS_INDEPENDENTES_2026-10-09.zip",
+      "sha256": "52e19531a44de11520299da314952638fa1861842442d7f07bf5dbe375e87cc8",
+      "entries": 17,
+      "matches_expected": null
+    }
+  ],
+  "runs": {
+    "compile_v099_partial": {
+      "exit": 0,
+      "elapsed_wall_s": 1.07096,
+      "log": "compile_v099_partial.log"
+    },
+    "tests_v099_partial": {
+      "exit": 0,
+      "elapsed_wall_s": 2.23137,
+      "log": "tests_v099_partial.log"
+    },
+    "compile_v010": {
+      "exit": 0,
+      "elapsed_wall_s": 1.15661,
+      "log": "compile_v010.log"
+    },
+    "tests_v010": {
+      "exit": 0,
+      "elapsed_wall_s": 4.0805,
+      "log": "tests_v010.log"
+    },
+    "artifact_parity": {
+      "exit": 0,
+      "elapsed_wall_s": 0.23047,
+      "log": "artifact_parity.log"
+    },
+    "sealed_gate": {
+      "exit": 0,
+      "elapsed_wall_s": 0.11942,
+      "log": "sealed_gate.log"
+    },
+    "expected_red_regressions": {
+      "exit": 1,
+      "elapsed_wall_s": 0.33603,
+      "log": "expected_red_regressions.log"
+    },
+    "independent_counterexamples": {
+      "exit": 0,
+      "elapsed_wall_s": 0.29368,
+      "log": "independent_counterexamples.log"
+    },
+    "benchmark_offline": {
+      "exit": 0,
+      "elapsed_wall_s": 0.19806,
+      "log": "benchmark_offline.log"
+    }
+  },
+  "status": "LOCAL_STAGE0_REPRODUCED_NOT_PRODUCTION_READY"
+}
