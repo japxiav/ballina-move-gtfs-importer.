@@ -1,4 +1,4 @@
-name: Ballina routing v0.9.9 candidate validation (no deployment)
+name: Ballina routing v0.10.0 rail candidate validation (no deployment)
 on:
   push:
     paths:
@@ -31,7 +31,7 @@ jobs:
         run: npm test
         working-directory: routing
       - name: Regenerate private candidate artifact
-        run: node scripts/build_singlefile_candidate_099.cjs
+        run: node scripts/build_singlefile_candidate_010.cjs
         working-directory: routing
       - name: Verify compiled parity
         run: npm run verify:artifact
