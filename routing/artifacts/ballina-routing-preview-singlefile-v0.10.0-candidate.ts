@@ -1321,6 +1321,8 @@ exports.buildPedestrianPaths = buildPedestrianPaths;
 const boarding_1 = require("./boarding");
 /** No raw coordinates or exact household offsets are logged. */
 function driftBucket(m) { return m <= 5 ? '0-5' : m <= 12 ? '5-12' : m <= 25 ? '12-25' : m <= 50 ? '25-50' : m <= 80 ? '50-80' : '>80'; }
+/** Bound untrusted geometry before building a passenger-facing map or spending memory. */
+const MAX_PEDESTRIAN_SHAPE_POINTS = 10000;
 /** Valhalla returns polyline6, NOT Google polyline5. */
 function decodePolyline6(polyline) {
     const out = [];
@@ -1341,9 +1343,14 @@ function decodePolyline6(polyline) {
         throw new Error('invalid_polyline');
     }
     while (index < polyline.length) {
+        if (out.length >= MAX_PEDESTRIAN_SHAPE_POINTS)
+            throw new Error('invalid_polyline');
         lat += read();
         lon += read();
-        out.push({ lat: lat / 1e6, lon: lon / 1e6 });
+        const point = { lat: lat / 1e6, lon: lon / 1e6 };
+        if (!validCoordinate(point))
+            throw new Error('invalid_polyline');
+        out.push(point);
     }
     return out;
 }
@@ -1384,6 +1391,20 @@ class StadiaWalkingRouter {
             return null;
         const geometry = decodePolyline6(shape);
         if (geometry.length < 2 || !Number.isFinite(time) || time < 0 || !Number.isFinite(distanceKm) || distanceKm < 0)
+            return null;
+        // A nominally successful provider response is not proof that its distance
+        // and geometry agree. The polyline cannot physically be longer than the
+        // reported route by a significant margin: otherwise the budget/ETA can be
+        // undercounted even while the displayed path is kilometres long.
+        let shapeLowerBoundMeters = 0;
+        for (let i = 1; i < geometry.length; i++) {
+            shapeLowerBoundMeters += (0, boarding_1.proximityMeters)(geometry[i - 1], geometry[i]);
+            if (!Number.isFinite(shapeLowerBoundMeters))
+                return null;
+        }
+        const reportedMeters = distanceKm * 1000;
+        const roundingToleranceMeters = Math.max(10, reportedMeters * 0.03);
+        if (shapeLowerBoundMeters > reportedMeters + roundingToleranceMeters)
             return null;
         const fromMeters = (0, boarding_1.proximityMeters)(geometry[0], from);
         const toMeters = (0, boarding_1.proximityMeters)(geometry[geometry.length - 1], to);
