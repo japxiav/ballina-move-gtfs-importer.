@@ -13,3 +13,5 @@ export * from './httpApi';
 export * from './supabaseLimiter';
 
 export {nearbyStops} from './nearbyStops';
+
+export * from './irishRail';

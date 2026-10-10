@@ -1,0 +1,312 @@
+diff --git a/routing/src/engine.ts b/routing/src/engine.ts
+--- a/routing/src/engine.ts
++++ b/routing/src/engine.ts
+@@ -142,6 +142,59 @@
+       other.transfers<candidate.transfers||
+       leaveAt(other)>leaveAt(candidate))));
+ }
++/**
++ * Guard against spectacular geographic backtracking on a multi-vehicle trip.
++ * This is a LOWER BOUND on distance, computed only from GTFS boarding/alighting
++ * stops: it is not street geometry, and does not assert that a route is optimal.
++ * Both a large absolute excess (75 km) AND a large relative excess (4x) are
++ * required. An ordinary rural connection via a neighbouring town survives.
++ * If a required GTFS stop is missing, fail open rather than invent geometry.
++ */
++export function hasExtremeGeographicDetour(
++  journey:Journey, origin:{lat:number;lon:number}, destination:{lat:number;lon:number},
++  stops:Map<string,Stop>,
++):boolean {
++  const rides=journey.legs.filter((leg):leg is RideLeg=>leg.type==='ride');
++  if(rides.length<2)return false;
++  const points=[origin];
++  for(const ride of rides){
++    const a=stops.get(ride.boardStopId),b=stops.get(ride.alightStopId);
++    if(!a||!b)return false;
++    points.push(a,b);
++  }
++  points.push(destination);
++  const direct=proximityMeters(origin,destination);
++  if(!Number.isFinite(direct))return false;
++  let lowerBound=0;
++  for(let i=1;i<points.length;i++){
++    const d=proximityMeters(points[i-1]!,points[i]!);
++    if(!Number.isFinite(d))return false;
++    lowerBound+=d;
++  }
++  return lowerBound>direct+75_000 && lowerBound>4*Math.max(direct,1_000);
++}
++
++/**
++ * A tiny walking saving must not justify a much later arrival + more transfers
++ * on the exact same first vehicle. Only apply this preference under 'fastest':
++ * a passenger explicitly choosing 'less_walking' keeps the genuine Pareto tradeoff.
++ * This does not compare different first departures or different snap-risk classes.
++ */
++export function removeLowValueFastestAlternatives(journeys:Journey[]):Journey[]{
++  const firstRide=(j:Journey)=>j.legs.find((leg):leg is RideLeg=>leg.type==='ride');
++  const leave=(j:Journey)=>j.latestLeaveAtSeconds??j.departureAtSeconds;
++  const snap=(j:Journey)=>Boolean(j.requiresSnapConfirmation||snapConfirmationRequired(j.legs));
++  return journeys.filter(candidate=>!journeys.some(other=>{
++    if(other===candidate||snap(other)!==snap(candidate))return false;
++    const a=firstRide(other),b=firstRide(candidate);
++    if(!a||!b||a.serviceDate!==b.serviceDate||a.tripId!==b.tripId||a.boardStopId!==b.boardStopId)return false;
++    if(Math.abs(leave(other)-leave(candidate))>1)return false;
++    return other.arrivalAtSeconds+600<=candidate.arrivalAtSeconds &&
++      other.transfers<=candidate.transfers &&
++      other.walkingMeters<=candidate.walkingMeters+20;
++  }));
++}
++
+ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRequest):Journey[]{
+   if(data.timezone!=='Europe/Dublin')throw new Error('unsupported_timezone');
+   if(!validDate(request.serviceDate))throw new Error('invalid_service_date');
+@@ -343,7 +396,12 @@
+     journeys.set(signature,nonDominatedJourneys([...previous,c]));
+   }
+   const rankBy=request.rankBy??'fastest';
+-  return nonDominatedJourneys([...journeys.values()].flat()).sort((a,b)=>{
++  // Reject clearly non-local loops BEFORE Pareto: an impossible detour must
++  // not dominate and erase a valid local route during the ranking phase.
++  const credible=nonDominatedJourneys([...journeys.values()].flat().filter(j=>
++    !hasExtremeGeographicDetour(j,paths.origin,paths.destination,stopMap)));
++  const ranked=rankBy==='fastest'?removeLowValueFastestAlternatives(credible):credible;
++  return ranked.sort((a,b)=>{
+     if(rankBy==='less_walking')return a.walkingMeters-b.walkingMeters||a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers;
+     if(rankBy==='fewest_transfers')return a.transfers-b.transfers||a.arrivalAtSeconds-b.arrivalAtSeconds||a.walkingMeters-b.walkingMeters;
+     return a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers||a.walkingMeters-b.walkingMeters;
+diff --git a/routing/supabase/functions/ballina-routing-preview/src/engine.ts b/routing/supabase/functions/ballina-routing-preview/src/engine.ts
+--- a/routing/supabase/functions/ballina-routing-preview/src/engine.ts
++++ b/routing/supabase/functions/ballina-routing-preview/src/engine.ts
+@@ -142,6 +142,59 @@
+       other.transfers<candidate.transfers||
+       leaveAt(other)>leaveAt(candidate))));
+ }
++/**
++ * Guard against spectacular geographic backtracking on a multi-vehicle trip.
++ * This is a LOWER BOUND on distance, computed only from GTFS boarding/alighting
++ * stops: it is not street geometry, and does not assert that a route is optimal.
++ * Both a large absolute excess (75 km) AND a large relative excess (4x) are
++ * required. An ordinary rural connection via a neighbouring town survives.
++ * If a required GTFS stop is missing, fail open rather than invent geometry.
++ */
++export function hasExtremeGeographicDetour(
++  journey:Journey, origin:{lat:number;lon:number}, destination:{lat:number;lon:number},
++  stops:Map<string,Stop>,
++):boolean {
++  const rides=journey.legs.filter((leg):leg is RideLeg=>leg.type==='ride');
++  if(rides.length<2)return false;
++  const points=[origin];
++  for(const ride of rides){
++    const a=stops.get(ride.boardStopId),b=stops.get(ride.alightStopId);
++    if(!a||!b)return false;
++    points.push(a,b);
++  }
++  points.push(destination);
++  const direct=proximityMeters(origin,destination);
++  if(!Number.isFinite(direct))return false;
++  let lowerBound=0;
++  for(let i=1;i<points.length;i++){
++    const d=proximityMeters(points[i-1]!,points[i]!);
++    if(!Number.isFinite(d))return false;
++    lowerBound+=d;
++  }
++  return lowerBound>direct+75_000 && lowerBound>4*Math.max(direct,1_000);
++}
++
++/**
++ * A tiny walking saving must not justify a much later arrival + more transfers
++ * on the exact same first vehicle. Only apply this preference under 'fastest':
++ * a passenger explicitly choosing 'less_walking' keeps the genuine Pareto tradeoff.
++ * This does not compare different first departures or different snap-risk classes.
++ */
++export function removeLowValueFastestAlternatives(journeys:Journey[]):Journey[]{
++  const firstRide=(j:Journey)=>j.legs.find((leg):leg is RideLeg=>leg.type==='ride');
++  const leave=(j:Journey)=>j.latestLeaveAtSeconds??j.departureAtSeconds;
++  const snap=(j:Journey)=>Boolean(j.requiresSnapConfirmation||snapConfirmationRequired(j.legs));
++  return journeys.filter(candidate=>!journeys.some(other=>{
++    if(other===candidate||snap(other)!==snap(candidate))return false;
++    const a=firstRide(other),b=firstRide(candidate);
++    if(!a||!b||a.serviceDate!==b.serviceDate||a.tripId!==b.tripId||a.boardStopId!==b.boardStopId)return false;
++    if(Math.abs(leave(other)-leave(candidate))>1)return false;
++    return other.arrivalAtSeconds+600<=candidate.arrivalAtSeconds &&
++      other.transfers<=candidate.transfers &&
++      other.walkingMeters<=candidate.walkingMeters+20;
++  }));
++}
++
+ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRequest):Journey[]{
+   if(data.timezone!=='Europe/Dublin')throw new Error('unsupported_timezone');
+   if(!validDate(request.serviceDate))throw new Error('invalid_service_date');
+@@ -343,7 +396,12 @@
+     journeys.set(signature,nonDominatedJourneys([...previous,c]));
+   }
+   const rankBy=request.rankBy??'fastest';
+-  return nonDominatedJourneys([...journeys.values()].flat()).sort((a,b)=>{
++  // Reject clearly non-local loops BEFORE Pareto: an impossible detour must
++  // not dominate and erase a valid local route during the ranking phase.
++  const credible=nonDominatedJourneys([...journeys.values()].flat().filter(j=>
++    !hasExtremeGeographicDetour(j,paths.origin,paths.destination,stopMap)));
++  const ranked=rankBy==='fastest'?removeLowValueFastestAlternatives(credible):credible;
++  return ranked.sort((a,b)=>{
+     if(rankBy==='less_walking')return a.walkingMeters-b.walkingMeters||a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers;
+     if(rankBy==='fewest_transfers')return a.transfers-b.transfers||a.arrivalAtSeconds-b.arrivalAtSeconds||a.walkingMeters-b.walkingMeters;
+     return a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers||a.walkingMeters-b.walkingMeters;
+diff --git a/routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts b/routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts
+--- a/routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts
++++ b/routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts
+@@ -185,6 +185,8 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.nonDominatedJourneys = nonDominatedJourneys;
++exports.hasExtremeGeographicDetour = hasExtremeGeographicDetour;
++exports.removeLowValueFastestAlternatives = removeLowValueFastestAlternatives;
+ exports.planJourneys = planJourneys;
+ const time_1 = require("./time");
+ const boarding_1 = require("./boarding");
+@@ -360,6 +362,61 @@
+             other.walkingMeters < candidate.walkingMeters ||
+             other.transfers < candidate.transfers ||
+             leaveAt(other) > leaveAt(candidate))));
++}
++/**
++ * Guard against spectacular geographic backtracking on a multi-vehicle trip.
++ * This is a LOWER BOUND on distance, computed only from GTFS boarding/alighting
++ * stops: it is not street geometry, and does not assert that a route is optimal.
++ * Both a large absolute excess (75 km) AND a large relative excess (4x) are
++ * required. An ordinary rural connection via a neighbouring town survives.
++ * If a required GTFS stop is missing, fail open rather than invent geometry.
++ */
++function hasExtremeGeographicDetour(journey, origin, destination, stops) {
++    const rides = journey.legs.filter((leg) => leg.type === 'ride');
++    if (rides.length < 2)
++        return false;
++    const points = [origin];
++    for (const ride of rides) {
++        const a = stops.get(ride.boardStopId), b = stops.get(ride.alightStopId);
++        if (!a || !b)
++            return false;
++        points.push(a, b);
++    }
++    points.push(destination);
++    const direct = (0, boarding_1.proximityMeters)(origin, destination);
++    if (!Number.isFinite(direct))
++        return false;
++    let lowerBound = 0;
++    for (let i = 1; i < points.length; i++) {
++        const d = (0, boarding_1.proximityMeters)(points[i - 1], points[i]);
++        if (!Number.isFinite(d))
++            return false;
++        lowerBound += d;
++    }
++    return lowerBound > direct + 75_000 && lowerBound > 4 * Math.max(direct, 1_000);
++}
++/**
++ * A tiny walking saving must not justify a much later arrival + more transfers
++ * on the exact same first vehicle. Only apply this preference under 'fastest':
++ * a passenger explicitly choosing 'less_walking' keeps the genuine Pareto tradeoff.
++ * This does not compare different first departures or different snap-risk classes.
++ */
++function removeLowValueFastestAlternatives(journeys) {
++    const firstRide = (j) => j.legs.find((leg) => leg.type === 'ride');
++    const leave = (j) => j.latestLeaveAtSeconds ?? j.departureAtSeconds;
++    const snap = (j) => Boolean(j.requiresSnapConfirmation || snapConfirmationRequired(j.legs));
++    return journeys.filter(candidate => !journeys.some(other => {
++        if (other === candidate || snap(other) !== snap(candidate))
++            return false;
++        const a = firstRide(other), b = firstRide(candidate);
++        if (!a || !b || a.serviceDate !== b.serviceDate || a.tripId !== b.tripId || a.boardStopId !== b.boardStopId)
++            return false;
++        if (Math.abs(leave(other) - leave(candidate)) > 1)
++            return false;
++        return other.arrivalAtSeconds + 600 <= candidate.arrivalAtSeconds &&
++            other.transfers <= candidate.transfers &&
++            other.walkingMeters <= candidate.walkingMeters + 20;
++    }));
+ }
+ function planJourneys(data, paths, request) {
+     if (data.timezone !== 'Europe/Dublin')
+@@ -605,7 +662,11 @@
+         journeys.set(signature, nonDominatedJourneys([...previous, c]));
+     }
+     const rankBy = request.rankBy ?? 'fastest';
+-    return nonDominatedJourneys([...journeys.values()].flat()).sort((a, b) => {
++    // Reject clearly non-local loops BEFORE Pareto: an impossible detour must
++    // not dominate and erase a valid local route during the ranking phase.
++    const credible = nonDominatedJourneys([...journeys.values()].flat().filter(j => !hasExtremeGeographicDetour(j, paths.origin, paths.destination, stopMap)));
++    const ranked = rankBy === 'fastest' ? removeLowValueFastestAlternatives(credible) : credible;
++    return ranked.sort((a, b) => {
+         if (rankBy === 'less_walking')
+             return a.walkingMeters - b.walkingMeters || a.arrivalAtSeconds - b.arrivalAtSeconds || a.transfers - b.transfers;
+         if (rankBy === 'fewest_transfers')
+diff --git a/routing/tests/a07JourneyQuality.test.cjs b/routing/tests/a07JourneyQuality.test.cjs
+new file mode 100644
+--- /dev/null
++++ b/routing/tests/a07JourneyQuality.test.cjs
+@@ -0,0 +1,66 @@
++'use strict';
++const test=require('node:test');
++const assert=require('node:assert/strict');
++const {planJourneys,hasExtremeGeographicDetour,removeLowValueFastestAlternatives}=require('../dist/engine.js');
++const DATE='2026-10-10';
++const stop=(id,name,lat,lon)=>({id,name,lat,lon});
++const B=stop('B','Ballina Bus Stn',54.11101,-9.1599);
++const R=stop('R','Ballina Rail',54.109063,-9.160596);
++const M=stop('M','Manulla Junction',53.827975,-9.192956);
++const C=stop('C','Castlebar Rail',53.847519,-9.288282);
++const H=stop('H','Heuston Bus',53.34617,-6.29275);
++const D=stop('D','Dublin Heuston',53.346404,-6.293487);
++const origin={lat:54.11065,lon:-9.1595},destination={lat:53.848,lon:-9.289};
++const path=(a,b,meters,seconds)=>({distanceMeters:meters,durationSeconds:seconds,geometry:[a,b],provider:'synthetic_fixture'});
++const a=(id,p,meters,seconds)=>({stopId:id,...path(origin,p,meters,seconds)});
++const e=(id,p,meters,seconds)=>({stopId:id,...path(p,destination,meters,seconds)});
++const transfers=[{fromStopId:'H',toStopId:'D',...path(H,D,75,63)}];
++const tbl={feedVersion:'a07-regression',timezone:'Europe/Dublin',stops:[B,R,M,C,H,D],routes:[
++  {id:'22',name:'22',mode:'bus'},{id:'rail',name:'rail',mode:'rail'}],
++  trips:[{id:'bus-to-dublin',routeId:'22',serviceId:'sat'},
++    {id:'rail-from-dublin',routeId:'rail',serviceId:'sat'},
++    {id:'rail-ballina',routeId:'rail',serviceId:'sat'},
++    {id:'rail-manulla',routeId:'rail',serviceId:'sat'}],
++  stopTimes:[
++    ['bus-to-dublin','B',1,34200],['bus-to-dublin','H',2,46800],
++    ['rail-from-dublin','D',1,53100],['rail-from-dublin','C',2,63780],
++    ['rail-ballina','R',1,34500],['rail-ballina','M',2,36120],
++    ['rail-manulla','M',1,38160],['rail-manulla','C',2,38520]
++  ].map(([tripId,stopId,sequence,t])=>({tripId,stopId,sequence,arrivalSeconds:t,departureSeconds:t})),
++  calendars:[{serviceId:'sat',startDate:DATE,endDate:DATE,weekdays:[false,false,false,false,false,false,true]}],exceptions:[]};
++const paths={origin,destination,access:[a('B',B,65,55),a('R',R,258,215)],egress:[e('C',C,97,81)],transfers};
++const query=(maxWalkingMeters,rankBy='fastest')=>planJourneys(tbl,paths,{serviceDate:DATE,departAfterSeconds:32400,
++ maxTransfers:1,maxWalkingMeters,limit:5,minBoardingSeconds:90,minTransferSeconds:180,rankBy});
++
++test('A07: under 300m, never recommend Ballina -> Dublin -> Castlebar return loop',()=>{
++ const result=query(300);
++ assert.equal(result.length,0);
++});
++test('A07: 400m restores the sensible Ballina -> Manulla -> Castlebar rail connection',()=>{
++ const result=query(400);
++ assert.ok(result.length>0);
++ assert.equal(result[0].walkingMeters,355);
++ assert.deepEqual(result[0].legs.filter(l=>l.type==='ride').map(l=>l.tripId),['rail-ballina','rail-manulla']);
++ assert.equal(result[0].arrivalAtSeconds,38601);
++ assert.ok(!result.some(j=>j.legs.some(l=>l.type==='ride'&&l.tripId==='bus-to-dublin')));
++});
++test('A07: multi-leg Dublin detour is identified by conservative geometry bound',()=>{
++ const stopMap=new Map(tbl.stops.map(s=>[s.id,s]));
++ const trip=(boardStopId,alightStopId)=>({type:'ride',tripId:'x',serviceDate:DATE,boardStopId,alightStopId});
++ const extreme={legs:[trip('B','H'),trip('D','C')]};
++ const valid={legs:[trip('R','M'),trip('M','C')]};
++ assert.equal(hasExtremeGeographicDetour(extreme,origin,destination,stopMap),true);
++ assert.equal(hasExtremeGeographicDetour(valid,origin,destination,stopMap),false);
++ assert.equal(hasExtremeGeographicDetour({legs:[trip('B','H')]},origin,destination,stopMap),false,'single ride is not guessed from endpoint positions');
++ assert.equal(hasExtremeGeographicDetour({legs:[trip('B','unknown'),trip('M','C')]},origin,destination,stopMap),false,'missing coordinates fail open');
++});
++test('A07: fastest removes a 40-minute penalty and extra transfer for just 4m less walking',()=>{
++ const first={type:'ride',serviceDate:DATE,tripId:'420',boardStopId:'B'};
++ const fast={legs:[first],arrivalAtSeconds:42604,latestLeaveAtSeconds:38555,departureAtSeconds:32400,transfers:0,walkingMeters:1653};
++ const bad={legs:[first,{...first,tripId:'440'}],arrivalAtSeconds:45030,latestLeaveAtSeconds:38555,departureAtSeconds:32400,transfers:1,walkingMeters:1649};
++ assert.deepEqual(removeLowValueFastestAlternatives([bad,fast]),[fast]);
++ assert.deepEqual(removeLowValueFastestAlternatives([fast,{...bad,latestLeaveAtSeconds:38800}]),[fast,{...bad,latestLeaveAtSeconds:38800}],
++  'do not silently discard a later starting alternative');
++ assert.deepEqual(removeLowValueFastestAlternatives([fast,{...bad,walkingMeters:1600}]),[fast,{...bad,walkingMeters:1600}],
++  'a meaningful walking saving must remain');
++});

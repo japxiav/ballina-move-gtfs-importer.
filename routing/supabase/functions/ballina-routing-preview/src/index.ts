@@ -13,3 +13,5 @@ export * from './httpApi.ts';
 export * from './supabaseLimiter.ts';
 
 export {nearbyStops} from './nearbyStops.ts';
+
+export * from './irishRail.ts';

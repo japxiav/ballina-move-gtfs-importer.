@@ -1,20 +1,14 @@
 {
   "name": "@ballina-move/routing-engine",
-  "version": "0.9.9",
+  "version": "0.10.0",
   "private": true,
   "license": "UNLICENSED",
-  "description": "Ballina Move routing 0.9.9 audit fixes candidate; not deployed",
+  "description": "Ballina Move routing 0.10.0 rail candidate; not deployed",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test tests/*.test.cjs",
-    "demo": "npm run build && node examples/demo.cjs",
-    "real-demo": "npm run build && node examples/real-gtfs.cjs",
-    "door-to-door-demo": "npm run build && node examples/door-to-door-demo.cjs",
-    "api-demo": "npm run build && node examples/api-demo.cjs",
-    "walk-smoke": "npm run build && node examples/walking-smoke.cjs",
     "api-local": "npm run build && node api/local-server.cjs",
-    "real-two-bus-demo": "npm run build && node examples/real-two-bus.cjs",
-    "verify:artifact": "node scripts/verify_singlefile_parity_099.cjs"
+    "verify:artifact": "node scripts/verify_singlefile_parity_010.cjs"
   },
   "devDependencies": {
     "typescript": "5.9.3"

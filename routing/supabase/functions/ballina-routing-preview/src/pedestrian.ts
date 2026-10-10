@@ -85,6 +85,8 @@ export interface BuildPathsOptions {
   preferredOriginStopIds?:string[];preferredDestinationStopIds?:string[];
   /** Nonstop, time-feasible GTFS services outrank speculative transfers. */
   directOriginStopIds?:string[];directDestinationStopIds?:string[];
+  /** GTFS-only hints for transfer prioritization. Never eliminate other pairs. */
+  preferredTransferFromStopIds?:string[];preferredTransferToStopIds?:string[];
   maxTransferPairs?:number;maxRequestCount?:number;maxPedestrianDistanceMeters?:number;
   /** Absolute deadline for the whole pedestrian search, including all paid calls. */
   requestDeadlineMs?:number;
@@ -186,7 +188,10 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     if(seen.has(k))return;
     seen.add(k);
     const distance=proximityMeters(routableStopCoordinate(a),routableStopCoordinate(b));
-    if(distance<=650&&distance<=walkCap)pairs.push({a,b,distance,priority});
+    // Straight-line distance is a LOWER bound on pedestrian distance, never a
+    // 650m service radius. Let the verified router decide walkability within the
+    // remaining request-wide walking allowance.
+    if(distance<=walkCap)pairs.push({a,b,distance,priority});
   };
   if(opts.transferPairs){
     for(const pair of opts.transferPairs){
@@ -203,20 +208,28 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
   }
   const cells=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
   for(const [,group] of cells)group.sort((a,b)=>a.distance-b.distance||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
+  const fromRelevant=new Set(opts.preferredTransferFromStopIds??[]);
+  const toRelevant=new Set(opts.preferredTransferToStopIds??[]);
+  const isRelevant=(pair:(typeof pairs)[number])=>fromRelevant.has(pair.a.id)&&toRelevant.has(pair.b.id);
   let attempted=0;
   const transferJobs:typeof pairs=[];
-  // Tiered round-robin across geographic cells. An added nearby same-line
-  // option must NOT crowd out an older cross-line route when the budget is 1.
-  for(const tier of ['cross_route','same_route'] as const){
-    const priorityCells=cells.map(([key,group])=>[key,group.filter(p=>p.priority===tier)] as const);
-    for(let depth=0;attempted<maxTransfers&&attempted<budget;depth++){
-      let found=false;
-      for(const [,group] of priorityCells){
-        if(attempted>=maxTransfers||attempted>=budget)break;
-        const pair=group[depth];if(!pair)continue;
-        found=true;attempted++;transferJobs.push(pair);
+  // Spend scarce walking queries on transit-topology-plausible transfers first.
+  // The hints are directional and advisory: candidate discovery is bounded and
+  // may miss a valid connection, so every other pair remains a fallback.
+  // Within each tier, retain deterministic geographic round-robin to avoid
+  // spending the entire allowance in just one urban cluster.
+  for(const relevant of [true,false]){
+    for(const tier of ['cross_route','same_route'] as const){
+      const priorityCells=cells.map(([key,group])=>[key,group.filter(p=>p.priority===tier&&isRelevant(p)===relevant)] as const);
+      for(let depth=0;attempted<maxTransfers&&attempted<budget;depth++){
+        let found=false;
+        for(const [,group] of priorityCells){
+          if(attempted>=maxTransfers||attempted>=budget)break;
+          const pair=group[depth];if(!pair)continue;
+          found=true;attempted++;transferJobs.push(pair);
+        }
+        if(!found)break;
       }
-      if(!found)break;
     }
   }
   await runBatch(transferJobs,async pair=>{
@@ -231,9 +244,30 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     else {const proposed=await requestWalk(origin,destination,{fromRole:'user',toRole:'user'});
       if(proposed&&proposed.distanceMeters<=directCap)direct=proposed;}
   }
+  // A09: Record the reason for candidate truncation without revealing stop
+  // identifiers or user coordinates and without performing any provider calls.
+  // "possibleGtfsPairs" includes worldwide GTFS pairs: it is NOT a count of
+  // guaranteed, time-feasible passenger connections for this journey.
+  const omittedOrigins=Math.max(0,originCandidateCount-origins.length);
+  const omittedDestinations=Math.max(0,destinationCandidateCount-destinations.length);
+  const omittedTransfers=Math.max(0,pairs.length-transferJobs.length);
+  const limitedBy:Array<'origin_stop_cap'|'destination_stop_cap'|'transfer_pair_cap'|'transfer_preselection_budget'>=[];
+  if(omittedOrigins>0)limitedBy.push('origin_stop_cap');
+  if(omittedDestinations>0)limitedBy.push('destination_stop_cap');
+  if(pairs.length>maxTransfers)limitedBy.push('transfer_pair_cap');
+  if(pairs.length>budget&&budget<maxTransfers)limitedBy.push('transfer_preselection_budget');
+  const candidateAudit={
+    origins:{nearbyGeodesic:originCandidateCount,selectionLimit:originCap,selected:origins.length,omittedByStopCap:omittedOrigins},
+    destinations:{nearbyGeodesic:destinationCandidateCount,selectionLimit:destCap,selected:destinations.length,omittedByStopCap:omittedDestinations},
+    transfers:{possibleGtfsPairs:pairs.length,pairSelectionLimit:maxTransfers,selected:transferJobs.length,omittedBySelectionLimit:omittedTransfers,
+      topologyHinted:pairs.filter(isRelevant).length,selectedTopologyHinted:transferJobs.filter(isRelevant).length},
+    requestLimit:budget,limitedBy,
+  };
   return {origin,destination,access,egress,transfers,direct,
     coverage:{planned:origins.length+destinations.length+transferJobs.length+
       Number(directCap>0&&proximityMeters(origin,destination)<=directCap),
       executed:used,skippedBudget,directSkippedBudget,
-      candidateLimitReached:originCandidateCount>originCap||destinationCandidateCount>destCap||pairs.length>maxTransfers}};
+      // Candidate limits can truncate discovery even without a paid call
+      // shortage. Never claim this is a complete transport network search.
+      candidateLimitReached:limitedBy.length>0,candidateAudit}};
 }

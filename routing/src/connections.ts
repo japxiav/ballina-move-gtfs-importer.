@@ -50,7 +50,8 @@ export function journeyConnections(journey:Journey,stops:Stop[]):ConnectionInstr
         transferWalkSeconds:walkSecs,transferWalkMeters:walk?.distanceMeters??0,
         scheduledWindowSeconds:window,waitingAfterWalkSeconds:window-walkSecs,
         boarding:boardingInstruction(to),guaranteed:false,
-        note:walk?'Walk between the indicated stops using the provided pedestrian route. Connection is scheduled, not guaranteed.':'Remain at the same GTFS stop for the next bus. Physical bay/side is not confirmed unless independently verified.',
+        note:walk?'Walk between the indicated stops using the provided pedestrian route. Connection is scheduled, not guaranteed.':
+          `Remain at the same GTFS stop for the next ${leg.mode==='rail'?'train':'bus'}. Physical platform/bay is not confirmed unless independently verified.`,
       });
     }
     previous={ride:leg,index};
