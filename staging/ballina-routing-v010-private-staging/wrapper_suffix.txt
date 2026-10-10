@@ -1,0 +1,91 @@
+
+};
+const __ballinaCache = {};
+function __ballinaRequire(moduleId) {
+  const cached = __ballinaCache[moduleId];
+  if (cached) return cached.exports;
+  const factory = __ballinaModules[moduleId];
+  if (!factory) throw new Error('unknown_module');
+  const module = {exports: {}};
+  __ballinaCache[moduleId] = module;
+  factory(module, module.exports, __ballinaRequire);
+  return module.exports;
+}
+// Ballina Move v0.10.0 private staging ONLY. Uses bundled engine from approved PR #4.
+// The SQL/PostgREST GTFS loader is READ-ONLY; fake walking paths are never authoritative.
+const {createRoutingApi, createSnapshotCache} = __ballinaRequire('./httpApi');
+const {loadActiveGtfsSnapshot} = __ballinaRequire('./gtfsSnapshot');
+const {proximityMeters} = __ballinaRequire('./boarding');
+
+const headers = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
+const result = (body, status=200) => Response.json(body, {status, headers});
+const constantTimeToken = async (provided) => {
+  const expected = Deno.env.get('BALLINA_V010_STAGING_TOKEN') ?? '';
+  if (!expected || expected.length < 32 || expected === privateKey || expected === publishableKey || !provided || provided.length > 256) return false;
+  const digest = async s => new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)));
+  const [a,b] = await Promise.all([digest(expected),digest(provided)]);
+  let diff=0; for(let i=0;i<a.length;i++) diff|=a[i]^b[i];
+  return diff===0;
+};
+function readNamedKey(jsonEnv, names) {
+  const raw=Deno.env.get(jsonEnv);
+  if (raw) { try {const obj=JSON.parse(raw);if(obj && typeof obj.default === 'string') return obj.default;}catch { /* ignore */ } }
+  for(const n of names){const key=Deno.env.get(n);if(key)return key;}
+  return '';
+}
+const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+const privateKey=readNamedKey('SUPABASE_SECRET_KEYS',['SUPABASE_SECRET_KEY','SUPABASE_SERVICE_ROLE_KEY','SB_SERVICE_ROLE_KEY']);
+const publishableKey=readNamedKey('SUPABASE_PUBLISHABLE_KEYS',['SUPABASE_PUBLISHABLE_KEY','SUPABASE_ANON_KEY']);
+const snapshotReady = /^https:\/\//.test(supabaseUrl) && privateKey.length>15;
+const loadTimetable = snapshotReady ? createSnapshotCache(()=>loadActiveGtfsSnapshot({supabaseUrl,privateKey,timeoutMs:20000}),300_000) : null;
+const mockRouter = {
+ async walk(from,to,_roles,signal) {
+   if(signal?.aborted)throw new Error('request_timeout');
+   const air=proximityMeters(from,to);
+   if (!Number.isFinite(air))return null;
+   if(air<0.01)return {distanceMeters:0,durationSeconds:0,geometry:[from,to],provider:'synthetic_private_staging_only'};
+   const meters=Math.ceil(air*1.35);
+   return {distanceMeters:meters,durationSeconds:Math.ceil(meters/1.2),geometry:[from,to],provider:'synthetic_private_staging_only'};
+ }
+};
+const api=loadTimetable ? createRoutingApi({loadTimetable,router:mockRouter,
+  clientIdentity:()=> 'staging-only', consumeRateLimit:async()=>true,allowedOrigins:[]}) : null;
+const limits=new Map();
+function permittedByLocalLimit() {
+  const tick=Date.now(), slot=Math.floor(tick/60000);
+  for (const k of limits.keys()) if (k!==slot) limits.delete(k);
+  const n=(limits.get(slot)??0)+1;
+  limits.set(slot,n);
+  return n<=10;
+}
+Deno.serve(async req=>{
+  // Supabase verify_jwt=true is also required at the gateway. Never disable it.
+  if(!await constantTimeToken(req.headers.get('x-ballina-preview-token')))
+    return result({error:'unauthorized'},401);
+  if(!permittedByLocalLimit())return result({error:'staging_rate_limited'},429);
+  const inputUrl=new URL(req.url);
+  const dashboardTest=inputUrl.pathname.endsWith('/ballina-routing-v010-private-staging')?inputUrl.searchParams.get('test'):null;
+  // Supabase Dashboard Test invokes the function root, not arbitrary nested paths.
+  // The test selector is honored only after JWT gateway and private-token checks.
+  const path=dashboardTest==='health'?'/health':dashboardTest==='gtfs-summary'?'/v1/gtfs-summary':dashboardTest==='journeys'?'/v1/journeys':inputUrl.pathname;
+  if (req.method==='GET' && path.endsWith('/health'))return result({service:'ballina-routing-v010-private-staging', version:'0.10.0', mode:'private_simulation', public_routing_enabled:false,paid_walking_provider_calls_enabled:false,walking_geometry_real:false,gtfs_read_only:true,snapshot_configured:snapshotReady});
+  if(!api)return result({error:'staging_snapshot_not_configured'},503);
+  if(req.method==='GET'&&path.endsWith('/v1/gtfs-summary')){
+    try {
+      const data=await loadTimetable();
+      const modes={bus:data.routes.filter(r=>r.mode==='bus').length,rail:data.routes.filter(r=>r.mode==='rail').length};
+      return result({service:'ballina-routing-v010-private-staging',simulation:true,public_routing_enabled:false,feedVersion:data.feedVersion,stops:data.stops.length,routes:modes,trips:data.trips.length,stopTimes:data.stopTimes.length,source:'NTA_GTFS_read_only'});
+    }catch{return result({error:'snapshot_load_failed'},503);}
+  }
+  if(req.method==='POST'&&path.endsWith('/v1/journeys')){
+    const url=new URL(req.url);url.pathname='/v1/journeys';url.search='';
+    try {
+      const forwarded=new Request(url,req);
+      const response=await api(forwarded);
+      const data=await response.json();
+      const envelope={...data,service:'ballina-routing-v010-private-staging',simulation:true,walking_geometry_real:false,not_for_passengers:true,public_routing_enabled:false,notice:'ALL WALKING GEOMETRY AND WALK TIMES ARE SYNTHETIC TEST DATA. DO NOT NAVIGATE USING THEM.'};
+      return result(envelope,response.status);
+    }catch{return result({error:'staging_request_failed'},503);}
+  }
+  return result({error:'not_found'},404);
+});

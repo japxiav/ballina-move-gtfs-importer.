@@ -1,3 +1,5 @@
+> **CURRENT A09.1 REVIEW (October 2026).** This README contains historical version notes, including commands and deployment assertions which no longer apply to the v0.10.0 staging candidate. For current release status and safe local commands, read [README_A091_STABILIZATION.md](README_A091_STABILIZATION.md). Supported offline checks: `npm test`, `npm run build`, `npm run verify:artifact`. The old `npm run demo`, `real-demo`, `door-to-door-demo`, `api-demo`, `walk-smoke` and `real-two-bus-demo` scripts were removed because their `examples/` files are absent. **No public journeys or verified walking routes are deployed.**
+
 > **v0.9.9 candidata em auditoria local.** Consulte `README_RELEASE_0.9.9.md`. Não está implantada.
 
 # Ballina Move routing v0.9.8 (candidata local nao implantada)
