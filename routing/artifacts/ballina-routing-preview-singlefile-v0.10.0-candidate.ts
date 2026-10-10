@@ -1558,26 +1558,34 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
     const cells = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
     for (const [, group] of cells)
         group.sort((a, b) => a.distance - b.distance || a.a.id.localeCompare(b.a.id) || a.b.id.localeCompare(b.b.id));
+    const fromRelevant = new Set(opts.preferredTransferFromStopIds ?? []);
+    const toRelevant = new Set(opts.preferredTransferToStopIds ?? []);
+    const isRelevant = (pair) => fromRelevant.has(pair.a.id) && toRelevant.has(pair.b.id);
     let attempted = 0;
     const transferJobs = [];
-    // Tiered round-robin across geographic cells. An added nearby same-line
-    // option must NOT crowd out an older cross-line route when the budget is 1.
-    for (const tier of ['cross_route', 'same_route']) {
-        const priorityCells = cells.map(([key, group]) => [key, group.filter(p => p.priority === tier)]);
-        for (let depth = 0; attempted < maxTransfers && attempted < budget; depth++) {
-            let found = false;
-            for (const [, group] of priorityCells) {
-                if (attempted >= maxTransfers || attempted >= budget)
+    // Spend scarce walking queries on transit-topology-plausible transfers first.
+    // The hints are directional and advisory: candidate discovery is bounded and
+    // may miss a valid connection, so every other pair remains a fallback.
+    // Within each tier, retain deterministic geographic round-robin to avoid
+    // spending the entire allowance in just one urban cluster.
+    for (const relevant of [true, false]) {
+        for (const tier of ['cross_route', 'same_route']) {
+            const priorityCells = cells.map(([key, group]) => [key, group.filter(p => p.priority === tier && isRelevant(p) === relevant)]);
+            for (let depth = 0; attempted < maxTransfers && attempted < budget; depth++) {
+                let found = false;
+                for (const [, group] of priorityCells) {
+                    if (attempted >= maxTransfers || attempted >= budget)
+                        break;
+                    const pair = group[depth];
+                    if (!pair)
+                        continue;
+                    found = true;
+                    attempted++;
+                    transferJobs.push(pair);
+                }
+                if (!found)
                     break;
-                const pair = group[depth];
-                if (!pair)
-                    continue;
-                found = true;
-                attempted++;
-                transferJobs.push(pair);
             }
-            if (!found)
-                break;
         }
     }
     await runBatch(transferJobs, async (pair) => {
@@ -1661,7 +1669,7 @@ function candidateStopPreferences(data, req, maxRadius = 1500, transferReach = 2
     const originIds = new Set(originNear.map(s => s.id));
     const destinationIds = new Set(destNear.map(s => s.id));
     if (!originIds.size || !destinationIds.size)
-        return { origin: [], destination: [], directOrigin: [], directDestination: [] };
+        return { origin: [], destination: [], directOrigin: [], directDestination: [], transferFrom: [], transferTo: [] };
     const stopMap = new Map(data.stops.map(s => [s.id, s]));
     const routeTripIds = new Set(data.trips.map(t => t.id));
     const timesByTrip = new Map();
@@ -1765,7 +1773,10 @@ function candidateStopPreferences(data, req, maxRadius = 1500, transferReach = 2
     const fromOrigin = step(originIds, graph, rounds);
     return { origin: originNear.filter(s => toDestination.has(s.id) && timeFeasibleOrigin.has(s.id)).map(s => s.id),
         destination: destNear.filter(s => fromOrigin.has(s.id)).map(s => s.id),
-        directOrigin: [...directOrigin], directDestination: [...directDestination] };
+        directOrigin: [...directOrigin], directDestination: [...directDestination],
+        // Topology-only transfer hints. These may be incomplete and MUST NOT
+        // exclude unranked pairs: the walking router remains authoritative.
+        transferFrom: [...fromOrigin], transferTo: [...toDestination] };
 }
 /**
  * A controlled, server-side integration seam. No provider key or database secret
@@ -1841,12 +1852,13 @@ async function planDoorToDoor(timetable, router, req, opts = {}) {
     // A smaller, hard-coded discovery radius must never silently shrink it.
     const candidateRadius = opts.candidateRadiusMeters ?? walkCap;
     const priority = transitAvailable ? candidateStopPreferences(data, req, candidateRadius, walkCap) :
-        { origin: [], destination: [], directOrigin: [], directDestination: [] };
+        { origin: [], destination: [], directOrigin: [], directDestination: [], transferFrom: [], transferTo: [] };
     const paths = await (0, pedestrian_1.buildPedestrianPaths)(router, transitAvailable ? stops : [], req.origin, req.destination, {
         ...opts, maxRequestCount: budget, candidateRadiusMeters: candidateRadius,
         maxPedestrianDistanceMeters: Math.min(opts.maxPedestrianDistanceMeters ?? walkCap, walkCap), transferPairs,
         preferredOriginStopIds: priority.origin, preferredDestinationStopIds: priority.destination,
         directOriginStopIds: priority.directOrigin, directDestinationStopIds: priority.directDestination,
+        preferredTransferFromStopIds: priority.transferFrom, preferredTransferToStopIds: priority.transferTo,
         maxDirectWalkMeters: Math.min(opts.maxDirectWalkMeters ?? 1400, req.maxWalkingMeters ?? 2500),
         maxOriginStops: opts.maxOriginStops ?? 5,
         maxDestinationStops: opts.maxDestinationStops ?? 5,
