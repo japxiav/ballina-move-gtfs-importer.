@@ -47,7 +47,7 @@ function hasBoardableServiceInWindow(data:Timetable, req:DoorToDoorRequest):bool
  * Directional bus topology helps prioritize a 5th useful stop over four closer
  * stops on irrelevant services. All actual transfers still require walking
  * routes from the provider, and departure times are validated by the engine. */
-function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius=1500):{
+function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius=1500,transferReach=2500):{
   origin:string[];destination:string[];directOrigin:string[];directDestination:string[]
 }{
   const originNear=data.stops.filter(s=>proximityMeters(req.origin,s)<=maxRadius);
@@ -113,7 +113,7 @@ function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius
     let result=walkingNeighbourhood.get(id);
     if(result)return result;
     const base=stopMap.get(id);
-    result=base?allTransitStops.filter(other=>other!==id&&stopMap.has(other)&&proximityMeters(base,stopMap.get(other)!)<=650):[];
+    result=base?allTransitStops.filter(other=>other!==id&&stopMap.has(other)&&proximityMeters(base,stopMap.get(other)!)<=transferReach):[];
     walkingNeighbourhood.set(id,result);return result;
   }
   const step=(seed:Set<string>,edges:Map<string,Set<string>>,rounds:number):Set<string>=>{
@@ -174,6 +174,9 @@ export async function planDoorToDoor(
   const stopMap=new Map(stops.map(s=>[s.id,s]));
   const transferPairs:{fromStopId:string;toStopId:string;priority:'cross_route'|'same_route'}[]=[];
   const ids=[...stopMap.keys()];
+  // The API may enforce a tighter per-request cap; never use an unrelated
+  // hard-coded transfer radius to discard a possible connection.
+  const walkCap=Math.max(0,Math.min(req.maxWalkingMeters??2500,opts.maxPedestrianDistanceMeters??Infinity));
   const transitAvailable=hasBoardableServiceInWindow(data,req);
   if(transitAvailable&&(req.maxTransfers??1)>0){
     for(const a of ids){
@@ -181,11 +184,10 @@ export async function planDoorToDoor(
       for(const b of ids){
         if(a===b)continue;
         const to=boardingTrips.get(b);if(!to)continue;
-        // pedestrian.ts already applies this exact geometric bound. Apply it
-        // before creating potentially thousands of extra same-line pairs;
-        // this is a cost-only filter, never evidence of walkability.
+        // Geodesic length is a cheap necessary lower bound, not a fixed
+        // service radius or evidence that a pedestrian path exists.
         const distance=proximityMeters(routableStopCoordinate(stopMap.get(a)!),routableStopCoordinate(stopMap.get(b)!));
-        if(distance<0.01||distance>650||distance>Math.max(0,req.maxWalkingMeters??2500))continue;
+        if(distance<0.01||distance>walkCap)continue;
         if(![...from].some(fr=>[...to].some(tr=>fr!==tr)))continue;
         // Keep legacy cross-route connections ahead of newly supported
         // same-line transfers when the paid walking budget is very small.
@@ -198,9 +200,8 @@ export async function planDoorToDoor(
   const budget=Math.max(0,Math.min(opts.maxRequestCount??24,200));
   // A user's walking budget is an upper bound on any access/egress segment.
   // A smaller, hard-coded discovery radius must never silently shrink it.
-  const walkCap=Math.max(0,req.maxWalkingMeters??2500);
   const candidateRadius=opts.candidateRadiusMeters??walkCap;
-  const priority=transitAvailable?candidateStopPreferences(data,req,candidateRadius):
+  const priority=transitAvailable?candidateStopPreferences(data,req,candidateRadius,walkCap):
     {origin:[],destination:[],directOrigin:[],directDestination:[]};
   const paths=await buildPedestrianPaths(router,transitAvailable?stops:[],req.origin,req.destination,{
     ...opts,maxRequestCount:budget,candidateRadiusMeters:candidateRadius,

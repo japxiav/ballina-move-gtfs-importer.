@@ -186,7 +186,10 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     if(seen.has(k))return;
     seen.add(k);
     const distance=proximityMeters(routableStopCoordinate(a),routableStopCoordinate(b));
-    if(distance<=650&&distance<=walkCap)pairs.push({a,b,distance,priority});
+    // Straight-line distance is a LOWER bound on pedestrian distance, never a
+    // 650m service radius. Let the verified router decide walkability within the
+    // remaining request-wide walking allowance.
+    if(distance<=walkCap)pairs.push({a,b,distance,priority});
   };
   if(opts.transferPairs){
     for(const pair of opts.transferPairs){
@@ -235,5 +238,8 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     coverage:{planned:origins.length+destinations.length+transferJobs.length+
       Number(directCap>0&&proximityMeters(origin,destination)<=directCap),
       executed:used,skippedBudget,directSkippedBudget,
-      candidateLimitReached:originCandidateCount>originCap||destinationCandidateCount>destCap||pairs.length>maxTransfers}};
+      // A request-budget stop is still incomplete candidate discovery, even
+      // when maxTransferPairs was not itself exceeded. Never report completeness
+      // for a zero-request search with reachable transfer candidates.
+      candidateLimitReached:originCandidateCount>originCap||destinationCandidateCount>destCap||pairs.length>transferJobs.length}};
 }
