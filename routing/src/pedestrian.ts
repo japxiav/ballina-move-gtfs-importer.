@@ -244,12 +244,30 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     else {const proposed=await requestWalk(origin,destination,{fromRole:'user',toRole:'user'});
       if(proposed&&proposed.distanceMeters<=directCap)direct=proposed;}
   }
+  // A09: Record the reason for candidate truncation without revealing stop
+  // identifiers or user coordinates and without performing any provider calls.
+  // "possibleGtfsPairs" includes worldwide GTFS pairs: it is NOT a count of
+  // guaranteed, time-feasible passenger connections for this journey.
+  const omittedOrigins=Math.max(0,originCandidateCount-origins.length);
+  const omittedDestinations=Math.max(0,destinationCandidateCount-destinations.length);
+  const omittedTransfers=Math.max(0,pairs.length-transferJobs.length);
+  const limitedBy:Array<'origin_stop_cap'|'destination_stop_cap'|'transfer_pair_cap'|'transfer_preselection_budget'>=[];
+  if(omittedOrigins>0)limitedBy.push('origin_stop_cap');
+  if(omittedDestinations>0)limitedBy.push('destination_stop_cap');
+  if(pairs.length>maxTransfers)limitedBy.push('transfer_pair_cap');
+  if(pairs.length>budget&&budget<maxTransfers)limitedBy.push('transfer_preselection_budget');
+  const candidateAudit={
+    origins:{nearbyGeodesic:originCandidateCount,selectionLimit:originCap,selected:origins.length,omittedByStopCap:omittedOrigins},
+    destinations:{nearbyGeodesic:destinationCandidateCount,selectionLimit:destCap,selected:destinations.length,omittedByStopCap:omittedDestinations},
+    transfers:{possibleGtfsPairs:pairs.length,pairSelectionLimit:maxTransfers,selected:transferJobs.length,omittedBySelectionLimit:omittedTransfers,
+      topologyHinted:pairs.filter(isRelevant).length,selectedTopologyHinted:transferJobs.filter(isRelevant).length},
+    requestLimit:budget,limitedBy,
+  };
   return {origin,destination,access,egress,transfers,direct,
     coverage:{planned:origins.length+destinations.length+transferJobs.length+
       Number(directCap>0&&proximityMeters(origin,destination)<=directCap),
       executed:used,skippedBudget,directSkippedBudget,
-      // A request-budget stop is still incomplete candidate discovery, even
-      // when maxTransferPairs was not itself exceeded. Never report completeness
-      // for a zero-request search with reachable transfer candidates.
-      candidateLimitReached:originCandidateCount>originCap||destinationCandidateCount>destCap||pairs.length>transferJobs.length}};
+      // Candidate limits can truncate discovery even without a paid call
+      // shortage. Never claim this is a complete transport network search.
+      candidateLimitReached:limitedBy.length>0,candidateAudit}};
 }

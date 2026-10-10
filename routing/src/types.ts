@@ -71,7 +71,18 @@ export interface PedestrianPaths {
   /** Optional, independently routed walk from origin directly to destination. */
   direct?: WalkPath;
   /** Aggregate resource limits only; never imply the entire network was searched. */
-  coverage?:{planned:number;executed:number;skippedBudget:number;directSkippedBudget:boolean;candidateLimitReached:boolean};
+  coverage?:{
+    planned:number;executed:number;skippedBudget:number;directSkippedBudget:boolean;candidateLimitReached:boolean;
+    /** A09: Aggregate diagnostics only. Geographic proximity and GTFS topology do not prove routability. */
+    candidateAudit?:{
+      origins:{nearbyGeodesic:number;selectionLimit:number;selected:number;omittedByStopCap:number};
+      destinations:{nearbyGeodesic:number;selectionLimit:number;selected:number;omittedByStopCap:number};
+      transfers:{possibleGtfsPairs:number;pairSelectionLimit:number;selected:number;omittedBySelectionLimit:number;
+        topologyHinted:number;selectedTopologyHinted:number};
+      requestLimit:number;
+      limitedBy:Array<'origin_stop_cap'|'destination_stop_cap'|'transfer_pair_cap'|'transfer_preselection_budget'>;
+    };
+  };
 }
 export interface WalkLeg { type:'walk'; from: Position; to: Position; durationSeconds:number;distanceMeters:number;geometry:Position[]; provider:string; purpose:'access'|'transfer'|'egress'|'direct'; endpointSnapMeters?:{from:number;to:number};unverifiedConnector?:{meters:number;estimatedSeconds:number;estimateOnly:true};snappedUserEndpoints?:{from?:Position;to?:Position};requiresSnapConfirmation?:boolean; }
 export interface RideLeg {type:'ride'; tripId:string;routeId:string;routeName:string;mode:'bus'|'rail';headsign:string|null;boardStopId:string;alightStopId:string;/** Seconds relative to the requested local calendar date (not serviceDate). */

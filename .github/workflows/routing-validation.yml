@@ -27,14 +27,28 @@ jobs:
       - name: Install exact dependency versions
         run: npm ci --ignore-scripts
         working-directory: routing
+      # A09.1: verify the versioned artifact *before* any build step can rewrite it.
+      # This detects a malicious/stale artifact even if regenerate would repair it.
+      - name: Compile source without changing the candidate
+        run: npm run build
+        working-directory: routing
+      - name: Verify committed candidate before regeneration
+        run: npm run verify:artifact
+        working-directory: routing
       - name: Run routing tests
         run: npm test
         working-directory: routing
       - name: Regenerate private candidate artifact
         run: node scripts/build_singlefile_candidate_010.cjs
         working-directory: routing
+      # Token parity alone is not sufficient: the generated wrapper and code
+      # must match the exact content committed in the pull request.
+      - name: Reject generated candidate drift
+        run: git diff --exit-code -- routing/artifacts/ballina-routing-preview-singlefile-v0.10.0-candidate.ts
       - name: Verify compiled parity
         run: npm run verify:artifact
         working-directory: routing
+      - name: Offline v0.10 private staging wrapper contract
+        run: node --test staging/tests/v010_private_contract.test.cjs
       - name: Verify sealed staging gate
         run: node --test staging/tests/sealed_gate.test.cjs
