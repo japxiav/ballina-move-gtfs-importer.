@@ -87,6 +87,8 @@ export interface BuildPathsOptions {
   directOriginStopIds?:string[];directDestinationStopIds?:string[];
   /** GTFS-only hints for transfer prioritization. Never eliminate other pairs. */
   preferredTransferFromStopIds?:string[];preferredTransferToStopIds?:string[];
+  /** A10: respects explicit less-walking ranking for timetable evidence. */
+  preferLowerBoundWalking?:boolean;
   maxTransferPairs?:number;maxRequestCount?:number;maxPedestrianDistanceMeters?:number;
   /** Absolute deadline for the whole pedestrian search, including all paid calls. */
   requestDeadlineMs?:number;
@@ -94,7 +96,7 @@ export interface BuildPathsOptions {
   maxConcurrentWalkingRequests?:number;
   signal?:AbortSignal;
   /** Optional known transit connection pairs. Unknown pairs are never guessed from a direct-line drawing. */
-  transferPairs?:Array<{fromStopId:string;toStopId:string;priority?:'cross_route'|'same_route'}>;
+  transferPairs?:Array<{fromStopId:string;toStopId:string;priority?:'cross_route'|'same_route';timetableArrivalEstimateSeconds?:number;timetableLowerBoundWalkingMeters?:number}>;
   /** Direct walk is optional because it spends one provider call when nonzero. */
   maxDirectWalkMeters?:number;
 }
@@ -179,9 +181,9 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
   // Discover short transfers deterministically, independent of the GTFS stop import order.
   // Spread candidates across geographic cells instead of exhausting the budget in one town.
   const known=new Map(unique.map(s=>[s.id,s]));
-  const pairs:{a:Stop;b:Stop;distance:number;priority:'cross_route'|'same_route'}[]=[];
+  const pairs:{a:Stop;b:Stop;distance:number;priority:'cross_route'|'same_route';timetableArrivalEstimateSeconds?:number;timetableLowerBoundWalkingMeters?:number}[]=[];
   const seen=new Set<string>();
-  const addPair=(a:Stop,b:Stop,priority:'cross_route'|'same_route'='cross_route')=>{
+  const addPair=(a:Stop,b:Stop,priority:'cross_route'|'same_route'='cross_route',timetableArrivalEstimateSeconds?:number,timetableLowerBoundWalkingMeters?:number)=>{
     if(a.id===b.id)return;
     if(proximityMeters(routableStopCoordinate(a),routableStopCoordinate(b))<0.01)return;
     const k=JSON.stringify([a.id,b.id]);
@@ -191,12 +193,12 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     // Straight-line distance is a LOWER bound on pedestrian distance, never a
     // 650m service radius. Let the verified router decide walkability within the
     // remaining request-wide walking allowance.
-    if(distance<=walkCap)pairs.push({a,b,distance,priority});
+    if(distance<=walkCap)pairs.push({a,b,distance,priority,...(Number.isFinite(timetableArrivalEstimateSeconds)?{timetableArrivalEstimateSeconds,timetableLowerBoundWalkingMeters}:{} )});
   };
   if(opts.transferPairs){
     for(const pair of opts.transferPairs){
       const a=known.get(pair.fromStopId),b=known.get(pair.toStopId);
-      if(a&&b)addPair(a,b,pair.priority??'cross_route');
+      if(a&&b)addPair(a,b,pair.priority??'cross_route',pair.timetableArrivalEstimateSeconds,pair.timetableLowerBoundWalkingMeters);
     }
   }else{
     for(const a of unique)for(const b of unique)addPair(a,b);
@@ -207,29 +209,55 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     const group=groups.get(key)??[];group.push(pair);groups.set(key,group);
   }
   const cells=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+  const timedScore=(p:(typeof pairs)[number])=>opts.preferLowerBoundWalking
+    ?p.timetableLowerBoundWalkingMeters??Infinity:p.timetableArrivalEstimateSeconds??Infinity;
+  const timedCompare=(a:(typeof pairs)[number],b:(typeof pairs)[number])=>
+    timedScore(a)-timedScore(b)||
+    (a.timetableArrivalEstimateSeconds??Infinity)-(b.timetableArrivalEstimateSeconds??Infinity)||
+    a.distance-b.distance||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id);
   for(const [,group] of cells)group.sort((a,b)=>a.distance-b.distance||a.a.id.localeCompare(b.a.id)||a.b.id.localeCompare(b.b.id));
   const fromRelevant=new Set(opts.preferredTransferFromStopIds??[]);
   const toRelevant=new Set(opts.preferredTransferToStopIds??[]);
   const isRelevant=(pair:(typeof pairs)[number])=>fromRelevant.has(pair.a.id)&&toRelevant.has(pair.b.id);
   let attempted=0;
   const transferJobs:typeof pairs=[];
-  // Spend scarce walking queries on transit-topology-plausible transfers first.
-  // The hints are directional and advisory: candidate discovery is bounded and
-  // may miss a valid connection, so every other pair remains a fallback.
-  // Within each tier, retain deterministic geographic round-robin to avoid
-  // spending the entire allowance in just one urban cluster.
-  for(const relevant of [true,false]){
-    for(const tier of ['cross_route','same_route'] as const){
-      const priorityCells=cells.map(([key,group])=>[key,group.filter(p=>p.priority===tier&&isRelevant(p)===relevant)] as const);
-      for(let depth=0;attempted<maxTransfers&&attempted<budget;depth++){
-        let found=false;
-        for(const [,group] of priorityCells){
-          if(attempted>=maxTransfers||attempted>=budget)break;
-          const pair=group[depth];if(!pair)continue;
-          found=true;attempted++;transferJobs.push(pair);
-        }
-        if(!found)break;
+  // First search timestamp-consistent *one-transfer* candidates. These are
+  // optimistic timetable hints, not confirmed journeys or walkable paths.
+  // Keep round-robin geographic coverage and the A08 topology/route fallback.
+  // Timetable-evidenced candidates are sorted by estimated arrival (or the
+  // request's walking preference). Round-robin cells by their BEST candidate,
+  // not alphabetical geography: the first call must target the strongest hint.
+  const rankedCells=cells.map(([key,group])=>[key,
+    group.filter(p=>p.timetableArrivalEstimateSeconds!==undefined).sort(timedCompare)] as const)
+    .filter(([,group])=>group.length)
+    .sort((a,b)=>timedCompare(a[1][0]!,b[1][0]!)||a[0].localeCompare(b[0]));
+  for(let depth=0;attempted<maxTransfers&&attempted<budget;depth++){
+    let found=false;
+    for(const [,group] of rankedCells){
+      if(attempted>=maxTransfers||attempted>=budget)break;
+      const pair=group[depth];if(!pair)continue;
+      found=true;attempted++;transferJobs.push(pair);
+    }
+    if(!found)break;
+  }
+  // A08 fallback still spans topology-relevant and other stop pairs, with
+  // cross-route priority and geographic round-robin. Nothing is hard-pruned.
+  const tiers=[
+    (p:(typeof pairs)[number])=>p.timetableArrivalEstimateSeconds===undefined&&isRelevant(p)&&p.priority==='cross_route',
+    (p:(typeof pairs)[number])=>p.timetableArrivalEstimateSeconds===undefined&&isRelevant(p)&&p.priority==='same_route',
+    (p:(typeof pairs)[number])=>p.timetableArrivalEstimateSeconds===undefined&&!isRelevant(p)&&p.priority==='cross_route',
+    (p:(typeof pairs)[number])=>p.timetableArrivalEstimateSeconds===undefined&&!isRelevant(p)&&p.priority==='same_route',
+  ];
+  for(const qualifies of tiers){
+    const priorityCells=cells.map(([key,group])=>[key,group.filter(qualifies)] as const);
+    for(let depth=0;attempted<maxTransfers&&attempted<budget;depth++){
+      let found=false;
+      for(const [,group] of priorityCells){
+        if(attempted>=maxTransfers||attempted>=budget)break;
+        const pair=group[depth];if(!pair)continue;
+        found=true;attempted++;transferJobs.push(pair);
       }
+      if(!found)break;
     }
   }
   await runBatch(transferJobs,async pair=>{
@@ -260,7 +288,9 @@ export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],ori
     origins:{nearbyGeodesic:originCandidateCount,selectionLimit:originCap,selected:origins.length,omittedByStopCap:omittedOrigins},
     destinations:{nearbyGeodesic:destinationCandidateCount,selectionLimit:destCap,selected:destinations.length,omittedByStopCap:omittedDestinations},
     transfers:{possibleGtfsPairs:pairs.length,pairSelectionLimit:maxTransfers,selected:transferJobs.length,omittedBySelectionLimit:omittedTransfers,
-      topologyHinted:pairs.filter(isRelevant).length,selectedTopologyHinted:transferJobs.filter(isRelevant).length},
+      topologyHinted:pairs.filter(isRelevant).length,selectedTopologyHinted:transferJobs.filter(isRelevant).length,
+      timetableHinted:pairs.filter(p=>p.timetableArrivalEstimateSeconds!==undefined).length,
+      selectedTimetableHinted:transferJobs.filter(p=>p.timetableArrivalEstimateSeconds!==undefined).length},
     requestLimit:budget,limitedBy,
   };
   return {origin,destination,access,egress,transfers,direct,

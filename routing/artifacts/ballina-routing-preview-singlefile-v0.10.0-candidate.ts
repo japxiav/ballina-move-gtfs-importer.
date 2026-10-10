@@ -1520,7 +1520,7 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
     const known = new Map(unique.map(s => [s.id, s]));
     const pairs = [];
     const seen = new Set();
-    const addPair = (a, b, priority = 'cross_route') => {
+    const addPair = (a, b, priority = 'cross_route', timetableArrivalEstimateSeconds, timetableLowerBoundWalkingMeters) => {
         if (a.id === b.id)
             return;
         if ((0, boarding_1.proximityMeters)((0, boarding_1.routableStopCoordinate)(a), (0, boarding_1.routableStopCoordinate)(b)) < 0.01)
@@ -1534,13 +1534,13 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
         // 650m service radius. Let the verified router decide walkability within the
         // remaining request-wide walking allowance.
         if (distance <= walkCap)
-            pairs.push({ a, b, distance, priority });
+            pairs.push({ a, b, distance, priority, ...(Number.isFinite(timetableArrivalEstimateSeconds) ? { timetableArrivalEstimateSeconds, timetableLowerBoundWalkingMeters } : {}) });
     };
     if (opts.transferPairs) {
         for (const pair of opts.transferPairs) {
             const a = known.get(pair.fromStopId), b = known.get(pair.toStopId);
             if (a && b)
-                addPair(a, b, pair.priority ?? 'cross_route');
+                addPair(a, b, pair.priority ?? 'cross_route', pair.timetableArrivalEstimateSeconds, pair.timetableLowerBoundWalkingMeters);
         }
     }
     else {
@@ -1556,6 +1556,11 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
         groups.set(key, group);
     }
     const cells = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const timedScore = (p) => opts.preferLowerBoundWalking
+        ? p.timetableLowerBoundWalkingMeters ?? Infinity : p.timetableArrivalEstimateSeconds ?? Infinity;
+    const timedCompare = (a, b) => timedScore(a) - timedScore(b) ||
+        (a.timetableArrivalEstimateSeconds ?? Infinity) - (b.timetableArrivalEstimateSeconds ?? Infinity) ||
+        a.distance - b.distance || a.a.id.localeCompare(b.a.id) || a.b.id.localeCompare(b.b.id);
     for (const [, group] of cells)
         group.sort((a, b) => a.distance - b.distance || a.a.id.localeCompare(b.a.id) || a.b.id.localeCompare(b.b.id));
     const fromRelevant = new Set(opts.preferredTransferFromStopIds ?? []);
@@ -1563,29 +1568,55 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
     const isRelevant = (pair) => fromRelevant.has(pair.a.id) && toRelevant.has(pair.b.id);
     let attempted = 0;
     const transferJobs = [];
-    // Spend scarce walking queries on transit-topology-plausible transfers first.
-    // The hints are directional and advisory: candidate discovery is bounded and
-    // may miss a valid connection, so every other pair remains a fallback.
-    // Within each tier, retain deterministic geographic round-robin to avoid
-    // spending the entire allowance in just one urban cluster.
-    for (const relevant of [true, false]) {
-        for (const tier of ['cross_route', 'same_route']) {
-            const priorityCells = cells.map(([key, group]) => [key, group.filter(p => p.priority === tier && isRelevant(p) === relevant)]);
-            for (let depth = 0; attempted < maxTransfers && attempted < budget; depth++) {
-                let found = false;
-                for (const [, group] of priorityCells) {
-                    if (attempted >= maxTransfers || attempted >= budget)
-                        break;
-                    const pair = group[depth];
-                    if (!pair)
-                        continue;
-                    found = true;
-                    attempted++;
-                    transferJobs.push(pair);
-                }
-                if (!found)
+    // First search timestamp-consistent *one-transfer* candidates. These are
+    // optimistic timetable hints, not confirmed journeys or walkable paths.
+    // Keep round-robin geographic coverage and the A08 topology/route fallback.
+    // Timetable-evidenced candidates are sorted by estimated arrival (or the
+    // request's walking preference). Round-robin cells by their BEST candidate,
+    // not alphabetical geography: the first call must target the strongest hint.
+    const rankedCells = cells.map(([key, group]) => [key,
+        group.filter(p => p.timetableArrivalEstimateSeconds !== undefined).sort(timedCompare)])
+        .filter(([, group]) => group.length)
+        .sort((a, b) => timedCompare(a[1][0], b[1][0]) || a[0].localeCompare(b[0]));
+    for (let depth = 0; attempted < maxTransfers && attempted < budget; depth++) {
+        let found = false;
+        for (const [, group] of rankedCells) {
+            if (attempted >= maxTransfers || attempted >= budget)
+                break;
+            const pair = group[depth];
+            if (!pair)
+                continue;
+            found = true;
+            attempted++;
+            transferJobs.push(pair);
+        }
+        if (!found)
+            break;
+    }
+    // A08 fallback still spans topology-relevant and other stop pairs, with
+    // cross-route priority and geographic round-robin. Nothing is hard-pruned.
+    const tiers = [
+        (p) => p.timetableArrivalEstimateSeconds === undefined && isRelevant(p) && p.priority === 'cross_route',
+        (p) => p.timetableArrivalEstimateSeconds === undefined && isRelevant(p) && p.priority === 'same_route',
+        (p) => p.timetableArrivalEstimateSeconds === undefined && !isRelevant(p) && p.priority === 'cross_route',
+        (p) => p.timetableArrivalEstimateSeconds === undefined && !isRelevant(p) && p.priority === 'same_route',
+    ];
+    for (const qualifies of tiers) {
+        const priorityCells = cells.map(([key, group]) => [key, group.filter(qualifies)]);
+        for (let depth = 0; attempted < maxTransfers && attempted < budget; depth++) {
+            let found = false;
+            for (const [, group] of priorityCells) {
+                if (attempted >= maxTransfers || attempted >= budget)
                     break;
+                const pair = group[depth];
+                if (!pair)
+                    continue;
+                found = true;
+                attempted++;
+                transferJobs.push(pair);
             }
+            if (!found)
+                break;
         }
     }
     await runBatch(transferJobs, async (pair) => {
@@ -1625,7 +1656,9 @@ async function buildPedestrianPaths(router, stops, origin, destination, opts = {
         origins: { nearbyGeodesic: originCandidateCount, selectionLimit: originCap, selected: origins.length, omittedByStopCap: omittedOrigins },
         destinations: { nearbyGeodesic: destinationCandidateCount, selectionLimit: destCap, selected: destinations.length, omittedByStopCap: omittedDestinations },
         transfers: { possibleGtfsPairs: pairs.length, pairSelectionLimit: maxTransfers, selected: transferJobs.length, omittedBySelectionLimit: omittedTransfers,
-            topologyHinted: pairs.filter(isRelevant).length, selectedTopologyHinted: transferJobs.filter(isRelevant).length },
+            topologyHinted: pairs.filter(isRelevant).length, selectedTopologyHinted: transferJobs.filter(isRelevant).length,
+            timetableHinted: pairs.filter(p => p.timetableArrivalEstimateSeconds !== undefined).length,
+            selectedTimetableHinted: transferJobs.filter(p => p.timetableArrivalEstimateSeconds !== undefined).length },
         requestLimit: budget, limitedBy,
     };
     return { origin, destination, access, egress, transfers, direct,
@@ -1800,6 +1833,170 @@ function candidateStopPreferences(data, req, maxRadius = 1500, transferReach = 2
         // exclude unranked pairs: the walking router remains authoritative.
         transferFrom: [...fromOrigin], transferTo: [...toDestination] };
 }
+/** A10: optimistic, timetable-only evidence for ONE-transfer candidates.
+ * Never proves that streets are connected and never removes fallback candidates.
+ * The 3 m/s lower bound avoids rejecting a walking transfer prematurely.
+ * Every GTFS event is checked against active service days and the same first-
+ * boarding window used by the journey engine (including previous-day 25:xx).
+ */
+function timetableTransferHints(data, req, pairs, radius, walkCap) {
+    const inbound = new Map(), outbound = new Map();
+    const stops = new Map(data.stops.map(s => [s.id, s]));
+    const access = new Map(data.stops.map(s => [s.id, (0, boarding_1.proximityMeters)(req.origin, s)]).filter(([, d]) => d <= radius && d <= walkCap));
+    const egress = new Map(data.stops.map(s => [s.id, (0, boarding_1.proximityMeters)(req.destination, s)]).filter(([, d]) => d <= radius && d <= walkCap));
+    if (!access.size || !egress.size || !pairs.length)
+        return new Map();
+    const grouped = new Map();
+    for (const row of data.stopTimes) {
+        const g = grouped.get(row.tripId) ?? [];
+        g.push(row);
+        grouped.set(row.tripId, g);
+    }
+    const activeMemo = new Map();
+    const days = [-1, 0, 1].map(offset => ({ offset, date: (0, time_1.offsetServiceDate)(req.serviceDate, offset) }))
+        .filter(d => d.offset === 0 || !(0, time_1.dstTransitionDay)(d.date));
+    const latestFirstBoard = req.departAfterSeconds + 18 * 3600;
+    const boardBuffer = Math.max(0, req.minBoardingSeconds ?? 60);
+    for (const trip of data.trips) {
+        const rows = [...(grouped.get(trip.id) ?? [])].sort((a, b) => a.sequence - b.sequence);
+        if (rows.length < 2)
+            continue;
+        // Do not give an invalid/nonmonotonic service an artificially strong hint.
+        let previous = -1, valid = true;
+        for (const row of rows) {
+            for (const value of [row.arrivalSeconds, row.departureSeconds]) {
+                if (value !== null && (!Number.isInteger(value) || value < previous || value > 72 * 3600)) {
+                    valid = false;
+                    break;
+                }
+                if (value !== null)
+                    previous = value;
+            }
+            if (!valid)
+                break;
+        }
+        if (!valid)
+            continue;
+        for (const { offset, date } of days) {
+            const memo = trip.serviceId + '|' + date;
+            let active = activeMemo.get(memo);
+            if (active === undefined) {
+                active = (0, time_1.activeService)(trip.serviceId, date, data.calendars, data.exceptions);
+                activeMemo.set(memo, active);
+            }
+            if (!active)
+                continue;
+            const shift = offset * 86400;
+            if (!rows.some(r => r.departureSeconds !== null && r.departureSeconds + shift >= req.departAfterSeconds &&
+                r.departureSeconds + shift <= latestFirstBoard))
+                continue;
+            const tripKey = trip.id + '|' + date;
+            let minAccess = Infinity;
+            for (const row of rows) {
+                const arrival = row.arrivalSeconds === null ? null : row.arrivalSeconds + shift;
+                const departure = row.departureSeconds === null ? null : row.departureSeconds + shift;
+                // An alighting event must come after an eligible origin boarding row.
+                if (minAccess < Infinity && arrival !== null && (row.dropOffType == null || row.dropOffType === 0)) {
+                    const list = inbound.get(row.stopId) ?? [];
+                    list.push({ at: arrival, trip: tripKey, accessMeters: minAccess });
+                    inbound.set(row.stopId, list);
+                }
+                const accessMeters = access.get(row.stopId);
+                if (accessMeters !== undefined && departure !== null && (row.pickupType == null || row.pickupType === 0) &&
+                    departure >= req.departAfterSeconds && departure <= latestFirstBoard &&
+                    departure >= req.departAfterSeconds + Math.ceil(accessMeters / 3) + boardBuffer) {
+                    minAccess = Math.min(minAccess, accessMeters);
+                }
+            }
+            const downstream = new Map();
+            for (let i = rows.length - 1; i >= 0; i--) {
+                const row = rows[i];
+                const departure = row.departureSeconds === null ? null : row.departureSeconds + shift;
+                if (departure !== null && (row.pickupType == null || row.pickupType === 0)) {
+                    for (const end of downstream.values()) {
+                        if (end.at < departure)
+                            continue;
+                        const list = outbound.get(row.stopId) ?? [];
+                        list.push({ at: departure, arrivalEstimate: end.at + Math.ceil(end.meters / 3), trip: tripKey,
+                            egressMeters: end.meters });
+                        outbound.set(row.stopId, list);
+                    }
+                }
+                // Destination alighting must be strictly AFTER the boarding row.
+                const arrival = row.arrivalSeconds === null ? null : row.arrivalSeconds + shift;
+                const distance = egress.get(row.stopId);
+                if (distance !== undefined && arrival !== null && (row.dropOffType == null || row.dropOffType === 0)) {
+                    const old = downstream.get(row.stopId);
+                    if (!old || arrival < old.at)
+                        downstream.set(row.stopId, { at: arrival, meters: distance });
+                }
+            }
+        }
+    }
+    for (const options of outbound.values())
+        options.sort((a, b) => a.arrivalEstimate - b.arrivalEstimate || a.at - b.at || a.trip.localeCompare(b.trip));
+    const index = new Map();
+    for (const [stopId, events] of inbound) {
+        events.sort((a, b) => a.at - b.at || a.accessMeters - b.accessMeters || a.trip.localeCompare(b.trip));
+        let first = { trip: '', accessMeters: Infinity }, second = { trip: '', accessMeters: Infinity };
+        const prefix = [];
+        for (const event of events) {
+            const candidate = { trip: event.trip, accessMeters: event.accessMeters };
+            if (candidate.trip === first.trip) {
+                if (candidate.accessMeters < first.accessMeters)
+                    first = candidate;
+            }
+            else if (candidate.trip === second.trip) {
+                if (candidate.accessMeters < second.accessMeters)
+                    second = candidate;
+            }
+            else if (candidate.accessMeters < second.accessMeters)
+                second = candidate;
+            if (second.accessMeters < first.accessMeters)
+                [first, second] = [second, first];
+            prefix.push({ at: event.at, first, second });
+        }
+        index.set(stopId, prefix);
+    }
+    const minTransfer = Math.max(0, req.minTransferSeconds ?? 120);
+    const hints = new Map();
+    for (const pair of pairs) {
+        const from = stops.get(pair.fromStopId), to = stops.get(pair.toStopId);
+        if (!from || !to)
+            continue;
+        const distance = (0, boarding_1.proximityMeters)((0, boarding_1.routableStopCoordinate)(from), (0, boarding_1.routableStopCoordinate)(to));
+        const wait = Math.ceil(distance / 3) + minTransfer;
+        const starts = index.get(pair.fromStopId) ?? [], finish = outbound.get(pair.toStopId) ?? [];
+        let best = Infinity, bestWalk = Infinity;
+        for (const leave of finish) {
+            if (req.rankBy !== 'less_walking' && leave.arrivalEstimate > best)
+                break;
+            const deadline = leave.at - wait;
+            let low = 0, high = starts.length;
+            while (low < high) {
+                const mid = (low + high) >>> 1;
+                if (starts[mid].at <= deadline)
+                    low = mid + 1;
+                else
+                    high = mid;
+            }
+            if (low === 0)
+                continue;
+            const arrived = starts[low - 1];
+            const lowest = arrived.first.trip !== leave.trip ? arrived.first : arrived.second;
+            const walkMeters = lowest.accessMeters + distance + leave.egressMeters;
+            if (walkMeters <= walkCap && (req.rankBy === 'less_walking'
+                ? (walkMeters < bestWalk || (walkMeters === bestWalk && leave.arrivalEstimate < best))
+                : (leave.arrivalEstimate < best || (leave.arrivalEstimate === best && walkMeters < bestWalk)))) {
+                best = leave.arrivalEstimate;
+                bestWalk = walkMeters;
+            }
+        }
+        if (Number.isFinite(best))
+            hints.set(JSON.stringify([pair.fromStopId, pair.toStopId]), { eta: best, walkMeters: bestWalk });
+    }
+    return hints;
+}
 /**
  * A controlled, server-side integration seam. No provider key or database secret
  * is ever serialized into the response. Missing pedestrian routes mean no itinerary.
@@ -1868,6 +2065,17 @@ async function planDoorToDoor(timetable, router, req, opts = {}) {
             }
         }
     }
+    // Timetable scores are advisory. Pairs without evidence remain eligible
+    // as deterministic fallback: incomplete GTFS priority must not hide a route.
+    const radius = opts.candidateRadiusMeters ?? walkCap;
+    const timed = transitAvailable ? timetableTransferHints(data, req, transferPairs, radius, walkCap) : new Map();
+    for (const pair of transferPairs) {
+        const score = timed.get(JSON.stringify([pair.fromStopId, pair.toStopId]));
+        if (score) {
+            pair.timetableArrivalEstimateSeconds = score.eta;
+            pair.timetableLowerBoundWalkingMeters = score.walkMeters;
+        }
+    }
     // Bound provider billing per user search. Expand only after measuring real Mayo results.
     const budget = Math.max(0, Math.min(opts.maxRequestCount ?? 24, 200));
     // A user's walking budget is an upper bound on any access/egress segment.
@@ -1881,6 +2089,7 @@ async function planDoorToDoor(timetable, router, req, opts = {}) {
         preferredOriginStopIds: priority.origin, preferredDestinationStopIds: priority.destination,
         directOriginStopIds: priority.directOrigin, directDestinationStopIds: priority.directDestination,
         preferredTransferFromStopIds: priority.transferFrom, preferredTransferToStopIds: priority.transferTo,
+        preferLowerBoundWalking: req.rankBy === 'less_walking',
         maxDirectWalkMeters: Math.min(opts.maxDirectWalkMeters ?? 1400, req.maxWalkingMeters ?? 2500),
         maxOriginStops: opts.maxOriginStops ?? 5,
         maxDestinationStops: opts.maxDestinationStops ?? 5,

@@ -18,7 +18,7 @@ test('A09: audit splits stop caps from transfer cap and records topology hints',
  assert.deepEqual(a.origins,{nearbyGeodesic:4,selectionLimit:1,selected:1,omittedByStopCap:3});
  assert.deepEqual(a.destinations,{nearbyGeodesic:4,selectionLimit:1,selected:1,omittedByStopCap:3});
  assert.deepEqual(a.transfers,{possibleGtfsPairs:2,pairSelectionLimit:1,selected:1,omittedBySelectionLimit:1,
-  topologyHinted:1,selectedTopologyHinted:1});
+  topologyHinted:1,selectedTopologyHinted:1,timetableHinted:0,selectedTimetableHinted:0});
  assert.deepEqual(a.limitedBy,['origin_stop_cap','destination_stop_cap','transfer_pair_cap']);
  assert.equal(r.coverage.candidateLimitReached,true);
  assert.deepEqual(r.transfers.map(t=>[t.fromStopId,t.toStopId]),[['A','B']]);
