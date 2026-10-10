@@ -142,6 +142,59 @@ export function nonDominatedJourneys(journeys:Journey[]):Journey[] {
       other.transfers<candidate.transfers||
       leaveAt(other)>leaveAt(candidate))));
 }
+/**
+ * Guard against spectacular geographic backtracking on a multi-vehicle trip.
+ * This is a LOWER BOUND on distance, computed only from GTFS boarding/alighting
+ * stops: it is not street geometry, and does not assert that a route is optimal.
+ * Both a large absolute excess (75 km) AND a large relative excess (4x) are
+ * required. An ordinary rural connection via a neighbouring town survives.
+ * If a required GTFS stop is missing, fail open rather than invent geometry.
+ */
+export function hasExtremeGeographicDetour(
+  journey:Journey, origin:{lat:number;lon:number}, destination:{lat:number;lon:number},
+  stops:Map<string,Stop>,
+):boolean {
+  const rides=journey.legs.filter((leg):leg is RideLeg=>leg.type==='ride');
+  if(rides.length<2)return false;
+  const points=[origin];
+  for(const ride of rides){
+    const a=stops.get(ride.boardStopId),b=stops.get(ride.alightStopId);
+    if(!a||!b)return false;
+    points.push(a,b);
+  }
+  points.push(destination);
+  const direct=proximityMeters(origin,destination);
+  if(!Number.isFinite(direct))return false;
+  let lowerBound=0;
+  for(let i=1;i<points.length;i++){
+    const d=proximityMeters(points[i-1]!,points[i]!);
+    if(!Number.isFinite(d))return false;
+    lowerBound+=d;
+  }
+  return lowerBound>direct+75_000 && lowerBound>4*Math.max(direct,1_000);
+}
+
+/**
+ * A tiny walking saving must not justify a much later arrival + more transfers
+ * on the exact same first vehicle. Only apply this preference under 'fastest':
+ * a passenger explicitly choosing 'less_walking' keeps the genuine Pareto tradeoff.
+ * This does not compare different first departures or different snap-risk classes.
+ */
+export function removeLowValueFastestAlternatives(journeys:Journey[]):Journey[]{
+  const firstRide=(j:Journey)=>j.legs.find((leg):leg is RideLeg=>leg.type==='ride');
+  const leave=(j:Journey)=>j.latestLeaveAtSeconds??j.departureAtSeconds;
+  const snap=(j:Journey)=>Boolean(j.requiresSnapConfirmation||snapConfirmationRequired(j.legs));
+  return journeys.filter(candidate=>!journeys.some(other=>{
+    if(other===candidate||snap(other)!==snap(candidate))return false;
+    const a=firstRide(other),b=firstRide(candidate);
+    if(!a||!b||a.serviceDate!==b.serviceDate||a.tripId!==b.tripId||a.boardStopId!==b.boardStopId)return false;
+    if(Math.abs(leave(other)-leave(candidate))>1)return false;
+    return other.arrivalAtSeconds+600<=candidate.arrivalAtSeconds &&
+      other.transfers<=candidate.transfers &&
+      other.walkingMeters<=candidate.walkingMeters+20;
+  }));
+}
+
 export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRequest):Journey[]{
   if(data.timezone!=='Europe/Dublin')throw new Error('unsupported_timezone');
   if(!validDate(request.serviceDate))throw new Error('invalid_service_date');
@@ -343,7 +396,12 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
     journeys.set(signature,nonDominatedJourneys([...previous,c]));
   }
   const rankBy=request.rankBy??'fastest';
-  return nonDominatedJourneys([...journeys.values()].flat()).sort((a,b)=>{
+  // Reject clearly non-local loops BEFORE Pareto: an impossible detour must
+  // not dominate and erase a valid local route during the ranking phase.
+  const credible=nonDominatedJourneys([...journeys.values()].flat().filter(j=>
+    !hasExtremeGeographicDetour(j,paths.origin,paths.destination,stopMap)));
+  const ranked=rankBy==='fastest'?removeLowValueFastestAlternatives(credible):credible;
+  return ranked.sort((a,b)=>{
     if(rankBy==='less_walking')return a.walkingMeters-b.walkingMeters||a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers;
     if(rankBy==='fewest_transfers')return a.transfers-b.transfers||a.arrivalAtSeconds-b.arrivalAtSeconds||a.walkingMeters-b.walkingMeters;
     return a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers||a.walkingMeters-b.walkingMeters;

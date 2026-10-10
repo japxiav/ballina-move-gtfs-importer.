@@ -48,13 +48,14 @@ function hasBoardableServiceInWindow(data:Timetable, req:DoorToDoorRequest):bool
  * stops on irrelevant services. All actual transfers still require walking
  * routes from the provider, and departure times are validated by the engine. */
 function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius=1500,transferReach=2500):{
-  origin:string[];destination:string[];directOrigin:string[];directDestination:string[]
+  origin:string[];destination:string[];directOrigin:string[];directDestination:string[];
+  transferFrom:string[];transferTo:string[]
 }{
   const originNear=data.stops.filter(s=>proximityMeters(req.origin,s)<=maxRadius);
   const destNear=data.stops.filter(s=>proximityMeters(req.destination,s)<=maxRadius);
   const originIds=new Set(originNear.map(s=>s.id));
   const destinationIds=new Set(destNear.map(s=>s.id));
-  if(!originIds.size||!destinationIds.size)return {origin:[],destination:[],directOrigin:[],directDestination:[]};
+  if(!originIds.size||!destinationIds.size)return {origin:[],destination:[],directOrigin:[],directDestination:[],transferFrom:[],transferTo:[]};
   const stopMap=new Map(data.stops.map(s=>[s.id,s]));
   const routeTripIds=new Set(data.trips.map(t=>t.id));
   const timesByTrip=new Map<string,Timetable['stopTimes']>();
@@ -134,7 +135,10 @@ function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius
   const fromOrigin=step(originIds,graph,rounds);
   return {origin:originNear.filter(s=>toDestination.has(s.id)&&timeFeasibleOrigin.has(s.id)).map(s=>s.id),
     destination:destNear.filter(s=>fromOrigin.has(s.id)).map(s=>s.id),
-    directOrigin:[...directOrigin],directDestination:[...directDestination]};
+    directOrigin:[...directOrigin],directDestination:[...directDestination],
+    // Topology-only transfer hints. These may be incomplete and MUST NOT
+    // exclude unranked pairs: the walking router remains authoritative.
+    transferFrom:[...fromOrigin],transferTo:[...toDestination]};
 }
 
 /**
@@ -202,12 +206,13 @@ export async function planDoorToDoor(
   // A smaller, hard-coded discovery radius must never silently shrink it.
   const candidateRadius=opts.candidateRadiusMeters??walkCap;
   const priority=transitAvailable?candidateStopPreferences(data,req,candidateRadius,walkCap):
-    {origin:[],destination:[],directOrigin:[],directDestination:[]};
+    {origin:[],destination:[],directOrigin:[],directDestination:[],transferFrom:[],transferTo:[]};
   const paths=await buildPedestrianPaths(router,transitAvailable?stops:[],req.origin,req.destination,{
     ...opts,maxRequestCount:budget,candidateRadiusMeters:candidateRadius,
     maxPedestrianDistanceMeters:Math.min(opts.maxPedestrianDistanceMeters??walkCap,walkCap),transferPairs,
     preferredOriginStopIds:priority.origin,preferredDestinationStopIds:priority.destination,
     directOriginStopIds:priority.directOrigin,directDestinationStopIds:priority.directDestination,
+    preferredTransferFromStopIds:priority.transferFrom,preferredTransferToStopIds:priority.transferTo,
     maxDirectWalkMeters:Math.min(opts.maxDirectWalkMeters??1400,req.maxWalkingMeters??2500),
     maxOriginStops:opts.maxOriginStops??5,
     maxDestinationStops:opts.maxDestinationStops??5,
