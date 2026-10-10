@@ -78,7 +78,9 @@ export interface PedestrianPaths {
       origins:{nearbyGeodesic:number;selectionLimit:number;selected:number;omittedByStopCap:number};
       destinations:{nearbyGeodesic:number;selectionLimit:number;selected:number;omittedByStopCap:number};
       transfers:{possibleGtfsPairs:number;pairSelectionLimit:number;selected:number;omittedBySelectionLimit:number;
-        topologyHinted:number;selectedTopologyHinted:number};
+        topologyHinted:number;selectedTopologyHinted:number;
+        /** A10: optimistic, service-date-aware scheduled connection hints, never walking proof. */
+        timetableHinted:number;selectedTimetableHinted:number};
       requestLimit:number;
       limitedBy:Array<'origin_stop_cap'|'destination_stop_cap'|'transfer_pair_cap'|'transfer_preselection_budget'>;
     };
