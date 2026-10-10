@@ -81,16 +81,45 @@ async function readLimitedJson(req:Request):Promise<unknown>{
   const header=req.headers.get('content-length');
   if(header&&(!/^\d+$/.test(header)||Number(header)>BODY_LIMIT))throw new Error('payload_too_large');
   const reader=req.body.getReader();let count=0;const chunks:Uint8Array[]=[];
+  // Node/Deno ReadableStream readers are not universally interrupted by a
+  // Request.signal abort. Race each pending read against that signal instead.
+  let rejectAborted:(error:Error)=>void=()=>{};
+  const aborted=new Promise<never>((_resolve,reject)=>{rejectAborted=reject;});
+  // An already-aborted request can reject before Promise.race subscribes.
+  void aborted.catch(()=>undefined);
+  let didAbort=false;
+  const abortError=()=>Object.assign(new Error('request_aborted'),{name:'AbortError'});
+  const onAbort=()=>{
+    if(didAbort)return;
+    didAbort=true;
+    rejectAborted(abortError());
+  };
+  req.signal.addEventListener('abort',onAbort,{once:true});
   try {
-    for(;;){const result=await reader.read();if(result.done)break;
+    // Check after subscribing so an abort between the first check and the
+    // listener registration cannot strand the pending read.
+    if(req.signal.aborted)onAbort();
+    for(;;){
+      if(didAbort)throw abortError();
+      const result=await Promise.race([reader.read(),aborted]);
+      if(result.done)break;
       count+=result.value.byteLength;
       if(count>BODY_LIMIT)throw new Error('payload_too_large');
       chunks.push(result.value);
     }
+    if(didAbort)throw abortError();
   } catch(error) {
-    await reader.cancel().catch(()=>undefined);
+    // An aborted HTTP request belongs to the host runtime. Releasing our
+    // reader lock ends pending read() without closing the host-owned stream.
+    // This matters for request streams that are finalized by the host later.
+    // For payload errors, cancel promptly without waiting on cancel() itself.
+    if(didAbort||req.signal.aborted)throw abortError();
+    void reader.cancel().catch(()=>undefined);
     throw error;
-  } finally {reader.releaseLock();}
+  } finally {
+    req.signal.removeEventListener('abort',onAbort);
+    reader.releaseLock();
+  }
   const bytes=new Uint8Array(count);let offset=0;
   for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
   return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)) as unknown;
@@ -208,7 +237,7 @@ export function createRoutingApi(deps:RoutingApiDependencies):(req:Request)=>Pro
     }
     let raw:unknown;
     try{raw=await readLimitedJson(req)}
-    catch(e){return json({error:e instanceof Error&&e.message==='payload_too_large'?'payload_too_large':'invalid_json'},400,cors);}
+    catch(e){if(e instanceof Error&&e.name==='AbortError')return json({error:'request_aborted'},499,cors);return json({error:e instanceof Error&&e.message==='payload_too_large'?'payload_too_large':'invalid_json'},400,cors);}
     const input=parseInput(raw,(deps.now??(()=>new Date()))());
     if(!input)return json({error:'invalid_route_request'},400,cors);
     if(dstTransitionDay(input.serviceDate))return json({error:'dst_transition_not_supported_yet'},422,cors);
