@@ -1915,12 +1915,11 @@ function decode(value) {
     return safe.trim().slice(0, 160);
 }
 function field(raw, key) {
-    const pattern = new RegExp(`<(?:(?:[A-Za-z_][\\w.-]*):)?${key}\\s*>([\\s\\S]*?)<\\/(?:(?:[A-Za-z_][\\w.-]*):)?${key}\\s*>`, 'i');
-    const found = pattern.exec(raw)?.[1];
-    if (found === undefined || /<[^>]+>/.test(found))
+    const value = raw.get(key);
+    if (value === undefined)
         return null;
-    const val = decode(found);
-    return val || null;
+    const text = decode(value);
+    return text || null;
 }
 function intField(raw, key) {
     const value = field(raw, key);
@@ -1933,81 +1932,224 @@ function clockField(raw, key) {
     const s = field(raw, key);
     return s && /^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(s) ? s : null;
 }
-/** Verify the structural subset returned by Irish Rail before extracting records.
- * XML fields are leaves; only objStationData can be a direct child of the root.
- * This rejects malformed XML and ghost services hidden in unexpected wrappers.
- * It is intentionally NOT a general-purpose XML parser (no CDATA or DTDs). */
-function validateStationBody(inner) {
-    const stack = [];
-    const tags = /<([^<>]+)>/g;
-    let position = 0;
-    function verifyText(text) {
-        if (text.includes('<'))
+const XML_NAME = '[A-Za-z_][A-Za-z0-9_.-]*(?::[A-Za-z_][A-Za-z0-9_.-]*)?';
+const XML_NAME_EXACT = new RegExp(`^${XML_NAME}$`);
+const XML_NAME_PREFIX = new RegExp(`^(${XML_NAME})`);
+const XML_END_TAG = new RegExp(`^/(${XML_NAME})[ \t\r\n]*$`);
+const XML_SPACE = /[ \t\r\n]/;
+function parseXmlStartTag(source) {
+    const head = XML_NAME_PREFIX.exec(source);
+    if (!head)
+        throw new Error('invalid_rail_xml_response');
+    const name = head[1];
+    const attrs = new Map();
+    let i = name.length, empty = false;
+    while (i < source.length) {
+        const spaceStart = i;
+        while (i < source.length && XML_SPACE.test(source[i]))
+            i++;
+        if (source[i] === '/' && i === source.length - 1) {
+            empty = true;
+            i++;
+            break;
+        }
+        if (i === source.length)
+            break;
+        // XML requires whitespace between the element QName and each attribute.
+        if (spaceStart === i)
             throw new Error('invalid_rail_xml_response');
-        if (stack.length < 2) {
-            if (text.trim())
+        const match = XML_NAME_PREFIX.exec(source.slice(i));
+        if (!match)
+            throw new Error('invalid_rail_xml_response');
+        const key = match[1];
+        i += key.length;
+        while (i < source.length && XML_SPACE.test(source[i]))
+            i++;
+        if (source[i] !== '=')
+            throw new Error('invalid_rail_xml_response');
+        i++;
+        while (i < source.length && XML_SPACE.test(source[i]))
+            i++;
+        const quote = source[i];
+        if (quote !== "'" && quote !== '"')
+            throw new Error('invalid_rail_xml_response');
+        i++;
+        const start = i;
+        while (i < source.length && source[i] !== quote)
+            i++;
+        if (i === source.length)
+            throw new Error('invalid_rail_xml_response');
+        const value = source.slice(start, i++);
+        if (value.includes('<') || attrs.has(key))
+            throw new Error('invalid_rail_xml_response');
+        // Attribute entities must be valid, too, not just passenger-visible fields.
+        decode(value);
+        attrs.set(key, value);
+    }
+    if (i !== source.length || !XML_NAME_EXACT.test(name))
+        throw new Error('invalid_rail_xml_response');
+    return { name, attrs, empty };
+}
+function xmlLocalName(qname) { return qname.split(':').pop(); }
+function readStationXml(xml) {
+    const source = xml.replace(/^\uFEFF/, '').replace(/^[ \t\r\n]+|[ \t\r\n]+$/g, '');
+    const stack = [];
+    const records = [];
+    let i = 0, rootSeen = false, rootClosed = false;
+    function appendText(s) {
+        if (s.includes(']]>'))
+            throw new Error('invalid_rail_xml_response');
+        if (!stack.length) {
+            if (/[^ \t\r\n]/.test(s))
+                throw new Error('invalid_rail_xml_response');
+            return;
+        }
+        if (stack.length < 3) {
+            if (/[^ \t\r\n]/.test(s))
+                throw new Error('invalid_rail_xml_response');
+            return;
+        }
+        decode(s); // rejects unknown entities in all leaves, including unknown fields
+        stack[2].text += s;
+    }
+    if (source.startsWith('<?xml')) {
+        const end = source.indexOf('?>');
+        if (end < 0)
+            throw new Error('invalid_rail_xml_response');
+        const declaration = source.slice(2, end);
+        // Declaration attributes are pseudo-attributes and must also be quoted.
+        const head = /^xml\s+/.exec(declaration);
+        if (!head)
+            throw new Error('invalid_rail_xml_response');
+        parseXmlStartTag('xml ' + declaration.slice(head[0].length));
+        i = end + 2;
+    }
+    while (i < source.length) {
+        const next = source.indexOf('<', i);
+        if (next === -1) {
+            appendText(source.slice(i));
+            break;
+        }
+        appendText(source.slice(i, next));
+        if (source.startsWith('<!--', next)) {
+            const end = source.indexOf('-->', next + 4);
+            if (end === -1 || source.slice(next + 4, end).includes('--') || source.slice(next + 4, end).endsWith('-'))
+                throw new Error('invalid_rail_xml_response');
+            i = end + 3;
+            continue;
+        }
+        if (source.startsWith('<!', next) || source.startsWith('<?', next))
+            throw new Error('invalid_rail_xml_response');
+        // Scan to the first > outside quoted attributes; > inside quoted values is legal XML.
+        let end = next + 1, quote = null;
+        for (; end < source.length; end++) {
+            const ch = source[end];
+            if (quote) {
+                if (ch === quote)
+                    quote = null;
+            }
+            else if (ch === '"' || ch === "'")
+                quote = ch;
+            else if (ch === '>')
+                break;
+            else if (ch === '<')
                 throw new Error('invalid_rail_xml_response');
         }
-        else
-            decode(text); // validate predefined entities even in unknown leaf fields
-    }
-    for (let match; (match = tags.exec(inner)) !== null;) {
-        verifyText(inner.slice(position, match.index));
-        const source = (match[1] ?? '').trim();
-        const closing = /^\/([A-Za-z_][\w.-]*(?::[A-Za-z_][\w.-]*)?)\s*$/.exec(source);
-        if (closing) {
-            if (stack.pop() !== closing[1])
+        if (end >= source.length || quote)
+            throw new Error('invalid_rail_xml_response');
+        const raw = source.slice(next + 1, end);
+        if (raw.startsWith('/')) {
+            const ending = XML_END_TAG.exec(raw);
+            if (!ending || stack.at(-1)?.name !== ending[1])
                 throw new Error('invalid_rail_xml_response');
+            const level = stack.length;
+            const closed = stack.pop();
+            if (level === 3) {
+                const record = stack[1].fields;
+                if (record.has(closed.nameLocal))
+                    throw new Error('invalid_rail_xml_response');
+                record.set(closed.nameLocal, closed.text);
+            }
+            else if (level === 2) {
+                if (records.length >= 120)
+                    throw new Error('rail_station_board_too_large');
+                records.push(closed.fields);
+            }
+            else if (level === 1)
+                rootClosed = true;
         }
         else {
-            const opening = /^([A-Za-z_][\w.-]*(?::[A-Za-z_][\w.-]*)?)(?:\s+[^<>]*?)?\s*(\/)?$/.exec(source);
-            if (!opening)
+            const tag = parseXmlStartTag(raw);
+            const local = xmlLocalName(tag.name);
+            const level = stack.length;
+            if (rootClosed || level === 0 && (rootSeen || local !== 'ArrayOfObjStationData') ||
+                level === 1 && local !== 'objStationData' || level === 2 && local === 'objStationData' || level >= 3)
                 throw new Error('invalid_rail_xml_response');
-            const localName = opening[1].split(':').pop();
-            if (stack.length === 0 ? localName !== 'objStationData' : stack.length !== 1 || localName === 'objStationData')
+            if (level === 0)
+                rootSeen = true;
+            // Ensure namespaced QNames are not accepted with undeclared prefixes.
+            const declared = new Set();
+            for (const frame of stack) {
+                const xmlns = frame.prefixes;
+                if (xmlns)
+                    for (const prefix of xmlns)
+                        declared.add(prefix);
+            }
+            for (const key of tag.attrs.keys())
+                if (key.startsWith('xmlns:'))
+                    declared.add(key.slice(6));
+            if (tag.name.includes(':') && !declared.has(tag.name.split(':')[0]))
                 throw new Error('invalid_rail_xml_response');
-            if (!opening[2])
-                stack.push(opening[1]);
-            else if (stack.length === 0)
-                throw new Error('invalid_rail_xml_response');
+            for (const key of tag.attrs.keys())
+                if (key.includes(':') && !key.startsWith('xmlns:') && !declared.has(key.split(':')[0]))
+                    throw new Error('invalid_rail_xml_response');
+            const frame = { name: tag.name, nameLocal: local, text: '' };
+            frame.prefixes = new Set([...tag.attrs.keys()].filter(k => k.startsWith('xmlns:')).map(k => k.slice(6)));
+            if (level === 1)
+                frame.fields = new Map();
+            if (tag.empty) {
+                if (level === 1) {
+                    if (records.length >= 120)
+                        throw new Error('rail_station_board_too_large');
+                    records.push(new Map());
+                }
+                else if (level === 2) {
+                    const record = stack[1].fields;
+                    if (record.has(local))
+                        throw new Error('invalid_rail_xml_response');
+                    record.set(local, '');
+                }
+                else
+                    rootClosed = true;
+            }
+            else
+                stack.push(frame);
         }
-        position = tags.lastIndex;
+        i = end + 1;
     }
-    verifyText(inner.slice(position));
-    if (stack.length)
+    if (!rootSeen || !rootClosed || stack.length)
         throw new Error('invalid_rail_xml_response');
+    return records;
+}
+/** Reject code points forbidden by XML 1.0, including NUL, surrogates and noncharacters. */
+function validateXmlCharacters(xml) {
+    for (const char of xml) {
+        const code = char.codePointAt(0);
+        if (code === 9 || code === 10 || code === 13 ||
+            code >= 0x20 && code <= 0xD7FF || code >= 0xE000 && code <= 0xFFFD ||
+            code >= 0x10000 && code <= 0x10FFFF)
+            continue;
+        throw new Error('invalid_rail_xml_response');
+    }
 }
 /** Strict parsing of this one provider's known response object, not a general-purpose XML parser. */
 function parseIrishRailStationXml(xml, station, fetchedAt) {
-    if (xml.length > KNOWN_MAX_XML_BYTES || /<!\s*(?:DOCTYPE|ENTITY)/i.test(xml))
+    if (xml.length > KNOWN_MAX_XML_BYTES)
         throw new Error('invalid_rail_xml_response');
-    // Official SOAP XML can contain comments. Never parse a train hidden inside one.
-    const noComments = xml.replace(/<!--[\s\S]*?-->/g, '').replace(/^\uFEFF/, '').trim();
-    if (noComments.includes('<!--') || noComments.includes('-->') || /<!\[CDATA\[/i.test(noComments))
-        throw new Error('invalid_rail_xml_response');
-    const root = /^(?:<\?xml\s[^<>]*\?>\s*)?<(?:[A-Za-z_][\w.-]*:)?ArrayOfObjStationData(?=[\s/>])[^<>]*?(\/?)>/.exec(noComments);
-    if (!root)
-        throw new Error('invalid_rail_xml_response');
-    if (root[1] === '/') {
-        if (noComments.slice(root[0].length).trim())
-            throw new Error('invalid_rail_xml_response');
-    }
-    else {
-        const close = /<\/(?:[A-Za-z_][\w.-]*:)?ArrayOfObjStationData\s*>\s*$/i.exec(noComments);
-        if (!close)
-            throw new Error('invalid_rail_xml_response');
-        validateStationBody(noComments.slice(root[0].length, close.index));
-    }
-    const declared = (noComments.match(/<(?:[A-Za-z_][\w.-]*:)?objStationData(?=[\s/>])/gi) ?? []).length;
-    const closed = (noComments.match(/<\/(?:[A-Za-z_][\w.-]*:)?objStationData\s*>/gi) ?? []).length;
-    if (declared !== closed)
-        throw new Error('invalid_rail_xml_response');
+    validateXmlCharacters(xml);
+    const records = readStationXml(xml);
     const services = [];
-    const re = /<(?:\w+:)?objStationData(?:\s+[^<>]*?)?\s*>([\s\S]*?)<\/(?:\w+:)?objStationData\s*>/gi;
-    for (let match; (match = re.exec(noComments)) !== null;) {
-        if (services.length >= 120)
-            throw new Error('rail_station_board_too_large');
-        const data = match[1] ?? '';
+    for (const data of records) {
         const trainCode = field(data, 'Traincode') ?? '';
         const stationName = field(data, 'Stationfullname') ?? '';
         if (!/^[A-Za-z0-9]{1,12}$/.test(trainCode) || !stationName)
@@ -2017,8 +2159,6 @@ function parseIrishRailStationXml(xml, station, fetchedAt) {
             expectedArrival: clockField(data, 'Exparrival'), expectedDeparture: clockField(data, 'Expdepart'),
             lateMinutes: intField(data, 'Late'), dueInMinutes: intField(data, 'Duein'), status: field(data, 'Status'), lastLocation: field(data, 'Lastlocation') });
     }
-    if (services.length !== declared)
-        throw new Error('invalid_rail_xml_response');
     return { station, source: 'irish_rail_station_api', fetchedAt, dataQuality: 'official_api_may_show_schedule_only', matchedToGtfsTrips: false, services };
 }
 function createIrishRailStationClient(options = {}) {
