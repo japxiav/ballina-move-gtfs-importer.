@@ -195,13 +195,29 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
       list.push(index);tripsByBoardingStop.set(row.stopId,list);
     }
   }
-  const egressPaths=new Map<string,AccessWalk>();
+  // A02: fastest is not always feasible when a walking budget is applied.
+  // Keep the time/distance/snap-safety Pareto frontier for every alighting stop.
+  // In particular, a 690s/900m walk must not suppress a 720s/120m walk.
+  const egressPaths=new Map<string,AccessWalk[]>();
   for(const p of paths.egress){
-    const s=stopMap.get(p.stopId);
-    if(s&&assertPath(p,routableStopCoordinate(s),paths.destination,'egress')){
-      const current=egressPaths.get(p.stopId);
-      if(!current||p.durationSeconds<current.durationSeconds)egressPaths.set(p.stopId,p);
+    const stop=stopMap.get(p.stopId);
+    if(!stop||!assertPath(p,routableStopCoordinate(stop),paths.destination,'egress'))continue;
+    const group=egressPaths.get(p.stopId)??[];
+    group.push(p);egressPaths.set(p.stopId,group);
+  }
+  for(const [stopId,group] of egressPaths){
+    // Stable tie ordering makes the selected geometry independent of GTFS/path order.
+    group.sort((a,b)=>a.durationSeconds-b.durationSeconds||a.distanceMeters-b.distanceMeters||
+      Number(!!a.requiresSnapConfirmation)-Number(!!b.requiresSnapConfirmation)||
+      a.provider.localeCompare(b.provider)||JSON.stringify(a.geometry).localeCompare(JSON.stringify(b.geometry)));
+    const pareto:AccessWalk[]=[];
+    for(const option of group){
+      if(pareto.some(prior=>prior.durationSeconds<=option.durationSeconds&&
+          prior.distanceMeters<=option.distanceMeters&&
+          (!prior.requiresSnapConfirmation||!!option.requiresSnapConfirmation)))continue;
+      pareto.push(option);
     }
+    egressPaths.set(stopId,pareto);
   }
   const transferMap=new Map<string,TransferWalk[]>();
   for(const p of paths.transfers){
@@ -294,9 +310,9 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
       }
     }
     for(const group of next.values())for(const result of group){
-      const egress=egressPaths.get(result.stopId);
-      if(!egress||result.walkingMeters+egress.distanceMeters>walkingCap)continue;
       const stop=stopMap.get(result.stopId)!;
+      for(const egress of egressPaths.get(result.stopId)??[]){
+      if(result.walkingMeters+egress.distanceMeters>walkingCap)continue;
       const firstRide=result.legs.find((leg):leg is RideLeg=>leg.type==='ride');
       const access=result.legs.find((leg):leg is WalkLeg=>leg.type==='walk'&&leg.purpose==='access');
       // Include required boarding slack: later advertised departures must
@@ -310,19 +326,24 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
         transfers:result.rides-1,walkingMeters:result.walkingMeters+egress.distanceMeters,
         boardings:result.boardings,legs:[...result.legs,pathLeg(egress,routableStopCoordinate(stop),paths.destination,'egress')],
         predictionType:'scheduled'});
+      }
     }
     frontier=expanded;
   }
   // Preserve alternatives with different transit patterns, then rank by actual scheduled arrival.
-  const journeys=new Map<string,Journey>();
+  // A02: grouping by transit pattern must preserve different feasible walking
+  // trade-offs. Keeping only the earliest arrival erases the shorter exit again.
+  const journeys=new Map<string,Journey[]>();
   for(const c of candidates){
     const signature=(c.legs.some(l=>l.type==='ride')?c.legs.filter(l=>l.type==='ride').map(l=>`${l.serviceDate}:${l.tripId}:${l.boardStopId}:${l.alightStopId}`).join('|'):'walk_only')+
       (snapConfirmationRequired(c.legs)?':snap-confirmation':':no-snap-confirmation');
-    const previous=journeys.get(signature);
-    if(!previous||c.arrivalAtSeconds<previous.arrivalAtSeconds)journeys.set(signature,c);
+    const previous=journeys.get(signature)??[];
+    if(previous.some(j=>j.arrivalAtSeconds===c.arrivalAtSeconds&&j.walkingMeters===c.walkingMeters&&
+        j.transfers===c.transfers&&j.latestLeaveAtSeconds===c.latestLeaveAtSeconds))continue;
+    journeys.set(signature,nonDominatedJourneys([...previous,c]));
   }
   const rankBy=request.rankBy??'fastest';
-  return nonDominatedJourneys([...journeys.values()]).sort((a,b)=>{
+  return nonDominatedJourneys([...journeys.values()].flat()).sort((a,b)=>{
     if(rankBy==='less_walking')return a.walkingMeters-b.walkingMeters||a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers;
     if(rankBy==='fewest_transfers')return a.transfers-b.transfers||a.arrivalAtSeconds-b.arrivalAtSeconds||a.walkingMeters-b.walkingMeters;
     return a.arrivalAtSeconds-b.arrivalAtSeconds||a.transfers-b.transfers||a.walkingMeters-b.walkingMeters;

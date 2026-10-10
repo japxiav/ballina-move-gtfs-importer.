@@ -433,14 +433,32 @@ function planJourneys(data, paths, request) {
             tripsByBoardingStop.set(row.stopId, list);
         }
     }
+    // A02: fastest is not always feasible when a walking budget is applied.
+    // Keep the time/distance/snap-safety Pareto frontier for every alighting stop.
+    // In particular, a 690s/900m walk must not suppress a 720s/120m walk.
     const egressPaths = new Map();
     for (const p of paths.egress) {
-        const s = stopMap.get(p.stopId);
-        if (s && assertPath(p, (0, boarding_1.routableStopCoordinate)(s), paths.destination, 'egress')) {
-            const current = egressPaths.get(p.stopId);
-            if (!current || p.durationSeconds < current.durationSeconds)
-                egressPaths.set(p.stopId, p);
+        const stop = stopMap.get(p.stopId);
+        if (!stop || !assertPath(p, (0, boarding_1.routableStopCoordinate)(stop), paths.destination, 'egress'))
+            continue;
+        const group = egressPaths.get(p.stopId) ?? [];
+        group.push(p);
+        egressPaths.set(p.stopId, group);
+    }
+    for (const [stopId, group] of egressPaths) {
+        // Stable tie ordering makes the selected geometry independent of GTFS/path order.
+        group.sort((a, b) => a.durationSeconds - b.durationSeconds || a.distanceMeters - b.distanceMeters ||
+            Number(!!a.requiresSnapConfirmation) - Number(!!b.requiresSnapConfirmation) ||
+            a.provider.localeCompare(b.provider) || JSON.stringify(a.geometry).localeCompare(JSON.stringify(b.geometry)));
+        const pareto = [];
+        for (const option of group) {
+            if (pareto.some(prior => prior.durationSeconds <= option.durationSeconds &&
+                prior.distanceMeters <= option.distanceMeters &&
+                (!prior.requiresSnapConfirmation || !!option.requiresSnapConfirmation)))
+                continue;
+            pareto.push(option);
         }
+        egressPaths.set(stopId, pareto);
     }
     const transferMap = new Map();
     for (const p of paths.transfers) {
@@ -552,37 +570,42 @@ function planJourneys(data, paths, request) {
             }
         for (const group of next.values())
             for (const result of group) {
-                const egress = egressPaths.get(result.stopId);
-                if (!egress || result.walkingMeters + egress.distanceMeters > walkingCap)
-                    continue;
                 const stop = stopMap.get(result.stopId);
-                const firstRide = result.legs.find((leg) => leg.type === 'ride');
-                const access = result.legs.find((leg) => leg.type === 'walk' && leg.purpose === 'access');
-                // Include required boarding slack: later advertised departures must
-                // remain physically reachable, not just convenient-looking timestamps.
-                const latestLeaveAtSeconds = firstRide
-                    ? firstRide.boardAtSeconds - (access?.durationSeconds ?? 0) - minBoarding
-                    : request.departAfterSeconds;
-                candidates.push({ serviceDate: request.serviceDate, feedVersion: data.feedVersion,
-                    departureAtSeconds: request.departAfterSeconds, latestLeaveAtSeconds,
-                    arrivalAtSeconds: result.at + egress.durationSeconds,
-                    transfers: result.rides - 1, walkingMeters: result.walkingMeters + egress.distanceMeters,
-                    boardings: result.boardings, legs: [...result.legs, pathLeg(egress, (0, boarding_1.routableStopCoordinate)(stop), paths.destination, 'egress')],
-                    predictionType: 'scheduled' });
+                for (const egress of egressPaths.get(result.stopId) ?? []) {
+                    if (result.walkingMeters + egress.distanceMeters > walkingCap)
+                        continue;
+                    const firstRide = result.legs.find((leg) => leg.type === 'ride');
+                    const access = result.legs.find((leg) => leg.type === 'walk' && leg.purpose === 'access');
+                    // Include required boarding slack: later advertised departures must
+                    // remain physically reachable, not just convenient-looking timestamps.
+                    const latestLeaveAtSeconds = firstRide
+                        ? firstRide.boardAtSeconds - (access?.durationSeconds ?? 0) - minBoarding
+                        : request.departAfterSeconds;
+                    candidates.push({ serviceDate: request.serviceDate, feedVersion: data.feedVersion,
+                        departureAtSeconds: request.departAfterSeconds, latestLeaveAtSeconds,
+                        arrivalAtSeconds: result.at + egress.durationSeconds,
+                        transfers: result.rides - 1, walkingMeters: result.walkingMeters + egress.distanceMeters,
+                        boardings: result.boardings, legs: [...result.legs, pathLeg(egress, (0, boarding_1.routableStopCoordinate)(stop), paths.destination, 'egress')],
+                        predictionType: 'scheduled' });
+                }
             }
         frontier = expanded;
     }
     // Preserve alternatives with different transit patterns, then rank by actual scheduled arrival.
+    // A02: grouping by transit pattern must preserve different feasible walking
+    // trade-offs. Keeping only the earliest arrival erases the shorter exit again.
     const journeys = new Map();
     for (const c of candidates) {
         const signature = (c.legs.some(l => l.type === 'ride') ? c.legs.filter(l => l.type === 'ride').map(l => `${l.serviceDate}:${l.tripId}:${l.boardStopId}:${l.alightStopId}`).join('|') : 'walk_only') +
             (snapConfirmationRequired(c.legs) ? ':snap-confirmation' : ':no-snap-confirmation');
-        const previous = journeys.get(signature);
-        if (!previous || c.arrivalAtSeconds < previous.arrivalAtSeconds)
-            journeys.set(signature, c);
+        const previous = journeys.get(signature) ?? [];
+        if (previous.some(j => j.arrivalAtSeconds === c.arrivalAtSeconds && j.walkingMeters === c.walkingMeters &&
+            j.transfers === c.transfers && j.latestLeaveAtSeconds === c.latestLeaveAtSeconds))
+            continue;
+        journeys.set(signature, nonDominatedJourneys([...previous, c]));
     }
     const rankBy = request.rankBy ?? 'fastest';
-    return nonDominatedJourneys([...journeys.values()]).sort((a, b) => {
+    return nonDominatedJourneys([...journeys.values()].flat()).sort((a, b) => {
         if (rankBy === 'less_walking')
             return a.walkingMeters - b.walkingMeters || a.arrivalAtSeconds - b.arrivalAtSeconds || a.transfers - b.transfers;
         if (rankBy === 'fewest_transfers')
