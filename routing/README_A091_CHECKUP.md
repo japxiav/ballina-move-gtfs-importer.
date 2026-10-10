@@ -21,7 +21,7 @@ No GitHub, a validação da A09 executou 324 testes do motor, 16 módulos equiva
 2. Confirmar os testes adversariais que adulteram o módulo de caminhada e o wrapper privado.
 3. Executar o smoke test privado autenticado no Supabase (incluindo a checagem do gateway JWT), sem ativar caminhada real e sem publicar para passageiros.
 4. Executar `routing/scripts/gtfs_health_readonly.sql` e conferir se existe uma única versão ativa, referência GTFS íntegra e coleta recente. Caso o feed não tenha importação na semana, investigar, não ativar automaticamente.
-5. Inspecionar as versões compiladas em `routing/dist` que são versionadas no Git. Mesmo que `npm test` as regenere, não assumir que um checkout limpo contém JS de distribuição atualizado.
+5. Confirmar que `routing/dist` é gerado pelo build (`npm run build`) e não está versionado nesta branch. Não pressupor que um checkout limpo contenha JS compilado; para distribuição, executar o build e validar o artefato versionado pela CI.
 6. Rodar outros cenários de município e horário, verificando que rotas ausentes ou avisos de cobertura não sejam apresentados como certezas.
 
 ## Restrições de escopo
