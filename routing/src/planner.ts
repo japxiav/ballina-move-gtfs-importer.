@@ -6,8 +6,10 @@ import {proximityMeters,routableStopCoordinate} from './boarding';
 
 export interface DoorToDoorRequest extends PlanRequest { origin:LatLon;destination:LatLon; }
 export interface DoorToDoorOptions extends BuildPathsOptions {
-  /** Only buses for our initial release; rail is a future explicit feature. */
+  /** Legacy switch; new callers should pass modes explicitly. Defaults to bus only. */
   includeRail?:boolean;
+  /** Explicit scheduled modes, independent of realtime availability. */
+  modes?:Array<'bus'|'rail'>;
   /** Maximum direct walking distance; defaults to 1.4 km, or 0 to disable. */
   maxDirectWalkMeters?:number;
 }
@@ -142,8 +144,11 @@ function candidateStopPreferences(data:Timetable,req:DoorToDoorRequest,maxRadius
 export async function planDoorToDoor(
   timetable:Timetable,router:WalkingRouter,req:DoorToDoorRequest,opts:DoorToDoorOptions={}
 ):Promise<PlannedJourneys>{
-  // Use the current GTFS graph only. Never silently include unsupported rail services.
-  const allowedRoutes=new Set(timetable.routes.filter(r=>r.mode==='bus'||opts.includeRail).map(r=>r.id));
+  // Preserve bus-only legacy behavior unless rail was explicitly requested.
+  // Never infer rail access from the GTFS feed merely containing trains.
+  const modes=new Set(opts.modes??(opts.includeRail?['bus','rail']:['bus']));
+  if(!modes.size||[...modes].some(m=>m!=='bus'&&m!=='rail'))throw new Error('invalid_modes');
+  const allowedRoutes=new Set(timetable.routes.filter(r=>modes.has(r.mode)).map(r=>r.id));
   const eligibleTrips=timetable.trips.filter(t=>allowedRoutes.has(t.routeId));
   const eligibleTripIds=new Set(eligibleTrips.map(t=>t.id));
   const times=timetable.stopTimes.filter(st=>eligibleTripIds.has(st.tripId));

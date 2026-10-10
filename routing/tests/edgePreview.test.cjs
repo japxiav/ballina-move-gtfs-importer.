@@ -7,7 +7,7 @@ const source=readFileSync(path.join(root,'index.ts'),'utf8');
 test('private routing preview never exposes the paid planner to publishable clients',()=>{
  assert.match(source,/if\(!await tokenMatches\(req\.headers\.get\('x-ballina-preview-token'\)\)\)/);
  assert.match(source,/public_planning_enabled:false/);
- assert.match(source,/router:new StadiaWalkingRouter\(stadiaKey,/);
+ assert.match(source,/router:stadiaKey\?new StadiaWalkingRouter\(stadiaKey,/);
  assert.match(source,/Deno\.env\.get\('STADIA_API_KEY'\)/);
  assert.match(source,/BALLINA_ROUTING_PREVIEW_TOKEN/);
  assert.match(source,/isNearby=path\.endsWith\('\/v1\/nearby-stops'\)/);
