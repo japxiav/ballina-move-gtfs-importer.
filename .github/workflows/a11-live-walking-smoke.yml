@@ -1,0 +1,60 @@
+name: A11 private Stadia walking smoke (two-call maximum)
+
+# Explicit action only; never during a push, PR, deploy or scheduled import.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_paid_requests:
+        description: 'I approve up to TWO Stadia routing requests for fixed public Ballina samples'
+        required: true
+        type: choice
+        options:
+          - NO_DO_NOT_RUN
+          - YES_UP_TO_2_REQUESTS
+        default: NO_DO_NOT_RUN
+
+permissions:
+  contents: read
+
+# Avoid simultaneous paid probe runs. Does not impose a lifetime quota.
+concurrency:
+  group: ballina-a11-live-walking-probe
+  cancel-in-progress: false
+
+jobs:
+  private-walking-probe:
+    # Refuse invocation from a feature branch, including modified probe code.
+    if: ${{ github.ref == 'refs/heads/main' && inputs.confirm_paid_requests == 'YES_UP_TO_2_REQUESTS' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout trusted main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Install Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: routing/package-lock.json
+      - name: Install pinned dependencies
+        working-directory: routing
+        run: npm ci --ignore-scripts
+      - name: Build walking adapter
+        working-directory: routing
+        run: npm run build
+      - name: Check Stadia secret availability without printing it
+        env:
+          STADIA_API_KEY: ${{ secrets.STADIA_API_KEY }}
+        run: |
+          if [ -z "$STADIA_API_KEY" ]; then
+            echo '::error::STADIA_API_KEY missing in GitHub Actions repository secrets; zero walking requests made.'
+            exit 1
+          fi
+      - name: Run explicitly approved two-request fixed Ballina smoke
+        working-directory: routing
+        env:
+          STADIA_API_KEY: ${{ secrets.STADIA_API_KEY }}
+        run: node scripts/a11_live_walking_smoke.cjs --live
