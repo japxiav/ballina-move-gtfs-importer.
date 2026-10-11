@@ -3,22 +3,35 @@
  * Runs ONLY when explicitly called with --live, performs two safe GETs and
  * at most ONE potentially billable POST. No retries or raw credential logging.
  */
-const assert=require('node:assert/strict');
 const BASE='https://giwiqbnyozjbpmetrjhe.supabase.co/functions/v1/ballina-a11-realwalking-canary';
 const FIXED_REQUEST=Object.freeze({
   scenarioId:'ballina-foxford-bus',
-  serviceDate:'2026-10-11',
-  departAt:'09:15',
   confirmPaidCalls:'YES_UP_TO_12_WALKS',
 });
 const TIMEOUT_MS=90000;
+function buildRequest({serviceDate,departAt},now){
+  if(typeof serviceDate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(serviceDate)||
+     !Number.isFinite(Date.parse(serviceDate+'T00:00:00Z'))||
+     new Date(serviceDate+'T00:00:00Z').toISOString().slice(0,10)!==serviceDate)
+    throw new Error('invalid_service_date');
+  if(typeof departAt!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(departAt))
+    throw new Error('invalid_departure_time');
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Dublin',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now);
+  const get=k=>parts.find(x=>x.type===k)?.value??'';
+  const today=`${get('year')}-${get('month')}-${get('day')}`;
+  const offset=(Date.parse(serviceDate+'T00:00:00Z')-Date.parse(today+'T00:00:00Z'))/86400000;
+  if(offset<0||offset>14)throw new Error('service_date_outside_canary_window');
+  if(offset===0&&departAt<=`${get('hour')}:${get('minute')}`)
+    throw new Error('departure_time_already_passed');
+  return Object.freeze({...FIXED_REQUEST,serviceDate,departAt});
+}
 function safeNumber(n){return typeof n==='number' && Number.isFinite(n) && n>=0;}
 function verifySecrets(jwt,previewToken){
   if(typeof jwt!=='string'||jwt.split('.').length!==3||jwt.length<100 ||
      typeof previewToken!=='string'||previewToken.length<32||previewToken.length>256)
     throw new Error('required_secrets_missing_or_invalid');
 }
-function summarize(result,gtfsSummary){
+function summarize(result,gtfsSummary,request){
   if(result?.status!=='scheduled_only'||result.realtime!==false)
     throw new Error('unexpected_routing_status');
   if(!Array.isArray(result.journeys)||result.journeys.length===0)
@@ -62,21 +75,16 @@ function summarize(result,gtfsSummary){
   if(!cases.length)throw new Error('no_bus_plus_real_walking_journey');
   if(!(result.canary.verifiedProviderWalkLegs>0))throw new Error('provider_leg_counter_zero');
   return {status:'A11_FIRST_LIVE_INTEGRATION_SUCCESS',scenarioId:FIXED_REQUEST.scenarioId,
-    serviceDate:FIXED_REQUEST.serviceDate,departAt:FIXED_REQUEST.departAt,
+    serviceDate:request.serviceDate,departAt:request.departAt,
     feedVersionPrefix:gtfsSummary.feedVersion.slice(0,12),
     totalJourneys:result.journeys.length,validBusAndRealWalkingJourneys:cases.length,
     provider:'stadia-valhalla-pedestrian',realtime:false,notForPassengers:true,
     journeys:cases.slice(0,3),
     warnings:(result.coverageWarnings??[]).map(x=>x.code).filter(x=>typeof x==='string').slice(0,12)};
 }
-async function runOnce({anonJwt,previewToken,fetcher=fetch,now=new Date()}={}){
+async function runOnce({anonJwt,previewToken,serviceDate,departAt,fetcher=fetch,now=new Date()}={}){
+  const request=buildRequest({serviceDate,departAt},now);
   verifySecrets(anonJwt,previewToken);
-  // The fixed departure belongs to the Oct 11 Sunday service, not an arbitrary later date.
-  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Dublin',year:'numeric',month:'2-digit',day:'2-digit'})
-    .formatToParts(now);
-  const get=k=>today.find(x=>x.type===k)?.value??'';
-  if(`${get('year')}-${get('month')}-${get('day')}`!=='2026-10-11')
-    throw new Error('fixed_gtfs_service_date_expired');
   const headers={apikey:anonJwt,authorization:`Bearer ${anonJwt}`,
     'x-ballina-preview-token':previewToken,accept:'application/json'};
   let postCount=0;
@@ -100,9 +108,9 @@ async function runOnce({anonJwt,previewToken,fetcher=fetch,now=new Date()}={}){
      !['stops','routes','trips','stopTimes'].every(x=>Number.isInteger(gtfs.counts[x])&&gtfs.counts[x]>0))
     throw new Error('invalid_active_gtfs_snapshot');
   // EXACTLY ONE potentially billable integration request, only AFTER safe checks.
-  const result=await req('/v1/canary-journey','POST',FIXED_REQUEST);
+  const result=await req('/v1/canary-journey','POST',request);
   return {requestCounts:{readOnlyGet:2,paidPostAttempts:postCount,providerQueriesMaximum:12},
-    gtfsCounts:gtfs.counts,...summarize(result,gtfs)};
+    gtfsCounts:gtfs.counts,...summarize(result,gtfs,request)};
 }
 if(require.main===module){
   (async()=>{
@@ -111,15 +119,16 @@ if(require.main===module){
     }
     try{
       const result=await runOnce({anonJwt:process.env.BALLINA_SUPABASE_ANON_JWT,
-        previewToken:process.env.BALLINA_ROUTING_PREVIEW_TOKEN});
+        previewToken:process.env.BALLINA_ROUTING_PREVIEW_TOKEN,
+        serviceDate:process.env.A11_SERVICE_DATE,departAt:process.env.A11_DEPART_AT});
       console.log(JSON.stringify(result,null,2));
     }catch(e){
       // Never echo upstream body, token, auth header or untrusted error messages.
       const msg=String(e?.message??'');
-      const safe=/^(required_secrets_missing_or_invalid|fixed_gtfs_service_date_expired|canary_not_ready|invalid_active_gtfs_snapshot|unexpected_routing_status|no_scheduled_itinerary_returned|invalid_private_canary_marker|feed_version_changed_during_test|malformed_journey|synthetic_or_unapproved_walking_provider|invalid_walking_distance_or_duration|walking_geometry_missing|no_bus_plus_real_walking_journey|provider_leg_counter_zero|paid_post_limit_exceeded|canary_(?:get|post)_http_\d{3})$/;
+      const safe=/^(required_secrets_missing_or_invalid|invalid_service_date|invalid_departure_time|service_date_outside_canary_window|departure_time_already_passed|canary_not_ready|invalid_active_gtfs_snapshot|unexpected_routing_status|no_scheduled_itinerary_returned|invalid_private_canary_marker|feed_version_changed_during_test|malformed_journey|synthetic_or_unapproved_walking_provider|invalid_walking_distance_or_duration|walking_geometry_missing|no_bus_plus_real_walking_journey|provider_leg_counter_zero|paid_post_limit_exceeded|canary_(?:get|post)_http_\d{3})$/;
       console.error(safe.test(msg)?msg:'a11_integration_request_failed_no_retry');
       process.exitCode=1;
     }
   })();
 }
-module.exports={runOnce,summarize,FIXED_REQUEST,BASE};
+module.exports={runOnce,summarize,buildRequest,FIXED_REQUEST,BASE};
