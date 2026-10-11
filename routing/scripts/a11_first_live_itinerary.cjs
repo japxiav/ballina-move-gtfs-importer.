@@ -32,6 +32,8 @@ function verifySecrets(jwt,previewToken){
     throw new Error('required_secrets_missing_or_invalid');
 }
 function summarize(result,gtfsSummary,request){
+  if(result?.serviceDate!==request.serviceDate)
+    throw new Error('requested_service_date_mismatch');
   if(result?.status!=='scheduled_only'||result.realtime!==false)
     throw new Error('unexpected_routing_status');
   if(!Array.isArray(result.journeys)||result.journeys.length===0)
@@ -125,7 +127,7 @@ if(require.main===module){
     }catch(e){
       // Never echo upstream body, token, auth header or untrusted error messages.
       const msg=String(e?.message??'');
-      const safe=/^(required_secrets_missing_or_invalid|invalid_service_date|invalid_departure_time|service_date_outside_canary_window|departure_time_already_passed|canary_not_ready|invalid_active_gtfs_snapshot|unexpected_routing_status|no_scheduled_itinerary_returned|invalid_private_canary_marker|feed_version_changed_during_test|malformed_journey|synthetic_or_unapproved_walking_provider|invalid_walking_distance_or_duration|walking_geometry_missing|no_bus_plus_real_walking_journey|provider_leg_counter_zero|paid_post_limit_exceeded|canary_(?:get|post)_http_\d{3})$/;
+      const safe=/^(required_secrets_missing_or_invalid|invalid_service_date|invalid_departure_time|service_date_outside_canary_window|departure_time_already_passed|canary_not_ready|invalid_active_gtfs_snapshot|requested_service_date_mismatch|unexpected_routing_status|no_scheduled_itinerary_returned|invalid_private_canary_marker|feed_version_changed_during_test|malformed_journey|synthetic_or_unapproved_walking_provider|invalid_walking_distance_or_duration|walking_geometry_missing|no_bus_plus_real_walking_journey|provider_leg_counter_zero|paid_post_limit_exceeded|canary_(?:get|post)_http_\d{3})$/;
       console.error(safe.test(msg)?msg:'a11_integration_request_failed_no_retry');
       process.exitCode=1;
     }

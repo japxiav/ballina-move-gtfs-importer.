@@ -16,7 +16,7 @@ const walk={type:'walk',purpose:'access',distanceMeters:155,durationSeconds:126,
   endpointSnapMeters:{from:4,to:9},requiresSnapConfirmation:false,geometry:[{lat:54.11,lon:-9.16},{lat:54.111,lon:-9.1599}]};
 const ride={type:'ride',mode:'bus',routeName:'22',tripId:'5940_48615',boardStopId:'8490B5550501',
   alightStopId:'8490B141661',boardAtSeconds:34200,alightAtSeconds:35040};
-const result={status:'scheduled_only',realtime:false,feedVersion:FEED,
+const result={status:'scheduled_only',realtime:false,feedVersion:FEED,serviceDate:REQUEST.serviceDate,
   journeys:[{legs:[walk,ride,{...walk,purpose:'egress',distanceMeters:100}],walkingMeters:255}],
   canary:{private:true,notForPassengers:true,syntheticWalking:false,verifiedProviderWalkLegs:2},coverageWarnings:[]};
 function fake({h=health,g=gtfs,j=result,failOn=null}={}){
@@ -136,4 +136,12 @@ test('A11 workflow passes reviewed inputs as environment variables, never shell 
  assert.ok(workflow.includes('A11_DEPART_AT: ${{ inputs.depart_at }}'));
  assert.match(workflow,/run: node routing\/scripts\/a11_first_live_itinerary.cjs --live/);
  assert.doesNotMatch(workflow,/Oct 11/);
+});
+
+test('A11 live itinerary: wrong or absent response date cannot report success',async()=>{
+ for(const serviceDate of ['2026-10-11',undefined]){
+  const x=fake({j:{...result,serviceDate}});
+  await assert.rejects(()=>runOnce({...auth,fetcher:x.fetcher}),/requested_service_date_mismatch/);
+  assert.equal(x.calls.filter(c=>c.method==='POST').length,1);
+ }
 });

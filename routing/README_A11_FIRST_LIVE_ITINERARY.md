@@ -23,7 +23,7 @@ These observations are historical evidence, not proof of service on another date
 4. Deployed canary uses an atomic shared 2-journeys/hour limiter; the engine caps provider requests to 12 per journey, also behind a global limiter. Max up to **12 chargeable Stadia calls** for this one manual run; actual usage could be lower. Check the provider's credit balance before running.
 5. Legacy anon JWT and the preview token are taken from **GitHub Secrets**, never hard-coded, echoed or passed to a frontend. The runner prints only aggregates and GTFS trip IDs (public transit data).
 6. Required workflow inputs `service_date` (`YYYY-MM-DD`) and `depart_at` (`HH:MM`) use Europe/Dublin time. Invalid dates/times, dates outside today through +14 days, and already-passed departures today fail before any HTTP request. There is no automatic date replacement or retry. Date validation does not prove service availability; review the active GTFS calendar first.
-7. The test fails if the response contains no bus + real-provider walking itinerary, has synthetic provider legs, or mismatched GTFS versions. Green Actions alone cannot establish safe sidewalk use, correct boarding bay, physical accessibility, or reliable live arrival times.
+7. The test fails if the response contains no bus + real-provider walking itinerary, has synthetic provider legs, mismatched GTFS versions, or a missing/different response service date. Green Actions alone cannot establish safe sidewalk use, correct boarding bay, physical accessibility, or reliable live arrival times.
 
 ## Procedure
 
