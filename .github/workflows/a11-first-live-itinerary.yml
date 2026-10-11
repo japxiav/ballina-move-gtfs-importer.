@@ -1,0 +1,39 @@
+name: A11 first GTFS plus Stadia itinerary (max 12 paid walking requests)
+
+# NEVER auto-run on commits, PRs, schedules or imports.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_paid_test:
+        description: 'I approve ONE private Oct 11 Ballina–Foxford itinerary search, max 12 Stadia calls'
+        required: true
+        type: choice
+        options:
+          - NO_DO_NOT_RUN
+          - YES_ONE_ITINERARY_MAX_12_WALKS
+        default: NO_DO_NOT_RUN
+permissions:
+  contents: read
+concurrency:
+  group: ballina-a11-one-live-itinerary
+  cancel-in-progress: false
+jobs:
+  first-live-itinerary:
+    if: ${{ github.ref == 'refs/heads/main' && inputs.confirm_paid_test == 'YES_ONE_ITINERARY_MAX_12_WALKS' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout reviewed main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preflight GTFS then explicitly approved single private journey
+        env:
+          BALLINA_SUPABASE_ANON_JWT: ${{ secrets.BALLINA_SUPABASE_ANON_JWT }}
+          BALLINA_ROUTING_PREVIEW_TOKEN: ${{ secrets.BALLINA_ROUTING_PREVIEW_TOKEN }}
+        run: node routing/scripts/a11_first_live_itinerary.cjs --live
