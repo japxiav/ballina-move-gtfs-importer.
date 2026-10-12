@@ -588,6 +588,10 @@ function planJourneys(data, paths, request) {
                 const alightStop = stopMap.get(stopTime.stopId);
                 if (!alightStop)
                     continue;
+                // The final transfer round cannot board another vehicle. Only stops
+                // with a validated egress can produce a completed journey now.
+                if (round === maxTransfers && !egressPaths.has(stopTime.stopId))
+                    continue;
                 for (const chosen of boardingCandidates) {
                     if (chosen.index >= i)
                         continue;
@@ -612,22 +616,25 @@ function planJourneys(data, paths, request) {
                 }
             }
         }
-        // Transfer walking only after arriving on a vehicle. Never assume opposite sidewalks connect.
+        // No later round uses transfer frontiers when the ride budget is spent.
         const expanded = new Map();
-        for (const group of next.values())
-            for (const entry of group)
-                addBest(expanded, entry);
-        for (const group of next.values())
-            for (const origin of group) {
-                for (const p of transferMap.get(origin.stopId) ?? []) {
-                    if (origin.walkingMeters + p.distanceMeters > walkingCap)
-                        continue;
-                    const from = stopMap.get(p.fromStopId), to = stopMap.get(p.toStopId);
-                    addBest(expanded, { ...origin, stopId: to.id, at: origin.at + p.durationSeconds,
-                        walkingMeters: origin.walkingMeters + p.distanceMeters,
-                        legs: [...origin.legs, pathLeg(p, (0, boarding_1.routableStopCoordinate)(from), (0, boarding_1.routableStopCoordinate)(to), 'transfer')] });
+        if (round < maxTransfers) {
+            // Transfer walking only after arriving on a vehicle.
+            for (const group of next.values())
+                for (const entry of group)
+                    addBest(expanded, entry);
+            for (const group of next.values())
+                for (const origin of group) {
+                    for (const p of transferMap.get(origin.stopId) ?? []) {
+                        if (origin.walkingMeters + p.distanceMeters > walkingCap)
+                            continue;
+                        const from = stopMap.get(p.fromStopId), to = stopMap.get(p.toStopId);
+                        addBest(expanded, { ...origin, stopId: to.id, at: origin.at + p.durationSeconds,
+                            walkingMeters: origin.walkingMeters + p.distanceMeters,
+                            legs: [...origin.legs, pathLeg(p, (0, boarding_1.routableStopCoordinate)(from), (0, boarding_1.routableStopCoordinate)(to), 'transfer')] });
+                    }
                 }
-            }
+        }
         for (const group of next.values())
             for (const result of group) {
                 const stop = stopMap.get(result.stopId);
