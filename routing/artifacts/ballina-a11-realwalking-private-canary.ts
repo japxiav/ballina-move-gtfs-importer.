@@ -223,14 +223,14 @@ function metadata(state) {
     const cached = stateMetadata.get(state);
     if (cached)
         return cached;
-    const used = new Set();
-    let last = null;
-    for (const leg of state.legs)
-        if (leg.type === 'ride') {
+    let last = null, snap = false;
+    for (const leg of state.legs) {
+        if (leg.type === 'ride')
             last = `${leg.serviceDate}:${leg.tripId}`;
-            used.add(last);
-        }
-    const item = { last, used, snap: snapConfirmationRequired(state.legs) };
+        if (leg.type === 'walk' && leg.requiresSnapConfirmation === true)
+            snap = true;
+    }
+    const item = { last, snap };
     stateMetadata.set(state, item);
     return item;
 }
@@ -240,14 +240,24 @@ function previousVehicle(state) {
 /** State A must not prohibit any trip that state B could still board.
  * The planner forbids reusing trip IDs, so history is part of state identity. */
 function usedVehicles(state) {
-    return metadata(state).used;
+    const item = metadata(state);
+    // Most labels have different last vehicles or already fail scalar Pareto
+    // checks. Allocate history only when subset comparison is actually needed.
+    if (!item.used) {
+        item.used = new Set();
+        for (const leg of state.legs)
+            if (leg.type === 'ride')
+                item.used.add(`${leg.serviceDate}:${leg.tripId}`);
+    }
+    return item.used;
 }
 function snapConfirmationRequired(legs) {
     return legs.some(leg => leg.type === 'walk' && leg.requiresSnapConfirmation === true);
 }
 function stateDominates(a, b) {
-    if (previousVehicle(a) !== previousVehicle(b) ||
-        a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides || a.latestLeaveAtSeconds < b.latestLeaveAtSeconds)
+    if (a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides || a.latestLeaveAtSeconds < b.latestLeaveAtSeconds)
+        return false;
+    if (previousVehicle(a) !== previousVehicle(b))
         return false;
     // A label with uncertain household-to-street access cannot discard one
     // which does not require explicit confirmation from the passenger.
@@ -2777,7 +2787,7 @@ async function a11TokenMatches(candidate){
 }
 function a11ParseRequest(raw){
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).sort().join(',')!=='confirmPaidCalls,departAt,scenarioId,serviceDate')return null;
-  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
+  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||typeof raw.scenarioId!=='string'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
   if(typeof raw.serviceDate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(raw.serviceDate))return null;
   const day=new Date(raw.serviceDate+'T00:00:00Z');
   if(!Number.isFinite(day.getTime())||day.toISOString().slice(0,10)!==raw.serviceDate)return null;
