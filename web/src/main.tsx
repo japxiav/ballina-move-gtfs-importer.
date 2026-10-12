@@ -16,6 +16,7 @@ import {
   type DemoJourney,
   type SearchQuery,
 } from "./fixtures";
+import { LiveMap } from "./LiveMap";
 import "./styles.css";
 
 type IconName =
@@ -376,6 +377,7 @@ function Home({ query }: { query: SearchQuery }) {
             <span className="tiny-line" /> BALLINA & MAYO
           </div>
           <h1>Your next <em>journey.</em></h1>
+          <a className="live-entry" href="#/live">Track buses &amp; trains <Icon name="arrow" size={16} /></a>
           <p className="hero-description">
             Explore journeys around Ballina and County Mayo.
           </p>
@@ -896,14 +898,14 @@ function About() {
           <span>02</span>
           <h2>Know your data</h2>
           <p>
-            All results are synthetic. Places are in Mayo, but times, distances and routes are examples.
+            Journey search results are synthetic. The Live map uses official vehicle observations and reported train locations, with timestamps and availability shown separately.
           </p>
         </section>
         <section>
           <span>03</span>
-          <h2>What comes next</h2>
+          <h2>Vehicle locations</h2>
           <p>
-            Real transport data needs a secure connection and verified stops, walking paths and live predictions.
+            Bus locations include observation times. Irish Rail reports locations without their observation age or precision. A published snapshot is clearly labelled; continuous updates require the server gateway.
           </p>
         </section>
       </div>
@@ -935,10 +937,10 @@ function App() {
     isJourney = journeyMatch !== null;
   const query = React.useMemo(() => decodeQuery(search), [search]),
     defaults = React.useMemo(defaultQuery, []);
-  const isHome = !path || path === "/";
+  const isHome = !path || path === "/", isLive = path === "/live";
   useEffect(() => {
-    document.title = `${isHome ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
-  }, [isHome, isJourney, isSearch]);
+    document.title = `${isLive ? "Live map" : isHome ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
+  }, [isHome, isJourney, isSearch, isLive]);
   return (
     <>
       <a
@@ -976,6 +978,7 @@ function App() {
           >
             Journeys
           </a>
+          <a className={isLive ? "active" : ""} href="#/live" aria-current={isLive ? "page" : undefined}>Live map</a>
           <a
             className={path === "/about" ? "active" : ""}
             href="#/about"
@@ -985,12 +988,14 @@ function App() {
           </a>
         </nav>
         <span className="header-demo">
-          <span className="status-dot" /> DEMO
+          <span className="status-dot" /> {isLive ? "MAP" : "DEMO"}
         </span>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
         {isHome ? (
           <Home query={defaults} />
+        ) : isLive ? (
+          <LiveMap />
         ) : isSearch || isJourney ? (
           query ? (
             <SearchPage
@@ -1025,9 +1030,9 @@ function App() {
           ballina move<span>Your next journey in Mayo.</span>
         </span>
         <span>
-          Demo prototype · Fixtures v1
+          {isLive ? "Official transport sources" : "Demo prototype · Fixtures v1"}
           <br />
-          No live data. No paid requests.
+          {isLive ? "Source timestamps shown. No paid requests." : "No live data. No paid requests."}
         </span>
         <a href="#/about">
           About this demo <Icon name="arrow" size={16} />

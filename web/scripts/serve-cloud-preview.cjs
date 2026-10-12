@@ -1,5 +1,5 @@
 "use strict";
-// Fixture-only static preview. Never serves the checkout, env files or a backend.
+// Static build and sanitized public snapshot only; no checkout or credentials.
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -13,10 +13,11 @@ const mime = {
   ".css": "text/css; charset=utf-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
+  ".json": "application/json; charset=utf-8",
 };
 const server = http.createServer((req, res) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Cache-Control", "no-store");
   if (!["GET", "HEAD"].includes(req.method)) {
     res.writeHead(405, { Allow: "GET, HEAD" });
@@ -40,6 +41,7 @@ const server = http.createServer((req, res) => {
       pathname === "/index.html" ||
       pathname === "/ballina-move.html" ||
       pathname === "/favicon.svg" ||
+      pathname === "/live-data.json" ||
       pathname.startsWith("/assets/")
     )
   ) {
@@ -72,7 +74,7 @@ const server = http.createServer((req, res) => {
   if (pathname !== "/ballina-move.html")
     res.setHeader(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'",
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'",
     );
   res.writeHead(200);
   if (req.method === "HEAD") {
@@ -89,7 +91,7 @@ server.on("error", (error) => {
 });
 server.listen(port, "0.0.0.0", () =>
   console.log(
-    `Ballina fixture build listening on internal port ${port}; no private services.`,
+    `Ballina static build listening on internal port ${port}; no private services.`,
   ),
 );
 for (const signal of ["SIGINT", "SIGTERM"])
