@@ -1,5 +1,7 @@
 # Revisão e evidências · 12 de outubro de 2026
 
+Registro histórico da primeira implementação e da primeira investigação de prévia. Os números e o estado de publicação abaixo correspondem àquele checkpoint. A execução atual, com novas correções, testes e branches enviadas, é acompanhada somente em [ENGINEERING_EXECUTION_LOG.md](../docs/ENGINEERING_EXECUTION_LOG.md).
+
 Base preservada: `4c40f4aa0ce26958a0fbbadb62110dab0b3b52a6`. O checkout inicial estava limpo na branch `work`. Nenhum código preexistente foi removido; a interface é um pacote novo. A correção A11 está em outra branch, com a mesma base, sem depender da web.
 
 ## Alterações entregues

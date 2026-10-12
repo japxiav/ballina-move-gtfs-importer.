@@ -43,6 +43,7 @@ export const places = [
 export type PlaceId = (typeof places)[number]["id"];
 export type Preference = "fastest" | "less_walking" | "fewest_transfers";
 export type DemoState = "normal" | "empty" | "error";
+export type TransportMode = Extract<Leg, { type: "ride" }>["mode"];
 export interface SearchQuery {
   origin: PlaceId;
   destination: PlaceId;
@@ -51,6 +52,7 @@ export interface SearchQuery {
   prioritize: Preference;
   maxWalkingMeters: number;
   demoState: DemoState;
+  modes: readonly TransportMode[];
 }
 export interface DemoJourney extends Journey {
   id: string;
@@ -60,6 +62,7 @@ export interface DemoJourney extends Journey {
 export const place = (id: PlaceId) => places.find((p) => p.id === id)!;
 export const validDate = (date: string) =>
   /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+  date.slice(0, 4) !== "0000" &&
   Number.isFinite(Date.parse(`${date}T00:00:00Z`)) &&
   new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) === date;
 export const validTime = (time: string) =>
@@ -82,21 +85,41 @@ export const defaultQuery = (): SearchQuery => ({
   prioritize: "fastest",
   maxWalkingMeters: 1500,
   demoState: "normal",
+  modes: ["bus", "rail"],
 });
 export function encodeQuery(query: SearchQuery): string {
   return new URLSearchParams(
-    Object.entries(query).map(([key, value]) => [key, String(value)]),
+    Object.entries(query).map(([key, value]) => [
+      key,
+      String(
+        key === "modes"
+          ? (["bus", "rail"] as const).filter((mode) => query.modes.includes(mode))
+          : value,
+      ),
+    ]),
   ).toString();
 }
 export function decodeQuery(search: string): SearchQuery | null {
-  const p = new URLSearchParams(search),
-    origin = p.get("origin"),
+  const p = new URLSearchParams(search);
+  const keys = [
+    "origin", "destination", "serviceDate", "departAt",
+    "prioritize", "maxWalkingMeters", "demoState",
+  ];
+  if (
+    Array.from(p.keys()).some((key) => ![...keys, "modes"].includes(key)) ||
+    keys.some((key) => p.getAll(key).length !== 1) ||
+    p.getAll("modes").length > 1
+  ) return null;
+  // Legacy links contain all existing fields but no modes; their bus results remain unchanged.
+  const modes = p.get("modes") ?? "bus,rail";
+  const origin = p.get("origin"),
     destination = p.get("destination");
   const serviceDate = p.get("serviceDate") ?? "",
     departAt = p.get("departAt") ?? "";
   const prioritize = p.get("prioritize"),
     demoState = p.get("demoState"),
-    maxWalkingMeters = Number(p.get("maxWalkingMeters"));
+    walking = p.get("maxWalkingMeters") ?? "",
+    maxWalkingMeters = Number(walking);
   if (
     !places.some((p) => p.id === origin) ||
     !places.some((p) => p.id === destination) ||
@@ -106,7 +129,8 @@ export function decodeQuery(search: string): SearchQuery | null {
       prioritize ?? "",
     ) ||
     !["normal", "empty", "error"].includes(demoState ?? "") ||
-    ![500, 1000, 1500, 2500].includes(maxWalkingMeters)
+    !["500", "1000", "1500", "2500"].includes(walking) ||
+    !["bus", "rail", "bus,rail"].includes(modes)
   )
     return null;
   return {
@@ -117,6 +141,7 @@ export function decodeQuery(search: string): SearchQuery | null {
     prioritize: prioritize as Preference,
     maxWalkingMeters,
     demoState: demoState as DemoState,
+    modes: modes.split(",") as TransportMode[],
   };
 }
 export function clock(seconds: number): string {
@@ -166,7 +191,9 @@ function walk(
   };
 }
 export function fixtureJourneys(q: SearchQuery): DemoJourney[] {
-  if (q.origin === q.destination || q.demoState === "empty") return [];
+  if (
+    q.origin === q.destination || q.demoState === "empty" || !q.modes.includes("bus")
+  ) return [];
   const departure =
     Number(q.departAt.slice(0, 2)) * 3600 + Number(q.departAt.slice(3)) * 60;
   const rideMinutes =

@@ -180,6 +180,10 @@ function SearchForm({
       setError("Escolha uma origem e um destino diferentes.");
       return;
     }
+    if (q.modes.length === 0) {
+      setError("Selecione pelo menos um meio de transporte.");
+      return;
+    }
     setError("");
     window.location.hash = `/search?${encodeQuery(q)}`;
   }
@@ -201,7 +205,7 @@ function SearchForm({
             <Icon name="pin" size={15} /> De onde
           </span>
           <select
-            aria-label="Origem"
+            aria-label="De onde — Origem"
             value={q.origin}
             onChange={(e) =>
               update("origin", e.target.value as SearchQuery["origin"])
@@ -233,7 +237,7 @@ function SearchForm({
             <Icon name="pin" size={15} /> Para onde
           </span>
           <select
-            aria-label="Destino"
+            aria-label="Para onde — Destino"
             value={q.destination}
             onChange={(e) =>
               update(
@@ -264,7 +268,7 @@ function SearchForm({
         <label className="field">
           <span>Partir a partir de</span>
           <input
-            aria-label="Horário de partida"
+            aria-label="Partir a partir de — Horário de partida"
             type="time"
             required
             value={q.departAt}
@@ -301,6 +305,28 @@ function SearchForm({
           </select>
         </label>
       </div>
+      <fieldset className="transport-modes">
+        <legend>Meios de transporte</legend>
+        {(["bus", "rail"] as const).map((mode) => (
+          <label key={mode}>
+            <input
+              type="checkbox"
+              checked={q.modes.includes(mode)}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setQ((old) => ({
+                  ...old,
+                  modes: (["bus", "rail"] as const).filter((candidate) =>
+                    candidate === mode ? checked : old.modes.includes(candidate),
+                  ),
+                }));
+              }}
+            />
+            {mode === "bus" ? "Ônibus" : "Trem"}
+          </label>
+        ))}
+        <p>Fixtures disponíveis: somente ônibus. O filtro não comprova cobertura real.</p>
+      </fieldset>
       <p className="timezone">
         <Icon name="clock" size={14} /> Horário local da Irlanda · Europe/Dublin
       </p>
@@ -317,7 +343,7 @@ function SearchForm({
         <label>
           Resposta das fixtures
           <select
-            aria-label="Resposta da demonstração"
+            aria-label="Resposta das fixtures"
             value={q.demoState}
             onChange={(e) =>
               update("demoState", e.target.value as SearchQuery["demoState"])
@@ -547,7 +573,11 @@ function Loading() {
     </div>
   );
 }
-function EmptyState({ error, retry }: { error: boolean; retry: () => void }) {
+function EmptyState({ error, retry, railOnly = false }: {
+  error: boolean;
+  retry: () => void;
+  railOnly?: boolean;
+}) {
   return (
     <div className="empty-state" role={error ? "alert" : "status"}>
       <div className="empty-icon">
@@ -559,7 +589,9 @@ function EmptyState({ error, retry }: { error: boolean; retry: () => void }) {
       <p>
         {error
           ? "Simulamos uma falha no serviço. Você pode tentar novamente ou escolher “Resultados ilustrativos” no formulário."
-          : "As fixtures não têm opções para esta combinação. Tente outros locais ou ajuste a caminhada máxima."}
+          : railOnly
+            ? "Esta demonstração não contém exemplos de trem."
+            : "As fixtures não têm opções para esta combinação. Tente outros locais ou ajuste a caminhada máxima."}
       </p>
       {error && (
         <button className="button primary" onClick={retry}>
@@ -812,7 +844,11 @@ function SearchPage({
           ) : state === "error" ? (
             <EmptyState error retry={() => setAttempt((n) => n + 1)} />
           ) : journeys.length === 0 ? (
-            <EmptyState error={false} retry={() => {}} />
+            <EmptyState
+              error={false}
+              retry={() => {}}
+              railOnly={!query.modes.includes("bus")}
+            />
           ) : (
             <>
               <div className="results-heading">
@@ -903,9 +939,12 @@ function App() {
     if (previousHash.current !== hash) main.current?.focus();
     previousHash.current = hash;
   }, [hash]);
-  const [path, search = ""] = hash.slice(1).split("?"),
+  const fragment = hash.slice(1), question = fragment.indexOf("?");
+  const path = question < 0 ? fragment : fragment.slice(0, question),
+    search = question < 0 ? "" : fragment.slice(question + 1),
     isSearch = path === "/search",
-    isJourney = path?.startsWith("/journey/");
+    journeyMatch = /^\/journey\/([^/]+)$/.exec(path ?? ""),
+    isJourney = journeyMatch !== null;
   const query = React.useMemo(() => decodeQuery(search), [search]),
     defaults = React.useMemo(defaultQuery, []);
   const isHome = !path || path === "/";
@@ -969,9 +1008,7 @@ function App() {
             <SearchPage
               key={encodeQuery(query)}
               query={query}
-              journeyId={
-                isJourney ? path?.slice("/journey/".length) : undefined
-              }
+              journeyId={journeyMatch?.[1]}
             />
           ) : (
             <div className="empty-state" role="alert">

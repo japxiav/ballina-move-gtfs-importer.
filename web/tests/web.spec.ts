@@ -91,13 +91,13 @@ test("priority and walking limit alter order and count", async ({ page }) => {
 test("swap and equal-place validation", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Trocar origem e destino" }).click();
-  await expect(page.getByLabel("Origem", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("De onde — Origem", { exact: true })).toHaveValue(
     "foxford",
   );
-  await expect(page.getByLabel("Destino", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Para onde — Destino", { exact: true })).toHaveValue(
     "ballina",
   );
-  await page.getByLabel("Destino", { exact: true }).selectOption("foxford");
+  await page.getByLabel("Para onde — Destino", { exact: true }).selectOption("foxford");
   await page.getByRole("button", { name: "Buscar viagens" }).click();
   await expect(page.getByRole("alert")).toContainText(
     "origem e um destino diferentes",
@@ -106,14 +106,14 @@ test("swap and equal-place validation", async ({ page }) => {
 test("empty, simulated failure, retry and recovery", async ({ page }) => {
   await page.goto("/");
   await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta da demonstração").selectOption("empty");
+  await page.getByLabel("Resposta das fixtures").selectOption("empty");
   await page.getByRole("button", { name: "Buscar viagens" }).click();
   await expect(
     page.getByRole("heading", { name: "Nenhuma viagem neste exemplo." }),
   ).toBeVisible();
   await page.getByText("Alterar pesquisa").click();
   await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta da demonstração").selectOption("error");
+  await page.getByLabel("Resposta das fixtures").selectOption("error");
   await page.getByRole("button", { name: "Buscar viagens" }).click();
   await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
   const beforeRetry = await page.evaluate(
@@ -130,7 +130,7 @@ test("empty, simulated failure, retry and recovery", async ({ page }) => {
   await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
   await page.getByText("Alterar pesquisa").click();
   await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta da demonstração").selectOption("normal");
+  await page.getByLabel("Resposta das fixtures").selectOption("normal");
   await page.getByRole("button", { name: "Buscar viagens" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
 });

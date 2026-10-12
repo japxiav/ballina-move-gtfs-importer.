@@ -2,7 +2,9 @@
 
 Aplicação React + TypeScript + Vite navegável, independente do importador e dos serviços privados. Inclui início, pesquisa, resultados, detalhes de itinerário, página explicativa e layouts para desktop/celular. Toda resposta é uma **fixture sintética**, identificada na interface; não serve para planejar viagens reais.
 
-## Abrir no PC
+## Execução técnica local (referência)
+
+No atendimento atual, instalação, build e execução ficam a cargo do agente. Os comandos abaixo são documentação para manutenção; não é necessário que o usuário os execute. O acesso pelo botão “Abrir em” depende do encaminhamento privado da plataforma, conforme diagnóstico no fim deste arquivo.
 
 Instale **Node.js 22 LTS, versão 22.12 ou superior** (Node 24 também funciona). Abra o terminal na raiz deste repositório, na branch `feature/ballina-web-fixtures`:
 
@@ -27,7 +29,7 @@ Abra o endereço mostrado pelo preview (normalmente porta 4173). Abrir `index.ht
 ## Usar a demonstração
 
 1. Escolha origem e destino entre Ballina, Foxford, Castlebar e Mayo Hospital.
-2. Selecione data, horário na Irlanda, prioridade e caminhada máxima.
+2. Selecione data, horário na Irlanda, prioridade, caminhada máxima e meios de transporte. As fixtures atuais contêm somente ônibus; escolher apenas trem mostra esse limite explicitamente, sem afirmar ausência de serviço real.
 3. Busque e compare as opções; clique em **Ver detalhes** para abrir as etapas.
 4. **Alterar pesquisa** preserva os filtros. Voltar no navegador, recarregar e copiar o endereço restauram os resultados e o itinerário.
 5. Em **Explorar estados da demonstração**, simule resultado vazio ou erro. “Tentar novamente” repete o cenário de erro; selecione “Resultados ilustrativos” para recuperar. Todas as buscas mostram um carregamento curto.
@@ -39,7 +41,7 @@ Os nomes de locais referenciam Mayo; linhas, horários, distâncias, códigos `D
 - `src/main.tsx`: componentes de páginas, formulários, cartões e timeline; navegação por hash e URL com filtros. Usar hash permite recarga de itinerários sem regras especiais no servidor.
 - `src/fixtures.ts`: fronteira `JourneyService`, validação da pesquisa e fixtures determinísticas. `DemoJourney` estende o contrato `Journey` de `routing/src/types.ts` por **importação de tipos**, sem incluir código servidor no bundle.
 - `src/styles.css`: estilos responsivos, foco de teclado e redução de movimentos.
-- `tests/web.spec.ts`: testes funcionais em Chromium, em desktop e celular; bloqueiam requisições externas e falhas JS.
+- `tests/*.spec.ts`: testes funcionais e adversariais em Chromium, em desktop e celular; validam navegação, filtros, datas, parâmetros ambíguos e nomes acessíveis.
 
 A futura integração deve substituir `fixtureService` por um cliente de gateway seguro, com contrato público revisado. Não importar adaptadores Supabase/Stadia do motor no navegador. Não adicionar variáveis `VITE_*` com credenciais: tudo que Vite expõe é público. Nenhuma chamada externa, geolocalização ou armazenamento de credenciais faz parte desta versão.
 
@@ -58,14 +60,14 @@ npm test
 
 O runner inicia e encerra um preview do **build de produção** em 4173; mantenha essa porta livre. Em Linux, a instalação do navegador pode exigir as dependências documentadas pelo Playwright (`npx playwright install --with-deps chromium`). Se já houver Chromium instalado, configure `PLAYWRIGHT_CHROMIUM_EXECUTABLE` com o caminho. Na nuvem, foi usado `/usr/bin/chromium`.
 
-Validação local: build e 18 verificações Playwright (9 cenários × 2 perfis). Cobrem pesquisa → detalhes → retorno, reload, filtros, inversão, validação, vazio/erro/retry, meia-noite, links inválidos, teclado, viewport 360 px, cancelamento e origem sintética dos dados. A revisão independente também verificou páginas em 320, 360, 601, 801, 1050 e 1440 px. Isso não substitui auditoria WCAG completa ou testes de integração real.
+Validação inicial: build e18 verificações Playwright. A execução atual acrescenta regressões de datas, links estritos, nomes acessíveis e modos; resultados finais e comparação com o baseline estão em [ENGINEERING_EXECUTION_LOG.md](../docs/ENGINEERING_EXECUTION_LOG.md). A revisão independente verificou576 combinações de filtros e navegação em320/360/601/801/1440px. Isso não substitui auditoria WCAG completa ou testes de integração real.
 
 ## Branches separadas
 
 - `feature/ballina-web-fixtures`: esta interface; baseada no commit original `4c40f4a`.
 - `fix/a11-explicit-service-date`: somente correção do runner/workflow A11 e regressões offline, com a mesma base.
 
-As branches são locais nesta entrega. Não houve push, merge em main, deploy ou consulta paga. Para transportar os commits, use o bundle entregue (instruções em `ENTREGA_PC.md`).
+As branches preservam a mesma base, sem herdar alterações entre backend e frontend. O estado remoto e os commits atuais estão no registro único de execução. Não houve merge em main, deploy ou consulta paga. A entrega atual não exige baixar bundle/ZIP nem instalar programas no PC.
 
 ## Prévia no ambiente de nuvem
 
