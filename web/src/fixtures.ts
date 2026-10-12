@@ -18,7 +18,7 @@ export const places = [
   {
     id: "foxford",
     name: "Foxford",
-    stop: "Foxford · centro",
+    stop: "Foxford · town centre",
     code: "DEMO-FOX",
     lat: 53.9815,
     lon: -9.1114,
@@ -26,7 +26,7 @@ export const places = [
   {
     id: "castlebar",
     name: "Castlebar",
-    stop: "Castlebar · centro",
+    stop: "Castlebar · town centre",
     code: "DEMO-CAS",
     lat: 53.856,
     lon: -9.298,
@@ -149,10 +149,10 @@ export function clock(seconds: number): string {
   return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}`;
 }
 export const daySuffix = (seconds: number) =>
-  seconds >= 86400 ? ` (+${Math.floor(seconds / 86400)} dia)` : "";
+  seconds >= 86400 ? ` (+${Math.floor(seconds / 86400)} ${Math.floor(seconds / 86400) === 1 ? "day" : "days"})` : "";
 export const minutes = (seconds: number) => Math.ceil(seconds / 60);
 export function dateLabel(date: string): string {
-  return new Intl.DateTimeFormat("pt-BR", {
+  return new Intl.DateTimeFormat("en-IE", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -169,8 +169,8 @@ function boarding(id: PlaceId): BoardingInstruction {
     locationConfidence: "official_unverified",
     sideOfStreet: null,
     platform: null,
-    notes: "Parada ilustrativa da demonstração.",
-    caveat: "Ponto de embarque, acessibilidade e lado da rua não verificados.",
+    notes: "Illustrative demo stop.",
+    caveat: "Boarding point, accessibility and side of the road are unverified.",
   };
 }
 function walk(
@@ -201,7 +201,7 @@ export function fixtureJourneys(q: SearchQuery): DemoJourney[] {
   const variants = [
     {
       id: "direct",
-      label: "Chegue mais cedo",
+      label: "Arrive sooner",
       wait: 10,
       ride: rideMinutes,
       access: 260,
@@ -211,7 +211,7 @@ export function fixtureJourneys(q: SearchQuery): DemoJourney[] {
     },
     {
       id: "less-walking",
-      label: "Menos caminhada",
+      label: "Less walking",
       wait: 22,
       ride: rideMinutes + 6,
       access: 80,
@@ -221,7 +221,7 @@ export function fixtureJourneys(q: SearchQuery): DemoJourney[] {
     },
     {
       id: "connection",
-      label: "Outra possibilidade",
+      label: "Another option",
       wait: 28,
       ride: rideMinutes + 18,
       access: 380,

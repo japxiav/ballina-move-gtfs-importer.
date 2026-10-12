@@ -25,7 +25,7 @@ test.beforeEach(async ({ page }) => {
       const loading =
         Array.from(document.querySelectorAll('[role="status"]')).find(
           (el) =>
-            el.textContent?.includes("Buscando viagens") &&
+            el.textContent?.includes("Finding demo journeys") &&
             el.getClientRects().length > 0,
         ) ?? null;
       if (loading && loading !== previous) state.ballinaLoadingCount++;
@@ -44,9 +44,9 @@ test("home → results → itinerary → back and deep-link reload", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Mais perto/ })).toBeVisible();
-  await page.getByLabel("Data da viagem").fill(query.serviceDate);
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
+  await page.getByLabel("Travel date").fill(query.serviceDate);
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await page.waitForFunction(
     () =>
       (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount >
@@ -55,83 +55,87 @@ test("home → results → itinerary → back and deep-link reload", async ({
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await expect(page.locator(".fixture-tag")).toHaveCount(3);
   await page
-    .getByRole("link", { name: "Ver detalhes: Chegue mais cedo" })
+    .getByRole("link", { name: "View details: Arrive sooner" })
     .click();
-  await expect(page.getByRole("heading", { name: "Ônibus 22" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bus 22" })).toBeVisible();
   await expect(
-    page.getByText("260 m · caminhada sintética, sem trajeto verificado."),
+    page.getByText("260 m · demo walk, no verified path."),
   ).toBeVisible();
   await expect(
     page.getByText(
-      "Ponto de embarque, acessibilidade e lado da rua não verificados.",
+      "Boarding point, accessibility and side of the road are unverified.",
     ),
   ).toBeVisible();
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Ônibus 22" })).toBeVisible();
-  await page.getByRole("link", { name: "Voltar aos resultados" }).click();
+  await expect(page.getByRole("heading", { name: "Bus 22" })).toBeVisible();
+  await page.getByRole("link", { name: "Back to results" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await page.goBack();
-  await expect(page.getByRole("heading", { name: "Ônibus 22" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bus 22" })).toBeVisible();
 });
 test("priority and walking limit alter order and count", async ({ page }) => {
   await page.goto(searchURL());
   await expect(page.locator(".journey-card")).toHaveCount(3);
-  await page.getByText("Alterar pesquisa").click();
-  await page.getByLabel("Minha prioridade").selectOption("less_walking");
-  await page.getByLabel("Caminhada máxima").selectOption("500");
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await page.getByText("Edit search").click();
+  await page.locator(".search-options > summary").click();
+  await page.getByLabel("Priority").selectOption("less_walking");
+  await page.getByLabel("Walking limit").selectOption("500");
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(2);
   await expect(page.locator(".journey-card").first()).toContainText(
-    "MENOS CAMINHADA",
+    "LESS WALKING",
   );
   await expect(page.locator(".journey-card").first()).toContainText(
-    "140 m a pé",
+    "140 m walking",
   );
 });
 test("swap and equal-place validation", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Trocar origem e destino" }).click();
-  await expect(page.getByLabel("De onde — Origem", { exact: true })).toHaveValue(
+  await page.getByRole("button", { name: "Swap start and destination" }).click();
+  await expect(page.getByLabel("From — Origin", { exact: true })).toHaveValue(
     "foxford",
   );
-  await expect(page.getByLabel("Para onde — Destino", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("To — Destination", { exact: true })).toHaveValue(
     "ballina",
   );
-  await page.getByLabel("Para onde — Destino", { exact: true }).selectOption("foxford");
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await page.getByLabel("To — Destination", { exact: true }).selectOption("foxford");
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.getByRole("alert")).toContainText(
-    "origem e um destino diferentes",
+    "different start and destination points",
   );
 });
 test("empty, simulated failure, retry and recovery", async ({ page }) => {
   await page.goto("/");
-  await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta das fixtures").selectOption("empty");
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await page.locator(".search-options > summary").click();
+  await page.getByText("Demo states").click();
+  await page.getByLabel("Demo response").selectOption("empty");
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(
-    page.getByRole("heading", { name: "Nenhuma viagem neste exemplo." }),
+    page.getByRole("heading", { name: "No demo journeys found." }),
   ).toBeVisible();
-  await page.getByText("Alterar pesquisa").click();
-  await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta das fixtures").selectOption("error");
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
-  await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
+  await page.getByText("Edit search").click();
+  await page.locator(".search-options > summary").click();
+  await page.getByText("Demo states").click();
+  await page.getByLabel("Demo response").selectOption("error");
+  await page.getByRole("button", { name: "Find journeys" }).click();
+  await expect(page.getByRole("alert")).toContainText("Unable to load journeys.");
   const beforeRetry = await page.evaluate(
     () =>
       (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount,
   );
-  await page.getByRole("button", { name: "Tentar novamente" }).click();
+  await page.getByRole("button", { name: "Try again" }).click();
   await page.waitForFunction(
     (count) =>
       (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount >
       count,
     beforeRetry,
   );
-  await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
-  await page.getByText("Alterar pesquisa").click();
-  await page.getByText("Explorar estados da demonstração").click();
-  await page.getByLabel("Resposta das fixtures").selectOption("normal");
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await expect(page.getByRole("alert")).toContainText("Unable to load journeys.");
+  await page.getByText("Edit search").click();
+  await page.locator(".search-options > summary").click();
+  await page.getByText("Demo states").click();
+  await page.getByLabel("Demo response").selectOption("normal");
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
 });
 test("bad links and missing itinerary have recovery paths", async ({
@@ -139,41 +143,41 @@ test("bad links and missing itinerary have recovery paths", async ({
 }) => {
   await page.goto("/#/search?origin=unknown");
   await expect(
-    page.getByRole("heading", { name: "Pesquisa inválida." }),
+    page.getByRole("heading", { name: "Invalid search." }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Iniciar nova pesquisa" }).click();
-  await expect(page.getByRole("heading", { name: /Mais perto/ })).toBeVisible();
+  await page.getByRole("link", { name: "Start a new search" }).click();
+  await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
   await page.goto(`/#/journey/missing?${encodeQuery(query)}`);
   await expect(
-    page.getByRole("heading", { name: "Itinerário não encontrado." }),
+    page.getByRole("heading", { name: "Journey not found." }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Ver resultados", exact: true }).click();
+  await page.getByRole("link", { name: "View results", exact: true }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await page.goto("/#/unknown");
   await expect(
-    page.getByRole("heading", { name: "Este caminho não existe." }),
+    page.getByRole("heading", { name: "Page not found." }),
   ).toBeVisible();
 });
 test("midnight offsets and transfer itinerary", async ({ page }) => {
   await page.goto(searchURL({ departAt: "23:55" }));
   await expect(page.locator(".journey-card")).toHaveCount(3);
-  await expect(page.locator(".journey-card").first()).toContainText("(+1 dia)");
+  await expect(page.locator(".journey-card").first()).toContainText("(+1 day)");
   await page
-    .getByRole("link", { name: "Ver detalhes: Outra possibilidade" })
+    .getByRole("link", { name: "View details: Another option" })
     .click();
-  await expect(page.getByRole("heading", { name: "Ônibus 445" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Ônibus 420" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bus 445" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bus 420" })).toBeVisible();
   await expect(
-    page.getByText("6 min de espera / margem de embarque"),
+    page.getByText("6 min wait / boarding buffer"),
   ).toBeVisible();
-  await expect(page.locator(".timeline-arrival")).toContainText("(+1 dia)");
+  await expect(page.locator(".timeline-arrival")).toContainText("(+1 day)");
 });
 test("360px pages fit and keyboard skip link works", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 });
   await page.goto("/");
   await page.keyboard.press("Tab");
   await expect(
-    page.getByRole("link", { name: "Pular para o conteúdo" }),
+    page.getByRole("link", { name: "Skip to content" }),
   ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();
@@ -184,20 +188,20 @@ test("360px pages fit and keyboard skip link works", async ({ page }) => {
       ),
     ).toBe(true);
   await noOverflow();
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await noOverflow();
   await page
-    .getByRole("link", { name: "Ver detalhes: Outra possibilidade" })
+    .getByRole("link", { name: "View details: Another option" })
     .click();
-  await expect(page.getByRole("heading", { name: "Ônibus 445" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bus 445" })).toBeVisible();
   await noOverflow();
   await page
     .getByRole("navigation")
-    .getByRole("link", { name: "Como funciona" })
+    .getByRole("link", { name: "About" })
     .click();
   await expect(
-    page.getByRole("heading", { name: /Mobilidade local/ }),
+    page.getByRole("heading", { name: /Local journeys/ }),
   ).toBeVisible();
   await noOverflow();
 });
@@ -205,12 +209,12 @@ test("navigation cancels stale searches", async ({ page }) => {
   await page.goto(searchURL({ demoState: "error" }));
   await page
     .getByRole("navigation")
-    .getByRole("link", { name: "Início" })
+    .getByRole("link", { name: "Home" })
     .click();
-  await expect(page.getByRole("heading", { name: /Mais perto/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
   await page.waitForTimeout(800);
   await expect(page.getByRole("alert")).toHaveCount(0);
-  await page.getByRole("button", { name: "Buscar viagens" }).click();
+  await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);
 });
 test("fixture provenance, date validation, query roundtrip and cancellation", async () => {

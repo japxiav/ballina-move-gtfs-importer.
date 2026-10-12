@@ -92,7 +92,7 @@ function CountyIllustration() {
       className="county-art"
       viewBox="0 0 600 340"
       role="img"
-      aria-label="Ilustração de Ballina junto ao rio, com ônibus; não é um mapa de navegação"
+      aria-label="Illustration of Ballina by the river with a bus; not a navigation map"
     >
       <rect width="600" height="340" rx="24" fill="#e8ebd7" />
       <circle cx="451" cy="72" r="36" fill="#e4b16c" />
@@ -149,8 +149,7 @@ function DemoNotice() {
     <div className="demo-note">
       <Icon name="info" size={18} />
       <span>
-        <strong>Modo demonstração.</strong> Horários, linhas e caminhadas são
-        fixtures ilustrativas. Não use estes resultados para viajar.
+        <strong>Demo data.</strong> Illustrative times and routes. Do not use for travel.
       </span>
     </div>
   );
@@ -173,15 +172,15 @@ function SearchForm({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!validDate(q.serviceDate) || !validTime(q.departAt)) {
-      setError("Informe uma data e um horário válidos.");
+      setError("Enter a valid date and time.");
       return;
     }
     if (q.origin === q.destination) {
-      setError("Escolha uma origem e um destino diferentes.");
+      setError("Choose different start and destination points.");
       return;
     }
     if (q.modes.length === 0) {
-      setError("Selecione pelo menos um meio de transporte.");
+      setError("Select at least one transport mode.");
       return;
     }
     setError("");
@@ -194,18 +193,18 @@ function SearchForm({
     >
       {!compact && (
         <>
-          <div className="eyebrow">SEU PRÓXIMO CAMINHO</div>
-          <h2>Para onde vamos?</h2>
-          <p className="form-intro">Uma viagem começa com uma boa escolha.</p>
+          <div className="eyebrow">PLAN A JOURNEY</div>
+          <h2>Plan your trip</h2>
+          <p className="form-intro">Choose your destination.</p>
         </>
       )}
       <div className="places-grid">
         <label className="field">
           <span>
-            <Icon name="pin" size={15} /> De onde
+            <Icon name="pin" size={15} /> From
           </span>
           <select
-            aria-label="De onde — Origem"
+            aria-label="From — Origin"
             value={q.origin}
             onChange={(e) =>
               update("origin", e.target.value as SearchQuery["origin"])
@@ -221,7 +220,7 @@ function SearchForm({
         <button
           className="swap-button"
           type="button"
-          aria-label="Trocar origem e destino"
+          aria-label="Swap start and destination"
           onClick={() =>
             setQ((old) => ({
               ...old,
@@ -234,10 +233,10 @@ function SearchForm({
         </button>
         <label className="field">
           <span>
-            <Icon name="pin" size={15} /> Para onde
+            <Icon name="pin" size={15} /> To
           </span>
           <select
-            aria-label="Para onde — Destino"
+            aria-label="To — Destination"
             value={q.destination}
             onChange={(e) =>
               update(
@@ -256,9 +255,9 @@ function SearchForm({
       </div>
       <div className="field-pair">
         <label className="field">
-          <span>Data da viagem</span>
+          <span>Travel date</span>
           <input
-            aria-label="Data da viagem"
+            aria-label="Travel date"
             type="date"
             required
             value={q.serviceDate}
@@ -266,9 +265,9 @@ function SearchForm({
           />
         </label>
         <label className="field">
-          <span>Partir a partir de</span>
+          <span>Leave after</span>
           <input
-            aria-label="Partir a partir de — Horário de partida"
+            aria-label="Leave after — Departure time"
             type="time"
             required
             value={q.departAt}
@@ -276,59 +275,86 @@ function SearchForm({
           />
         </label>
       </div>
-      <div className="field-pair">
-        <label className="field">
-          <span>Minha prioridade</span>
-          <select
-            aria-label="Minha prioridade"
-            value={q.prioritize}
-            onChange={(e) =>
-              update("prioritize", e.target.value as SearchQuery["prioritize"])
-            }
-          >
-            <option value="fastest">Chegar mais cedo</option>
-            <option value="less_walking">Caminhar menos</option>
-            <option value="fewest_transfers">Menos conexões</option>
-          </select>
-        </label>
-        <label className="field">
-          <span>Caminhada máxima</span>
-          <select
-            aria-label="Caminhada máxima"
-            value={q.maxWalkingMeters}
-            onChange={(e) => update("maxWalkingMeters", Number(e.target.value))}
-          >
-            <option value={500}>500 m</option>
-            <option value={1000}>1 km</option>
-            <option value={1500}>1,5 km</option>
-            <option value={2500}>2,5 km</option>
-          </select>
-        </label>
-      </div>
-      <fieldset className="transport-modes">
-        <legend>Meios de transporte</legend>
-        {(["bus", "rail"] as const).map((mode) => (
-          <label key={mode}>
-            <input
-              type="checkbox"
-              checked={q.modes.includes(mode)}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                setQ((old) => ({
-                  ...old,
-                  modes: (["bus", "rail"] as const).filter((candidate) =>
-                    candidate === mode ? checked : old.modes.includes(candidate),
-                  ),
-                }));
-              }}
-            />
-            {mode === "bus" ? "Ônibus" : "Trem"}
+      <details className="search-options">
+        <summary>
+          <span>Filters</span>
+          <span className="filter-summary">
+            {q.prioritize === "fastest" ? "Arrive sooner" : q.prioritize === "less_walking" ? "Less walking" : "Fewer changes"}
+            {" · "}{q.maxWalkingMeters >= 1000 ? `${q.maxWalkingMeters / 1000} km` : `${q.maxWalkingMeters} m`}
+          </span>
+        </summary>
+        <div className="field-pair">
+          <label className="field">
+            <span>Priority</span>
+            <select
+              aria-label="Priority"
+              value={q.prioritize}
+              onChange={(e) =>
+                update("prioritize", e.target.value as SearchQuery["prioritize"])
+              }
+            >
+              <option value="fastest">Arrive sooner</option>
+              <option value="less_walking">Less walking</option>
+              <option value="fewest_transfers">Fewer changes</option>
+            </select>
           </label>
-        ))}
-        <p>Fixtures disponíveis: somente ônibus. O filtro não comprova cobertura real.</p>
-      </fieldset>
+          <label className="field">
+            <span>Walking limit</span>
+            <select
+              aria-label="Walking limit"
+              value={q.maxWalkingMeters}
+              onChange={(e) => update("maxWalkingMeters", Number(e.target.value))}
+            >
+              <option value={500}>500 m</option>
+              <option value={1000}>1 km</option>
+              <option value={1500}>1.5 km</option>
+              <option value={2500}>2.5 km</option>
+            </select>
+          </label>
+        </div>
+        <fieldset className="transport-modes">
+          <legend>Transport</legend>
+          {(["bus", "rail"] as const).map((mode) => (
+            <label key={mode}>
+              <input
+                type="checkbox"
+                checked={q.modes.includes(mode)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setQ((old) => ({
+                    ...old,
+                    modes: (["bus", "rail"] as const).filter((candidate) =>
+                      candidate === mode ? checked : old.modes.includes(candidate),
+                    ),
+                  }));
+                }}
+              />
+              {mode === "bus" ? "Bus" : "Train"}
+            </label>
+          ))}
+          <p>Demo routes are bus-only.</p>
+        </fieldset>
+        <details className="demo-controls">
+          <summary>Demo states</summary>
+          <label>
+            Demo response
+            <select
+              aria-label="Demo response"
+              value={q.demoState}
+              onChange={(e) =>
+                update("demoState", e.target.value as SearchQuery["demoState"])
+              }
+            >
+              <option value="normal">Example results</option>
+              <option value="empty">No journeys</option>
+              <option value="error">Service error</option>
+            </select>
+          </label>
+          <p>Local simulation. No external requests.</p>
+        </details>
+      </details>
       <p className="timezone">
-        <Icon name="clock" size={14} /> Horário local da Irlanda · Europe/Dublin
+        <Icon name="clock" size={14} /> Ireland time · Europe/Dublin
       </p>
       {error && (
         <p className="form-error" role="alert">
@@ -336,26 +362,8 @@ function SearchForm({
         </p>
       )}
       <button className="button primary search-submit" type="submit">
-        Buscar viagens <Icon name="arrow" />
+        Find journeys <Icon name="arrow" />
       </button>
-      <details className="demo-controls">
-        <summary>Explorar estados da demonstração</summary>
-        <label>
-          Resposta das fixtures
-          <select
-            aria-label="Resposta das fixtures"
-            value={q.demoState}
-            onChange={(e) =>
-              update("demoState", e.target.value as SearchQuery["demoState"])
-            }
-          >
-            <option value="normal">Resultados ilustrativos</option>
-            <option value="empty">Nenhuma viagem</option>
-            <option value="error">Erro de serviço</option>
-          </select>
-        </label>
-        <p>Simulação local, sem chamadas externas.</p>
-      </details>
     </form>
   );
 }
@@ -365,28 +373,21 @@ function Home({ query }: { query: SearchQuery }) {
       <section className="hero">
         <div className="hero-copy">
           <div className="eyebrow">
-            <span className="tiny-line" /> FEITO PARA BALLINA E MAYO
+            <span className="tiny-line" /> BALLINA & MAYO
           </div>
-          <h1>
-            Mais perto.
-            <br />
-            <em>Mais simples.</em>
-            <br />
-            Seu próximo caminho.
-          </h1>
+          <h1>Your next <em>journey.</em></h1>
           <p className="hero-description">
-            Da rotina a uma nova descoberta, explore conexões por Ballina e
-            County Mayo, em um só lugar.
+            Explore journeys around Ballina and County Mayo.
           </p>
           <div className="hero-tags">
             <span>
-              <Icon name="bus" size={17} /> Ônibus
+              <Icon name="bus" size={17} /> Bus
             </span>
             <span>
-              <Icon name="walk" size={17} /> A pé
+              <Icon name="walk" size={17} /> Walking
             </span>
             <span>
-              <Icon name="leaf" size={17} /> No seu ritmo
+              <Icon name="leaf" size={17} /> At your pace
             </span>
           </div>
           <CountyIllustration />
@@ -394,8 +395,7 @@ function Home({ query }: { query: SearchQuery }) {
         <div className="search-panel">
           <SearchForm initial={query} />
           <div className="panel-foot">
-            <span className="status-dot" /> Demonstração local · sem consultas
-            pagas
+            <span className="status-dot" /> Demo only · no live services
           </div>
         </div>
       </section>
@@ -403,10 +403,10 @@ function Home({ query }: { query: SearchQuery }) {
       <section className="discover">
         <div className="section-heading">
           <div>
-            <div className="eyebrow">UM LUGAR, MUITAS POSSIBILIDADES</div>
-            <h2>Comece por aqui.</h2>
+            <div className="eyebrow">EXPLORE MAYO</div>
+            <h2>Quick trips</h2>
           </div>
-          <span className="muted">Explore uma viagem de exemplo</span>
+          <span className="muted">Try a demo journey</span>
         </div>
         <div className="destination-grid">
           {(["foxford", "castlebar", "hospital"] as const).map((id, index) => (
@@ -421,14 +421,14 @@ function Home({ query }: { query: SearchQuery }) {
               <p>
                 {
                   [
-                    "Uma pausa junto ao River Moy",
-                    "Uma nova conexão em Mayo",
-                    "Um caminho para o cuidado",
+                    "By the River Moy",
+                    "Explore Mayo",
+                    "Mayo University Hospital",
                   ][index]
                 }
               </p>
               <span className="destination-link">
-                Ver exemplo <Icon name="arrow" size={18} />
+                Try route <Icon name="arrow" size={18} />
               </span>
             </a>
           ))}
@@ -474,7 +474,7 @@ function JourneyCard({
     <article className={`journey-card ${index === 0 ? "recommended" : ""}`}>
       <div className="card-label">
         <span>
-          {index === 0 ? "PRIMEIRA OPÇÃO · " : ""}
+          {index === 0 ? "TOP PICK · " : ""}
           {j.label.toUpperCase()}
         </span>
         <span className="fixture-tag">FIXTURE</span>
@@ -487,32 +487,32 @@ function JourneyCard({
             <strong>{clock(j.arrivalAtSeconds)}</strong>
           </div>
           <div className="time-captions">
-            <span>Saída sugerida{daySuffix(leave)}</span>
-            <span>Chegada{daySuffix(j.arrivalAtSeconds)}</span>
+            <span>Leave{daySuffix(leave)}</span>
+            <span>Arrival{daySuffix(j.arrivalAtSeconds)}</span>
           </div>
         </div>
         <div className="journey-duration">
           <strong>
             {minutes(j.arrivalAtSeconds - leave)} <small>min</small>
           </strong>
-          <span>duração estimada</span>
+          <span>estimated duration</span>
         </div>
       </div>
       <div className="card-bottom">
         <div>
           <RideBadges journey={j} />
           <p>
-            {j.transfers === 0 ? "Sem conexão" : `${j.transfers} conexão`}
+            {j.transfers === 0 ? "Direct" : `${j.transfers} change`}
             <span>·</span>
-            {j.walkingMeters} m a pé
+            {j.walkingMeters} m walking
           </p>
         </div>
         <a
           className="button secondary"
           href={`#/journey/${j.id}?${encodeQuery(query)}`}
-          aria-label={`Ver detalhes: ${j.label}`}
+          aria-label={`View details: ${j.label}`}
         >
-          Ver detalhes <Icon name="arrow" size={16} />
+          View details <Icon name="arrow" size={16} />
         </a>
       </div>
     </article>
@@ -521,38 +521,36 @@ function JourneyCard({
 function CoverageAside() {
   return (
     <aside className="coverage-aside">
-      <div className="eyebrow">VIAJE COM CONTEXTO</div>
+      <div className="eyebrow">KNOW YOUR JOURNEY</div>
       <h3>
-        O caminho é mais
+        A journey is more
         <br />
-        que um horário.
+        than a timetable.
       </h3>
       <div className="aside-art">
         <Icon name="leaf" size={56} />
         <span>
           Ballina
           <br />
-          <em>& arredores</em>
+          <em>& nearby</em>
         </span>
       </div>
       <ul>
         <li>
-          <Icon name="check" size={18} /> Compare tempo e caminhada.
+          <Icon name="check" size={18} /> Compare time and walking.
         </li>
         <li>
-          <Icon name="check" size={18} /> Veja cada etapa da viagem.
+          <Icon name="check" size={18} /> See every journey step.
         </li>
         <li>
-          <Icon name="info" size={18} /> Paradas e acessibilidade ainda não
-          verificadas.
+          <Icon name="info" size={18} /> Stops and accessibility are unverified.
         </li>
       </ul>
       <p>
-        Esta versão usa apenas exemplos. Uma integração segura com dados reais
-        será necessária antes do uso em viagens.
+        This version uses demo data. Real journeys need validated transport and walking information.
       </p>
       <a href="#/about">
-        Como funciona <Icon name="arrow" size={16} />
+        About <Icon name="arrow" size={16} />
       </a>
     </aside>
   );
@@ -561,7 +559,7 @@ function Loading() {
   return (
     <div className="loading" role="status" aria-live="polite">
       <div className="loading-heading">
-        <span className="spinner" /> Buscando viagens de demonstração…
+        <span className="spinner" /> Finding demo journeys…
       </div>
       {[0, 1, 2].map((n) => (
         <div className="skeleton" key={n}>
@@ -584,22 +582,22 @@ function EmptyState({ error, retry, railOnly = false }: {
         <Icon name={error ? "info" : "bus"} size={36} />
       </div>
       <h2>
-        {error ? "Uma pausa no caminho." : "Nenhuma viagem neste exemplo."}
+        {error ? "Unable to load journeys." : "No demo journeys found."}
       </h2>
       <p>
         {error
-          ? "Simulamos uma falha no serviço. Você pode tentar novamente ou escolher “Resultados ilustrativos” no formulário."
+          ? "This is a simulated error. Retry or choose Example results in the form."
           : railOnly
-            ? "Esta demonstração não contém exemplos de trem."
-            : "As fixtures não têm opções para esta combinação. Tente outros locais ou ajuste a caminhada máxima."}
+            ? "This demo has no train examples."
+            : "No demo options match. Try different places or a higher walking limit."}
       </p>
       {error && (
         <button className="button primary" onClick={retry}>
-          Tentar novamente <Icon name="arrow" size={18} />
+          Try again <Icon name="arrow" size={18} />
         </button>
       )}
       <a className="text-link" href="#/">
-        Voltar ao início
+        Back to home
       </a>
     </div>
   );
@@ -616,17 +614,17 @@ function JourneyDetails({
   return (
     <>
       <a className="back-link" href={`#/search?${encodeQuery(query)}`}>
-        <span>←</span> Voltar aos resultados
+        <span>←</span> Back to results
       </a>
       <div className="detail-layout">
         <article className="itinerary">
-          <div className="eyebrow">SEU ITINERÁRIO · FIXTURE ILUSTRATIVA</div>
+          <div className="eyebrow">YOUR JOURNEY · DEMO DATA</div>
           <h1>
             {place(query.origin).name} <span className="title-arrow">→</span>{" "}
             {place(query.destination).name}
           </h1>
           <p className="muted">
-            {dateLabel(query.serviceDate)} · horário local da Irlanda
+            {dateLabel(query.serviceDate)} · Ireland time
           </p>
           <div className="itinerary-summary">
             <div>
@@ -635,13 +633,13 @@ function JourneyDetails({
                 {daySuffix(leave)} → {clock(j.arrivalAtSeconds)}
                 {daySuffix(j.arrivalAtSeconds)}
               </strong>
-              <span>Saída sugerida e chegada ilustrativas</span>
+              <span>Illustrative departure and arrival</span>
             </div>
             <div>
               <strong>{minutes(j.arrivalAtSeconds - leave)} min</strong>
               <span>
-                {j.walkingMeters} m a pé ·{" "}
-                {j.transfers ? "1 conexão" : "sem conexão"}
+                {j.walkingMeters} m walking ·{" "}
+                {j.transfers ? "1 change" : "direct"}
               </span>
             </div>
           </div>
@@ -667,8 +665,7 @@ function JourneyDetails({
                 <li className={`timeline-step ${leg.type}`} key={i}>
                   {wait > 0 && (
                     <p className="wait-note">
-                      <Icon name="clock" size={14} /> {minutes(wait)} min de
-                      espera / margem de embarque
+                      <Icon name="clock" size={14} /> {minutes(wait)} min wait / boarding buffer
                     </p>
                   )}
                   <div className="step-header">
@@ -684,10 +681,10 @@ function JourneyDetails({
                     </span>
                     <h3>
                       {leg.type === "ride"
-                        ? `Ônibus ${leg.routeName}`
+                        ? `Bus ${leg.routeName}`
                         : leg.purpose === "access"
-                          ? "Caminhe até a parada"
-                          : "Caminhe até o destino"}
+                          ? "Walk to the stop"
+                          : "Walk to your destination"}
                     </h3>
                     <span className="step-duration">
                       {minutes(end - start)} min
@@ -696,14 +693,14 @@ function JourneyDetails({
                   {leg.type === "ride" ? (
                     <div className="step-body">
                       <p className="direction">
-                        Sentido {leg.headsign} · linha ilustrativa
+                        Towards {leg.headsign} · demo route
                       </p>
                       <div className="stop-line">
                         <span className="stop-dot" />
                         <div>
                           <strong>{boarding?.stopName}</strong>
                           <span>
-                            {clock(start)} · Embarque · código{" "}
+                            {clock(start)} · Get on · stop code{" "}
                             {boarding?.stopCode}
                           </span>
                         </div>
@@ -714,7 +711,7 @@ function JourneyDetails({
                           <strong>{destination}</strong>
                           <span>
                             {clock(end)}
-                            {daySuffix(end)} · Desembarque
+                            {daySuffix(end)} · Get off
                           </span>
                         </div>
                       </div>
@@ -725,13 +722,12 @@ function JourneyDetails({
                   ) : (
                     <div className="step-body">
                       <p>
-                        {leg.distanceMeters} m · caminhada sintética, sem
-                        trajeto verificado.
+                        {leg.distanceMeters} m · demo walk, no verified path.
                       </p>
                       <p className="muted">
                         {leg.purpose === "access"
-                          ? `De ${place(query.origin).name} até ${place(query.origin).stop}.`
-                          : `Da parada de chegada até ${place(query.destination).name}.`}
+                          ? `From ${place(query.origin).name} to ${place(query.origin).stop}.`
+                          : `From the arrival stop to ${place(query.destination).name}.`}
                       </p>
                     </div>
                   )}
@@ -747,14 +743,13 @@ function JourneyDetails({
                 {daySuffix(j.arrivalAtSeconds)} ·{" "}
                 {place(query.destination).name}
               </strong>
-              <span>Chegada ilustrativa</span>
+              <span>Illustrative arrival</span>
             </li>
           </ol>
           <div className="detail-bottom">
             <Icon name="info" />
             <p>
-              Sem previsões em tempo real, tarifas, garantia de serviço ou
-              orientação de calçadas. Nenhuma geometria real foi verificada.
+              No live predictions, fares or verified walking directions.
             </p>
           </div>
         </article>
@@ -802,10 +797,10 @@ function SearchPage({
       <JourneyDetails journey={journey} query={query} />
     ) : (
       <div className="empty-state">
-        <h1>Itinerário não encontrado.</h1>
-        <p>Esta opção não está disponível para os filtros da pesquisa.</p>
+        <h1>Journey not found.</h1>
+        <p>This option is unavailable for these search filters.</p>
         <a className="button primary" href={`#/search?${encodeQuery(query)}`}>
-          Ver resultados
+          View results
         </a>
       </div>
     );
@@ -813,30 +808,30 @@ function SearchPage({
     <>
       <div className="page-heading">
         <div>
-          <div className="eyebrow">ESCOLHA O SEU CAMINHO</div>
+          <div className="eyebrow">YOUR JOURNEY</div>
           <h1>
             {place(query.origin).name} <span className="title-arrow">→</span>{" "}
             {place(query.destination).name}
           </h1>
           <p>
-            {dateLabel(query.serviceDate)} · a partir de {query.departAt} ·
-            horário da Irlanda
+            {dateLabel(query.serviceDate)} · from {query.departAt} ·
+            Ireland time
           </p>
         </div>
         <a className="text-link" href="#/">
-          Nova pesquisa <Icon name="arrow" size={18} />
+          New search <Icon name="arrow" size={18} />
         </a>
       </div>
       <DemoNotice />
       <details className="edit-search">
         <summary>
-          Alterar pesquisa <Icon name="swap" size={17} />
+          Edit search <Icon name="swap" size={17} />
         </summary>
         <SearchForm initial={query} compact />
       </details>
       <div className="results-layout">
         <section
-          aria-label="Resultados de viagens"
+          aria-label="Journey results"
           aria-busy={state === "loading"}
         >
           {state === "loading" ? (
@@ -852,22 +847,21 @@ function SearchPage({
           ) : (
             <>
               <div className="results-heading">
-                <span>{journeys.length} opções ilustrativas</span>
+                <span>{journeys.length} demo options</span>
                 <span>
-                  Ordenadas por{" "}
+                  Sorted by{" "}
                   {query.prioritize === "fastest"
-                    ? "chegada"
+                    ? "arrival"
                     : query.prioritize === "less_walking"
-                      ? "caminhada"
-                      : "conexões"}
+                      ? "walking"
+                      : "changes"}
                 </span>
               </div>
               {journeys.map((j, i) => (
                 <JourneyCard key={j.id} journey={j} query={query} index={i} />
               ))}
               <p className="results-footnote">
-                Tempos demonstrativos. Sem previsões ao vivo ou comparação de
-                tarifas.
+                Demo times. No live predictions or fare comparison.
               </p>
             </>
           )}
@@ -880,47 +874,41 @@ function SearchPage({
 function About() {
   return (
     <article className="about-page">
-      <div className="eyebrow">O PRIMEIRO PASSO</div>
+      <div className="eyebrow">BALLINA MOVE</div>
       <h1>
-        Mobilidade local.
+        Local journeys.
         <br />
-        <em>Informação clara.</em>
+        <em>Clear information.</em>
       </h1>
       <p className="about-lead">
-        Ballina Move começa com uma ideia simples: entender uma viagem deve ser
-        tão fácil quanto escolher o destino.
+        Plan local journeys with clear, useful information.
       </p>
       <DemoNotice />
       <div className="about-grid">
         <section>
           <span>01</span>
-          <h2>Explore uma viagem</h2>
+          <h2>Plan a journey</h2>
           <p>
-            Escolha locais, data e horário. Compare opções por chegada,
-            caminhada e conexões. Abra os detalhes para ver as etapas.
+            Choose places, a date and time. Compare arrival, walking and changes, then view each step.
           </p>
         </section>
         <section>
           <span>02</span>
-          <h2>Saiba o que está vendo</h2>
+          <h2>Know your data</h2>
           <p>
-            Todos os resultados são sintéticos. Os locais referenciam Mayo, mas
-            horários, distâncias e linhas são exemplos, sem garantia de
-            operação.
+            All results are synthetic. Places are in Mayo, but times, distances and routes are examples.
           </p>
         </section>
         <section>
           <span>03</span>
-          <h2>O próximo caminho</h2>
+          <h2>What comes next</h2>
           <p>
-            Dados reais dependem de um gateway seguro. Paradas, acessibilidade,
-            caminhos a pé e previsões ao vivo precisam de validação antes de
-            orientar passageiros.
+            Real transport data needs a secure connection and verified stops, walking paths and live predictions.
           </p>
         </section>
       </div>
       <a className="button primary" href="#/">
-        Explorar demonstração <Icon name="arrow" />
+        Explore the demo <Icon name="arrow" />
       </a>
     </article>
   );
@@ -949,7 +937,7 @@ function App() {
     defaults = React.useMemo(defaultQuery, []);
   const isHome = !path || path === "/";
   useEffect(() => {
-    document.title = `${isHome ? "Seu próximo caminho" : isJourney ? "Itinerário" : isSearch ? "Viagens" : "Como funciona"} · Ballina Move`;
+    document.title = `${isHome ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
   }, [isHome, isJourney, isSearch]);
   return (
     <>
@@ -961,10 +949,10 @@ function App() {
           main.current?.focus();
         }}
       >
-        Pular para o conteúdo
+        Skip to content
       </a>
       <header className="site-header">
-        <a className="brand" href="#/" aria-label="Ballina Move, início">
+        <a className="brand" href="#/" aria-label="Ballina Move, home">
           <span className="brand-mark">
             b<span>m</span>
             <i />
@@ -973,31 +961,31 @@ function App() {
             ballina<span>move</span>
           </span>
         </a>
-        <nav aria-label="Navegação principal">
+        <nav aria-label="Main navigation">
           <a
             className={isHome ? "active" : ""}
             href="#/"
             aria-current={isHome ? "page" : undefined}
           >
-            Início
+            Home
           </a>
           <a
             className={isSearch || isJourney ? "active" : ""}
             href={`#/search?${encodeQuery(defaults)}`}
             aria-current={isSearch || isJourney ? "page" : undefined}
           >
-            Viagens
+            Journeys
           </a>
           <a
             className={path === "/about" ? "active" : ""}
             href="#/about"
             aria-current={path === "/about" ? "page" : undefined}
           >
-            Como funciona
+            About
           </a>
         </nav>
         <span className="header-demo">
-          <span className="status-dot" /> DEMONSTRAÇÃO
+          <span className="status-dot" /> DEMO
         </span>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
@@ -1012,13 +1000,12 @@ function App() {
             />
           ) : (
             <div className="empty-state" role="alert">
-              <h1>Pesquisa inválida.</h1>
+              <h1>Invalid search.</h1>
               <p>
-                O link não contém uma combinação válida de locais, data e
-                filtros.
+                This link has invalid places, a date or filters.
               </p>
               <a className="button primary" href="#/">
-                Iniciar nova pesquisa
+                Start a new search
               </a>
             </div>
           )
@@ -1026,24 +1013,24 @@ function App() {
           <About />
         ) : (
           <div className="empty-state">
-            <h1>Este caminho não existe.</h1>
+            <h1>Page not found.</h1>
             <a className="button primary" href="#/">
-              Voltar ao início
+              Back to home
             </a>
           </div>
         )}
       </main>
       <footer className="site-footer">
         <span className="footer-brand">
-          ballina move<span>Um próximo caminho para Mayo.</span>
+          ballina move<span>Your next journey in Mayo.</span>
         </span>
         <span>
-          Protótipo navegável · Fixtures v1
+          Demo prototype · Fixtures v1
           <br />
-          Sem dados ao vivo. Sem consultas pagas.
+          No live data. No paid requests.
         </span>
         <a href="#/about">
-          Sobre esta demonstração <Icon name="arrow" size={16} />
+          About this demo <Icon name="arrow" size={16} />
         </a>
       </footer>
     </>

@@ -2747,7 +2747,7 @@ async function a11TokenMatches(candidate){
 }
 function a11ParseRequest(raw){
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).sort().join(',')!=='confirmPaidCalls,departAt,scenarioId,serviceDate')return null;
-  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
+  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||typeof raw.scenarioId!=='string'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
   if(typeof raw.serviceDate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(raw.serviceDate))return null;
   const day=new Date(raw.serviceDate+'T00:00:00Z');
   if(!Number.isFinite(day.getTime())||day.toISOString().slice(0,10)!==raw.serviceDate)return null;
