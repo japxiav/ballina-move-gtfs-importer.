@@ -3,11 +3,17 @@ on:
   push:
     paths:
       - "web/**"
+      - "render.yaml"
+      - ".dockerignore"
+      - "scripts/deploy_live_gateway_render.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
     paths:
       - "web/**"
+      - "render.yaml"
+      - ".dockerignore"
+      - "scripts/deploy_live_gateway_render.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
@@ -44,3 +50,27 @@ jobs:
         run: npm test
       - name: Verify static preview boundary
         run: npm run test:preview
+      - name: Build and verify unprivileged container without provider access
+        working-directory: .
+        run: |
+          set -euo pipefail
+          docker build -f web/Dockerfile -t ballina-live:ci .
+          trap 'docker rm -f ballina-live-ci >/dev/null 2>&1 || true' EXIT
+          docker run -d --name ballina-live-ci --network none --read-only --cap-drop ALL --security-opt no-new-privileges ballina-live:ci
+          docker exec -i ballina-live-ci python - <<'PY'
+          import os, time, urllib.request
+          assert os.getuid() == 10001
+          assert not os.access('/app/web', os.W_OK)
+          deadline = time.monotonic() + 10
+          while True:
+              try:
+                  response = urllib.request.urlopen('http://127.0.0.1:10000/', timeout=1)
+                  break
+              except OSError:
+                  if time.monotonic() > deadline:
+                      raise
+                  time.sleep(.1)
+          assert response.status == 200
+          assert "connect-src 'self'" in response.headers['Content-Security-Policy']
+          assert b'Ballina Move' in response.read()
+          PY

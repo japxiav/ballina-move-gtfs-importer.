@@ -1,0 +1,22 @@
+# Allowlist: private/local files and unrelated backend data never enter context.
+**
+!web/
+!web/package.json
+!web/package-lock.json
+!web/tsconfig.json
+!web/index.html
+!web/src/
+!web/src/**
+!web/scripts/
+!web/scripts/build-standalone.cjs
+!web/public/
+!web/public/**
+!web/server/
+!web/server/live_gateway.py
+!web/Dockerfile
+!routing/
+!routing/src/
+!routing/src/types.ts
+!.github/
+!.github/workflows/
+!.github/workflows/post-activation-health.yml
