@@ -27,25 +27,26 @@ for (const [name, change] of [
 
 test("form accessible names contain the visible labels", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("combobox", { name: /De onde/ })).toBeVisible();
-  await expect(page.getByRole("combobox", { name: /Para onde/ })).toBeVisible();
-  await expect(page.getByLabel(/Partir a partir de/)).toBeVisible();
-  await page.getByText("Explorar estados da demonstração").click();
-  await expect(page.getByRole("combobox", { name: /Resposta das fixtures/ })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: /From/ })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: /To/ })).toBeVisible();
+  await expect(page.getByLabel(/Leave after/)).toBeVisible();
+  await page.locator(".search-options > summary").click();
+  await page.getByText("Demo states").click();
+  await expect(page.getByRole("combobox", { name: /Demo response/ })).toBeVisible();
 });
 
 for (const path of ["/journey/", "/journey/direct/extra"]) {
   test(`malformed itinerary path ${path} offers home recovery`, async ({ page }) => {
     await page.goto(`/#${path}?${encodeQuery(query)}`);
-    await expect(page.getByRole("heading", { name: "Este caminho não existe." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Page not found." })).toBeVisible();
     await expect(page.locator(".journey-card")).toHaveCount(0);
-    await page.getByRole("link", { name: "Voltar ao início" }).click();
-    await expect(page.getByRole("heading", { name: /Mais perto/ })).toBeVisible();
+    await page.getByRole("link", { name: "Back to home" }).click();
+    await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
   });
 }
 
 test("router does not silently discard a second question mark", async ({ page }) => {
   await page.goto(`/#/search?${encodeQuery(query)}?&unreviewed=true`);
-  await expect(page.getByRole("heading", { name: "Pesquisa inválida." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Invalid search." })).toBeVisible();
   await expect(page.locator(".journey-card")).toHaveCount(0);
 });
