@@ -1,0 +1,41 @@
+name: Ballina Move web validation (fixtures only)
+on:
+  push:
+    paths:
+      - "web/**"
+      - "routing/src/types.ts"
+      - ".github/workflows/web-validation.yml"
+  pull_request:
+    paths:
+      - "web/**"
+      - "routing/src/types.ts"
+      - ".github/workflows/web-validation.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts
+      - name: Build browser application
+        run: npm run build:standalone
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+      - name: Test fixture navigation on desktop and mobile
+        run: npm test
+      - name: Verify static preview boundary
+        run: npm run test:preview
