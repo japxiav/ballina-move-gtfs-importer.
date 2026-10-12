@@ -120,8 +120,21 @@ export interface BuildPathsOptions {
   /** Direct walk is optional because it spends one provider call when nonzero. */
   maxDirectWalkMeters?:number;
 }
+/** Reject malformed caps before a fractional/NaN budget can exceed its promise. */
+export function validateWalkingOptions(opts:BuildPathsOptions):void {
+  for(const key of ['maxOriginStops','maxDestinationStops','maxTransferPairs','maxRequestCount','requestDeadlineMs','maxConcurrentWalkingRequests'] as const){
+    const value=opts[key];
+    if(value!==undefined&&(!Number.isInteger(value)||value<0||
+      ((key==='requestDeadlineMs'||key==='maxConcurrentWalkingRequests')&&value===0)))throw new Error('invalid_walking_options');
+  }
+  for(const key of ['candidateRadiusMeters','maxPedestrianDistanceMeters','maxDirectWalkMeters'] as const){
+    const value=opts[key];
+    if(value!==undefined&&(typeof value!=='number'||!Number.isFinite(value)||value<0))throw new Error('invalid_walking_options');
+  }
+}
 /** Candidate discovery MAY use straight-line proximity, but every accepted leg requires a real walking-route response. */
 export async function buildPedestrianPaths(router:WalkingRouter,stops:Stop[],origin:LatLon,destination:LatLon,opts:BuildPathsOptions={}):Promise<PedestrianPaths> {
+  validateWalkingOptions(opts);
   if(!validCoordinate(origin)||!validCoordinate(destination))throw new Error('invalid_coordinates');
   const originCap=Math.max(0,Math.min(opts.maxOriginStops??8,20));
   const destCap=Math.max(0,Math.min(opts.maxDestinationStops??8,20));
