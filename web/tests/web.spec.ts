@@ -15,6 +15,23 @@ const query = {
 const searchURL = (changes = {}) =>
   `/#/search?${encodeQuery({ ...query, ...changes })}`;
 test.beforeEach(async ({ page }) => {
+  // Record the real loading DOM while it exists; a slow click acknowledgement
+  // must not make a transient 650 ms state invisible to the assertion.
+  await page.addInitScript(() => {
+    const state = window as Window & { ballinaLoadingCount: number };
+    state.ballinaLoadingCount = 0;
+    let previous: Element | null = null;
+    new MutationObserver(() => {
+      const loading =
+        Array.from(document.querySelectorAll('[role="status"]')).find(
+          (el) =>
+            el.textContent?.includes("Buscando viagens") &&
+            el.getClientRects().length > 0,
+        ) ?? null;
+      if (loading && loading !== previous) state.ballinaLoadingCount++;
+      previous = loading;
+    }).observe(document, { childList: true, subtree: true });
+  });
   await page.route("**/*", async (route) => {
     expect(new URL(route.request().url()).hostname).toBe("127.0.0.1");
     await route.continue();
@@ -30,7 +47,11 @@ test("home → results → itinerary → back and deep-link reload", async ({
   await expect(page.getByRole("heading", { name: /Mais perto/ })).toBeVisible();
   await page.getByLabel("Data da viagem").fill(query.serviceDate);
   await page.getByRole("button", { name: "Buscar viagens" }).click();
-  await expect(page.getByRole("status")).toContainText("Buscando viagens");
+  await page.waitForFunction(
+    () =>
+      (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount >
+      0,
+  );
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await expect(page.locator(".fixture-tag")).toHaveCount(3);
   await page
@@ -95,8 +116,17 @@ test("empty, simulated failure, retry and recovery", async ({ page }) => {
   await page.getByLabel("Resposta da demonstração").selectOption("error");
   await page.getByRole("button", { name: "Buscar viagens" }).click();
   await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
+  const beforeRetry = await page.evaluate(
+    () =>
+      (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount,
+  );
   await page.getByRole("button", { name: "Tentar novamente" }).click();
-  await expect(page.getByRole("status")).toContainText("Buscando viagens");
+  await page.waitForFunction(
+    (count) =>
+      (window as Window & { ballinaLoadingCount: number }).ballinaLoadingCount >
+      count,
+    beforeRetry,
+  );
   await expect(page.getByRole("alert")).toContainText("Uma pausa no caminho.");
   await page.getByText("Alterar pesquisa").click();
   await page.getByText("Explorar estados da demonstração").click();

@@ -32,8 +32,10 @@ jobs:
       - name: Install pinned dependencies
         run: npm ci --ignore-scripts
       - name: Build browser application
-        run: npm run build
+        run: npm run build:standalone
       - name: Install test browser
         run: npx playwright install --with-deps chromium
       - name: Test fixture navigation on desktop and mobile
         run: npm test
+      - name: Verify static preview boundary
+        run: npm run test:preview

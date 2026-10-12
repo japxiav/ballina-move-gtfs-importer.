@@ -66,3 +66,13 @@ Validação local: build e 18 verificações Playwright (9 cenários × 2 perfis
 - `fix/a11-explicit-service-date`: somente correção do runner/workflow A11 e regressões offline, com a mesma base.
 
 As branches são locais nesta entrega. Não houve push, merge em main, deploy ou consulta paga. Para transportar os commits, use o bundle entregue (instruções em `ENTREGA_PC.md`).
+
+## Prévia no ambiente de nuvem
+
+A prévia do ambiente usa `scripts/serve-cloud-preview.cjs`, um servidor somente de arquivos do build, em `0.0.0.0:5173` (ou `BALLINA_PREVIEW_PORT`). Ele aceita hosts encaminhados pela plataforma, sem servir código fonte, `.env`, diretórios ou APIs privadas. As requisições do frontend a serviços externos ficam bloqueadas pela CSP. Servir na rede interna do ambiente não constitui publicação na Internet; o acesso do usuário exige encaminhamento autenticado de porta pela plataforma.
+
+Os scripts `build:standalone`, `preview:cloud` e `test:preview` permitem reproduzir o build autônomo, a prévia interna e o teste da fronteira de arquivos. `dist/ballina-move.html` contém o app completo em um arquivo, com JS/CSS incorporados e CSP por hashes. O build autônomo é verificado via HTTP em Chromium, sem recursos externos. A navegação `file://` foi bloqueada pela política administrada do navegador (`ERR_BLOCKED_BY_ADMINISTRATOR`); não foi alterada essa política. Sua visualização na UI ainda depende de um visualizador HTML habilitado; geração do arquivo não comprova suporte do botão “Abrir em”.
+
+Diagnóstico de 12/10/2026: havia somente uma instância em loopback 5174 e nenhuma em 5173. Foram iniciados servidores estáticos em 5173 e 3000; home, pesquisa e detalhes funcionaram em Chromium local. Acesso ao IP interno pelo proxy recebeu `403 Domain forbidden`. A ativação suportada do navegador compartilhado falhou com `NODE_REPL_AUTH_TOKEN must be provisioned before browser activation`, uma exigência interna da plataforma que não deve ser preenchida com credenciais do usuário. As ferramentas disponíveis não oferecem registro de prévia, encaminhamento de portas ou controle do botão “Abrir em”.
+
+Sem encaminhamento/visualizador da plataforma, um link interativo externo exige hospedagem autorizada separadamente. Não foi aberto túnel, publicado site, exposto backend ou incluída credencial no build.

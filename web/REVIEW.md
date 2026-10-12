@@ -34,3 +34,13 @@ Achados corrigidos: validar a data retornada no A11; adicionar chave estável ao
 O frontend usa fixtures e não executa consultas reais ao motor/gateway. Não foram validados GTFS atual, integrações Supabase/Stadia, navegação pedestre, tarifas ou acessibilidade real. A avaliação de teclado/layout não equivale a uma auditoria WCAG completa; os testes de navegador usam Chromium, sem cobertura Safari/Firefox.
 
 Não houve chamada paga, solicitação de credencial, exposição de token, push, merge ou deploy. O ambiente atual não demonstra publicação ou restauração em nova tarefa.
+
+## Correção da prévia no ambiente · 12/10/2026
+
+Foi adicionado um servidor estático do build em `0.0.0.0`, com hosts encaminhados e restrição ao diretório `dist`. A home, pesquisa e detalhes abriram em Chromium nas portas 5173 e 3000. Um teste novo confirmou arquivos/hosts/métodos, bloqueio de diretórios e travessia/symlinks para fora do build. O HTML autônomo abriu via HTTP com zero requisições adicionais; seu conteúdo também foi renderizado em Chromium sem nenhuma requisição de rede. Isso não confirma que o visualizador da plataforma aceite HTML.
+
+A suíte inicial detectou uma disputa de tempo no teste mobile do carregamento curto: o estado terminava antes da confirmação do clique. O teste agora registra a presença real do DOM visível do carregamento com MutationObserver, incluindo uma nova ocorrência no retry, sem alterar a duração ou remover a verificação. A execução final passou em 18/18 testes, e o teste do servidor estático passou.
+
+Não foi possível verificar o botão “Abrir em” do usuário: não há ferramenta de encaminhamento/registro de prévia; ativar o runtime de navegador compartilhado exige uma credencial interna ausente. O proxy recusou o IP interno (`403 Domain forbidden`) e a política administrada bloqueou `file://`. Essas políticas não foram desativadas. Não houve túnel ou publicação externa.
+
+`install_script` e `start_skill` foram atualizados no rascunho da configuração para preparar/reiniciar a prévia com fixtures, preservando as instruções anteriores do importador. Salvar o rascunho não publica nem aplica o runtime compartilhado; a aplicação local foi validada separadamente.
