@@ -132,3 +132,15 @@ test('A13 canary: delayed EOF cleans timer and abort listener without waiting fo
   body:{getReader:()=>({read:async()=>{now+=10001;return{done:true};},cancel:()=>new Promise(()=>{}),releaseLock:()=>{released++;}})},text:async()=>JSON.stringify(input)};
  assert.equal((await fn(req)).status,408);assert.equal(activeTimers,0);assert.equal(listeners,0);assert.equal(released,1);
 });
+
+for(const [name,scenarioId] of [
+ ['object with no primitive conversion',{toString:null,valueOf:null}],
+ ['one-element array',['ballina-foxford-bus']],
+ ['empty object',{}],['null',null],['number',0],['boolean',true],
+]){
+ test(`A13 canary schema: ${name} returns 400 before limiter/provider`,async()=>{
+  const a=boot(),s=streamed([new TextEncoder().encode(JSON.stringify({...input,scenarioId}))]);
+  const r=await a.fn(s.req);
+  assert.equal(r.status,400);assert.deepEqual(await r.json(),{error:'invalid_canary_request'});assert.deepEqual(a.calls,zero);
+ });
+}
