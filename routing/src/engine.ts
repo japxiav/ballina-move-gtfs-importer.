@@ -60,25 +60,6 @@ function stateDominates(a:State,b:State):boolean {
 function addBest(states:Map<string,State[]>,state:State):void {
   const entries=states.get(state.stopId)??[];
   const compare=(a:State,b:State)=>a.at-b.at||a.walkingMeters-b.walkingMeters||a.rides-b.rides||b.latestLeaveAtSeconds-a.latestLeaveAtSeconds;
-  // The bounded algorithm is approximate, but never lose a NEW minimum of
-  // walking distance at the stop (critical for walking-constrained transfers).
-  // This cheap gate prevents an O(24 log 24) selection on every later,
-  // no-less-walk state in highly overlapping timetable feeds.
-  if(entries.length>=MAX_STATES_PER_STOP&&compare(state,entries[entries.length-1]!)>=0&&
-      entries.some(x=>metadata(x).snap===snapConfirmationRequired(state.legs))){
-    let comparable=0;const distinct=new Set<string>();
-    for(const old of entries){
-      if(old.at<=state.at&&old.walkingMeters<=state.walkingMeters&&old.rides<=state.rides&&old.latestLeaveAtSeconds>=state.latestLeaveAtSeconds&&
-          (!metadata(old).snap||snapConfirmationRequired(state.legs))){
-        const history=previousVehicle(old);
-        if(history)distinct.add(history);
-        if(distinct.size>=2){comparable=2;break;}
-      }
-    }
-    // Preserve states that can be the *second* low-walk alternative when a
-    // single earlier history may block reboarding an essential vehicle.
-    if(comparable>=2)return;
-  }
   if(entries.some(x=>stateDominates(x,state)))return;
   const viable=entries.filter(x=>!stateDominates(state,x));
   viable.push(state);
