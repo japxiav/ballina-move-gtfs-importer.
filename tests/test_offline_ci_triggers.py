@@ -37,5 +37,16 @@ class OfflineCiTriggers(unittest.TestCase):
         ))
 
 
+    def test_workflow_contract_inputs_trigger_importer_checks(self):
+        self.assert_triggers('importer-validation.yml', (
+            '.github/workflows/routing-validation.yml',
+            '.github/workflows/a11-first-live-itinerary.yml',
+            '.github/workflows/a11-live-walking-smoke.yml',
+            '.github/workflows/a11-private-canary-readonly.yml',
+            '.github/workflows/gtfs-import.yml',
+            '.github/workflows/post-activation-health.yml',
+        ))
+
+
 if __name__ == '__main__':
     unittest.main()

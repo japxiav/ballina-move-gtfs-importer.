@@ -8,6 +8,7 @@ on:
       - 'tests/**'
       - 'routing/package.json'
       - 'routing/package-lock.json'
+      - '.github/workflows/*.yml'
       - '.github/workflows/importer-validation.yml'
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - 'tests/**'
       - 'routing/package.json'
       - 'routing/package-lock.json'
+      - '.github/workflows/*.yml'
       - '.github/workflows/importer-validation.yml'
   workflow_dispatch:
 permissions:
