@@ -2,7 +2,7 @@ import type {AccessWalk,BoardingInstruction,Journey,Leg,PedestrianPaths,PlanRequ
 import {activeService,dstTransitionDay,validDate,offsetServiceDate} from './time';
 import {boardingInstruction,proximityMeters,routableStopCoordinate,MAX_WALK_ENDPOINT_DRIFT_METERS,MAX_USER_ENDPOINT_DRIFT_METERS} from './boarding';
 
-interface State {stopId:string;at:number;legs:Leg[];boardings:BoardingInstruction[];rides:number;walkingMeters:number;}
+interface State {stopId:string;at:number;legs:Leg[];boardings:BoardingInstruction[];rides:number;walkingMeters:number;latestLeaveAtSeconds:number;}
 const MAX_SCHEDULE_SECONDS=72*3600;
 function assertPath(path:WalkPath,from:{lat:number;lon:number},to:{lat:number;lon:number},purpose:WalkLeg['purpose']):boolean {
   if(!Number.isFinite(path.durationSeconds)||path.durationSeconds<0||path.durationSeconds>7200)return false;
@@ -49,7 +49,7 @@ function snapConfirmationRequired(legs:Leg[]):boolean {
 }
 function stateDominates(a:State,b:State):boolean {
   if(previousVehicle(a)!==previousVehicle(b)||
-    a.at>b.at||a.walkingMeters>b.walkingMeters||a.rides>b.rides)return false;
+    a.at>b.at||a.walkingMeters>b.walkingMeters||a.rides>b.rides||a.latestLeaveAtSeconds<b.latestLeaveAtSeconds)return false;
   // A label with uncertain household-to-street access cannot discard one
   // which does not require explicit confirmation from the passenger.
   if(metadata(a).snap&&!metadata(b).snap)return false;
@@ -59,7 +59,7 @@ function stateDominates(a:State,b:State):boolean {
 }
 function addBest(states:Map<string,State[]>,state:State):void {
   const entries=states.get(state.stopId)??[];
-  const compare=(a:State,b:State)=>a.at-b.at||a.walkingMeters-b.walkingMeters||a.rides-b.rides;
+  const compare=(a:State,b:State)=>a.at-b.at||a.walkingMeters-b.walkingMeters||a.rides-b.rides||b.latestLeaveAtSeconds-a.latestLeaveAtSeconds;
   // The bounded algorithm is approximate, but never lose a NEW minimum of
   // walking distance at the stop (critical for walking-constrained transfers).
   // This cheap gate prevents an O(24 log 24) selection on every later,
@@ -68,7 +68,7 @@ function addBest(states:Map<string,State[]>,state:State):void {
       entries.some(x=>metadata(x).snap===snapConfirmationRequired(state.legs))){
     let comparable=0;const distinct=new Set<string>();
     for(const old of entries){
-      if(old.at<=state.at&&old.walkingMeters<=state.walkingMeters&&old.rides<=state.rides&&
+      if(old.at<=state.at&&old.walkingMeters<=state.walkingMeters&&old.rides<=state.rides&&old.latestLeaveAtSeconds>=state.latestLeaveAtSeconds&&
           (!metadata(old).snap||snapConfirmationRequired(state.legs))){
         const history=previousVehicle(old);
         if(history)distinct.add(history);
@@ -83,29 +83,34 @@ function addBest(states:Map<string,State[]>,state:State):void {
   const viable=entries.filter(x=>!stateDominates(state,x));
   viable.push(state);
   const byTime=compare;
-  const byWalk=(a:State,b:State)=>a.walkingMeters-b.walkingMeters||a.at-b.at||a.rides-b.rides;
+  const byWalk=(a:State,b:State)=>a.walkingMeters-b.walkingMeters||a.at-b.at||a.rides-b.rides||b.latestLeaveAtSeconds-a.latestLeaveAtSeconds;
+  const byLeave=(a:State,b:State)=>b.latestLeaveAtSeconds-a.latestLeaveAtSeconds||byTime(a,b);
   if(viable.length<=MAX_STATES_PER_STOP){viable.sort(byTime);states.set(state.stopId,viable);return;}
   // Selecting only the earliest 24 suppresses late but low-walking feeders,
   // including the sole state that can afford a subsequent walking transfer.
-  // Reserve earliest AND lowest-walking labels per snap-risk class. Then
-  // distribute the remaining places equally between time and walking ranks.
+  // Reserve earliest, lowest-walking AND latest-leave labels per snap-risk class.
+  // Distribute remaining places across these three bounded ranks.
   const selected=new Set<State>();
   for(const snap of [false,true]){
     const same=viable.filter(x=>metadata(x).snap===snap);
     if(same.length){
       selected.add(same.reduce((best,x)=>byTime(x,best)<0?x:best));
       selected.add(same.reduce((best,x)=>byWalk(x,best)<0?x:best));
+      selected.add(same.reduce((best,x)=>byLeave(x,best)<0?x:best));
     }
   }
   const orderedTime=[...viable].sort(byTime);
   const orderedWalk=[...viable].sort(byWalk);
-  let ti=0,wi=0;
+  const orderedLeave=[...viable].sort(byLeave);
+  let ti=0,wi=0,li=0;
   while(selected.size<MAX_STATES_PER_STOP){
     const prior=selected.size;
     while(ti<orderedTime.length&&selected.has(orderedTime[ti]!))ti++;
     if(ti<orderedTime.length&&selected.size<MAX_STATES_PER_STOP)selected.add(orderedTime[ti++]!);
     while(wi<orderedWalk.length&&selected.has(orderedWalk[wi]!))wi++;
     if(wi<orderedWalk.length&&selected.size<MAX_STATES_PER_STOP)selected.add(orderedWalk[wi++]!);
+    while(li<orderedLeave.length&&selected.has(orderedLeave[li]!))li++;
+    if(li<orderedLeave.length&&selected.size<MAX_STATES_PER_STOP)selected.add(orderedLeave[li++]!);
     if(selected.size===prior)break;
   }
   states.set(state.stopId,[...selected].sort(byTime));
@@ -195,11 +200,21 @@ export function removeLowValueFastestAlternatives(journeys:Journey[]):Journey[]{
   }));
 }
 
-export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRequest):Journey[]{
+/** Validate before discovering candidates or invoking a metered provider. */
+export function validatePlanRequest(data:Pick<Timetable,'timezone'>,request:PlanRequest):void {
   if(data.timezone!=='Europe/Dublin')throw new Error('unsupported_timezone');
   if(!validDate(request.serviceDate))throw new Error('invalid_service_date');
   if(dstTransitionDay(request.serviceDate))throw new Error('dst_transition_requires_timezone_aware_scheduling');
   if(!Number.isInteger(request.departAfterSeconds)||request.departAfterSeconds<0||request.departAfterSeconds>=86400)throw new Error('invalid_departure_time');
+  for(const key of ['maxTransfers','limit','minBoardingSeconds','minTransferSeconds','maxWalkingMeters'] as const){
+    const value=request[key];
+    if(value!==undefined&&(typeof value!=='number'||!Number.isFinite(value)))throw new Error('invalid_parameters');
+  }
+  if(request.rankBy!==undefined&&!['fastest','less_walking','fewest_transfers'].includes(request.rankBy))throw new Error('invalid_parameters');
+}
+
+export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRequest):Journey[]{
+  validatePlanRequest(data,request);
   const maxTransfers=Math.max(0,Math.min(2,Math.floor(request.maxTransfers??1)));
   const limit=Math.max(1,Math.min(5,Math.floor(request.limit??3)));
   const minBoarding=Math.max(0,Math.floor(request.minBoardingSeconds??60));
@@ -283,7 +298,7 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
     const stop=stopMap.get(p.stopId);
     if(!stop||!assertPath(p,paths.origin,routableStopCoordinate(stop),'access')||p.distanceMeters>walkingCap)continue;
     addBest(initial,{stopId:stop.id,at:request.departAfterSeconds+p.durationSeconds,rides:0,
-      walkingMeters:p.distanceMeters,legs:[pathLeg(p,paths.origin,routableStopCoordinate(stop),'access')],boardings:[]});
+      walkingMeters:p.distanceMeters,latestLeaveAtSeconds:request.departAfterSeconds,legs:[pathLeg(p,paths.origin,routableStopCoordinate(stop),'access')],boardings:[]});
   }
   const candidates:Journey[]=[];
   // Walk-only is a real alternative, never a fabricated road line. Requires
@@ -323,6 +338,8 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
           }
           if(boardingCandidates.length>36){
             boardingCandidates.sort((a,b)=>a.state.walkingMeters-b.state.walkingMeters||
+              (b.state.rides===0?rows[b.index]!.departureSeconds!-(b.state.at-request.departAfterSeconds)-minBoarding:b.state.latestLeaveAtSeconds)-
+              (a.state.rides===0?rows[a.index]!.departureSeconds!-(a.state.at-request.departAfterSeconds)-minBoarding:a.state.latestLeaveAtSeconds)||
               a.state.at-b.state.at||a.index-b.index);
             boardingCandidates.splice(36);
           }
@@ -345,7 +362,9 @@ export function planJourneys(data:Timetable,paths:PedestrianPaths,request:PlanRe
           const base=chosen.state;
           const result:State={stopId:stopTime.stopId,at:stopTime.arrivalSeconds,rides:base.rides+1,
             legs:[...base.legs,ride],boardings:[...base.boardings,boardingInstruction(boardingStop)],
-            walkingMeters:base.walkingMeters};
+            walkingMeters:base.walkingMeters,latestLeaveAtSeconds:base.rides===0
+              ? b.departureSeconds!-(base.at-request.departAfterSeconds)-minBoarding
+              : base.latestLeaveAtSeconds};
           addBest(next,result);
         }
       }

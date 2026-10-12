@@ -29,7 +29,7 @@ const first=engine.indexOf('const MAX_STATES_PER_STOP =');
 const last=engine.indexOf('function sortStopTimes(',first);
 const context={};vm.runInNewContext(engine.slice(first,last)+'\nthis.addBest=addBest;',context);
 const addBest=context.addBest;
-const state=(i,at,walking)=>({stopId:'transfer',at,walkingMeters:walking,rides:1,legs:[{type:'ride',tripId:'t'+i,serviceDate:DATE}],boardings:[]});
+const state=(i,at,walking)=>({stopId:'transfer',at,walkingMeters:walking,rides:1,latestLeaveAtSeconds:29000,legs:[{type:'ride',tripId:'t'+i,serviceDate:DATE}],boardings:[]});
 test('REGRESSION: 24 label cap prunes later label even when it has the least walking',()=>{
  const m=new Map();
  for(let i=0;i<24;i++)addBest(m,state(i,30000+i*100,1000-i*25));
