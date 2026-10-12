@@ -1148,6 +1148,27 @@ main {
   font-size: 13px;
   color: var(--muted);
 }
+.search-options {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 0 0 12px;
+}
+.search-options > summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 13px 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.search-options > summary .filter-summary {
+  float: right;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.search-options[open] > .field-pair { margin-top: 12px; }
+.search-options > .demo-controls { margin: 0 0 12px; }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -1265,279 +1286,120 @@ main {
   }
 }
 @media (max-width: 600px) {
-  .site-header,
-  main,
-  .site-footer {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
+  .site-header, main, .site-footer { padding-left: 16px; padding-right: 16px; }
   .site-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
     height: auto;
-    min-height: 108px;
-    flex-direction: column;
-    gap: 8px;
-    align-items: start;
-    padding-top: 16px;
-    padding-bottom: 3px;
-  }
-  .brand {
-    font-size: 23px;
-  }
-  .brand-mark {
-    width: 35px;
-    height: 35px;
-    font-size: 24px;
-    border-radius: 10px;
-  }
-  .brand-mark span {
-    font-size: 18px;
-  }
-  .brand-mark i {
-    bottom: 6px;
-    right: 6px;
-  }
-  nav {
-    width: 100%;
-    justify-content: space-between;
-    gap: 20px;
-    font-size: 12px;
-  }
-  nav a {
-    padding: 12px 0;
-  }
-  nav a.active:after {
-    bottom: 3px;
-  }
-  main {
-    padding-top: 28px;
-    padding-bottom: 40px;
-  }
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-  .hero h1 {
-    font-size: 45px;
-    letter-spacing: -1.8px;
-  }
-  .hero-description {
-    font-size: 14px;
-  }
-  .hero-copy > .eyebrow {
-    font-size: 9px;
-    margin-bottom: 16px;
-  }
-  .hero-tags {
-    font-size: 11px;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  .county-art {
-    max-height: 220px;
-  }
-  .search-panel {
-    border-radius: 18px;
-  }
-  .search-form {
-    padding: 24px;
-  }
-  .search-form h2 {
-    font-size: 32px;
-  }
-  .field select,
-  .field input {
-    font-size: 13px;
-    height: 47px;
-  }
-  .places-grid {
-    gap: 16px;
-  }
-  .demo-note {
-    font-size: 10px;
-    padding: 13px;
-    gap: 8px;
-  }
-  .discover {
-    margin-top: 35px;
-  }
-  .section-heading {
-    align-items: start;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .section-heading h2 {
-    font-size: 32px;
-  }
-  .destination-grid {
-    grid-template-columns: 1fr;
-  }
-  .destination {
-    padding: 22px;
-    min-height: 160px;
-  }
-  .destination h3 {
-    font-size: 26px;
-    margin-top: 12px;
-  }
-  .destination p {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-  .destination-link {
-    font-size: 12px;
-  }
-  .site-footer {
-    gap: 20px;
-    padding-top: 25px;
-    padding-bottom: 25px;
-  }
-  .site-footer > span:nth-child(2) {
-    width: 100%;
-  }
-  .page-heading {
-    align-items: start;
-    flex-direction: column;
-    gap: 17px;
-  }
-  .page-heading h1 {
-    font-size: 34px;
-  }
-  .page-heading p {
-    font-size: 11px;
-  }
-  .edit-search {
-    margin: 20px 0;
-  }
-  .search-compact .places-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .search-compact .swap-button {
-    top: 61px;
-    right: 17px;
-    left: auto;
-    transform: rotate(90deg);
-  }
-  .results-heading {
-    font-size: 9px;
-  }
-  .journey-card {
-    padding: 19px 17px;
-    border-radius: 14px;
-  }
-  .card-label {
-    font-size: 8px;
-    letter-spacing: 0.8px;
-    margin-bottom: 20px;
-  }
-  .journey-times {
-    font-size: 27px;
-    gap: 12px;
-  }
-  .time-line {
-    width: 34px;
-  }
-  .journey-duration > strong {
-    font-size: 23px;
-  }
-  .journey-duration > span {
-    font-size: 8px;
-  }
-  .time-captions {
-    font-size: 8px;
-  }
-  .card-main {
-    gap: 10px;
-    margin-bottom: 22px;
-  }
-  .card-bottom {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .card-bottom .button {
-    font-size: 10px;
-    padding: 10px;
-    gap: 5px;
-    min-height: 42px;
-  }
-  .ride-badges {
-    gap: 5px;
-  }
-  .route-badge {
-    font-size: 10px;
-    padding: 5px 6px;
-  }
-  .card-bottom p {
-    font-size: 9px;
-  }
-  .itinerary {
-    padding: 22px 17px;
-  }
-  .itinerary > h1 {
-    font-size: 30px;
-  }
-  .itinerary-summary {
-    gap: 17px;
-    flex-wrap: wrap;
-  }
-  .itinerary-summary strong {
-    font-size: 18px;
-  }
-  .timeline-step {
-    padding-left: 39px;
-    margin-left: 15px;
-  }
-  .timeline-step.ride {
-    padding-left: 38px;
-  }
-  .step-symbol {
-    left: -56px;
-    width: 32px;
-    height: 32px;
-  }
-  .step-header {
-    gap: 8px;
-    align-items: start;
-  }
-  .step-header h3 {
-    font-size: 13px;
-    min-width: 95px;
-  }
-  .step-time {
-    font-size: 11px;
-    min-width: 32px;
-  }
-  .step-duration {
-    font-size: 9px;
-  }
-  .step-body {
-    font-size: 10px;
-  }
-  .timeline-arrival {
-    padding-left: 39px;
-    margin-left: 15px;
-  }
-  .timeline-arrival .step-symbol {
-    left: -16px;
-  }
-  .empty-state {
-    padding: 40px 20px;
-  }
-  .about-page h1 {
-    font-size: 44px;
-  }
-  .about-lead {
-    font-size: 15px;
-  }
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin: 30px 0;
-  }
-  .about-grid h2 {
-    font-size: 26px;
-    margin: 10px 0;
-  }
+    min-height: 0;
+    gap: 0;
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
+  .brand { font-size: 20px; gap: 8px; min-height: 44px; }
+  .brand-mark { width: 30px; height: 30px; font-size: 22px; border-radius: 9px; }
+  .brand-mark span { font-size: 16px; }
+  .brand-mark i { bottom: 5px; right: 5px; }
+  .header-demo { display: flex; grid-column: 2; grid-row: 1; padding: 6px 9px; }
+  nav { grid-column: 1 / -1; grid-row: 2; width: 100%; gap: 16px; justify-content: space-between; font-size: 12px; }
+  nav a { display: flex; align-items: center; min-height: 44px; min-width: 44px; padding: 10px 0; }
+  nav a.active:after { bottom: 4px; }
+  main { min-height: 0; padding-top: 16px; padding-bottom: 20px; }
+  .hero { grid-template-columns: 1fr; gap: 12px; }
+  .hero h1 { font-size: 28px; letter-spacing: -0.8px; margin: 0; }
+  .hero-copy > .eyebrow, .hero-description, .hero-tags, .county-art { display: none; }
+  .search-panel { border-radius: 14px; box-shadow: none; }
+  .search-form { padding: 14px; }
+  .search-form > .eyebrow, .search-form h2, .form-intro, .panel-foot { display: none; }
+  .field { gap: 6px; }
+  .field > span { font-size: 12px; }
+  .field select, .field input { height: 44px; padding: 0 6px; font-size: 16px; }
+  .places-grid, .search-compact .places-grid { grid-template-columns: 1fr 1fr; gap: 46px; margin-bottom: 12px; }
+  .places-grid .swap-button, .search-compact .swap-button { top: 22px; left: calc(50% - 22px); right: auto; width: 44px; height: 44px; transform: none; }
+  .field-pair { gap: 10px; margin-bottom: 12px; }
+  .search-options { margin-bottom: 9px; }
+  .search-options > summary { padding: 12px 0; }
+  .filter-summary { max-width: 72%; }
+  .transport-modes { padding: 10px; gap: 16px; margin-bottom: 12px; }
+  .transport-modes label { min-height: 44px; }
+  .demo-controls summary { min-height: 44px; padding: 12px 0; font-size: 12px; }
+  .demo-controls select { height: 44px; font-size: 16px; }
+  .timezone { margin: 0 0 10px; font-size: 10px; }
+  .search-submit { min-height: 48px; }
+  .demo-note { margin-top: 12px; padding: 10px; font-size: 11px; line-height: 1.4; gap: 8px; }
+  .discover { margin-top: 18px; }
+  .section-heading { margin-bottom: 10px; }
+  .section-heading .eyebrow, .section-heading > .muted { display: none; }
+  .section-heading h2 { font-size: 22px; margin: 0; letter-spacing: -0.5px; }
+  .destination-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .destination { padding: 10px 8px; min-height: 80px; border-radius: 10px; }
+  .destination > svg, .destination-number, .destination p { display: none; }
+  .destination h3 { font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0; margin: 0 0 8px; line-height: 1.3; }
+  .destination-link { font-size: 10px; gap: 3px; }
+  .destination-link svg { width: 12px; }
+  .site-footer { padding-top: 8px; padding-bottom: 8px; gap: 8px; justify-content: space-between; flex-wrap: nowrap; font-size: 10px; }
+  .site-footer .footer-brand { display: none; }
+  .site-footer > span:nth-child(2) { width: auto; }
+  .site-footer a { min-height: 44px; }
+  .page-heading { flex-direction: row; align-items: start; gap: 8px; }
+  .page-heading > div { min-width: 0; }
+  .page-heading .eyebrow { display: none; }
+  .page-heading h1 { font-size: 27px; margin: 0 0 8px; line-height: 1.1; letter-spacing: -0.8px; }
+  .page-heading p { font-size: 11px; line-height: 1.4; }
+  .page-heading > a { font-size: 11px; min-height: 44px; }
+  .page-heading > a svg { display: none; }
+  .edit-search { margin: 12px 0; }
+  .edit-search > summary { min-height: 44px; padding: 12px 14px; }
+  .results-heading { font-size: 10px; margin-bottom: 10px; }
+  .results-layout, .detail-layout { gap: 0; }
+  .coverage-aside { display: none; }
+  .journey-card { padding: 14px; border-radius: 12px; margin-bottom: 10px; }
+  .card-label { font-size: 8px; letter-spacing: 0.4px; margin-bottom: 12px; }
+  .journey-times { font-size: 25px; gap: 8px; }
+  .time-line { width: 23px; }
+  .journey-duration > strong { font-size: 21px; }
+  .journey-duration > span { display: none; }
+  .time-captions { font-size: 9px; margin-top: 5px; }
+  .card-main { gap: 8px; margin-bottom: 12px; }
+  .card-bottom { flex-wrap: nowrap; gap: 8px; padding-top: 12px; }
+  .card-bottom .button { min-height: 44px; font-size: 11px; padding: 8px; gap: 4px; white-space: nowrap; }
+  .card-bottom .button svg { display: none; }
+  .ride-badges { gap: 4px; }
+  .route-badge { font-size: 10px; padding: 4px; gap: 3px; }
+  .card-bottom p { font-size: 10px; margin-top: 6px; }
+  .card-bottom p span { margin: 0 5px; }
+  .results-footnote { margin: 14px 0 0; font-size: 10px; }
+  .loading-heading { margin: 10px 0; }
+  .skeleton { height: 155px; margin-bottom: 10px; }
+  .back-link { min-height: 44px; margin-bottom: 8px; }
+  .itinerary { padding: 16px 14px; }
+  .itinerary > h1 { font-size: 27px; margin: 10px 0; }
+  .itinerary-summary { margin-top: 14px; padding-top: 12px; gap: 12px; flex-wrap: wrap; }
+  .itinerary-summary strong { font-size: 17px; }
+  .timeline { margin-top: 22px; }
+  .timeline-step { padding: 0 0 20px 36px; margin-left: 15px; }
+  .timeline-step.ride { padding-left: 35px; }
+  .step-symbol { left: -53px; width: 32px; height: 32px; }
+  .step-header { gap: 7px; align-items: start; }
+  .step-header h3 { font-size: 13px; min-width: 90px; }
+  .step-time { font-size: 11px; min-width: 32px; }
+  .step-duration { font-size: 10px; }
+  .step-body { font-size: 11px; padding-top: 10px; }
+  .stop-line { padding-bottom: 12px; }
+  .step-body .direction { margin-bottom: 10px; }
+  .wait-note { margin-bottom: 12px; }
+  .timeline-arrival { padding-left: 36px; margin-left: 15px; }
+  .timeline-arrival .step-symbol { left: -16px; }
+  .detail-bottom { margin-top: 20px; padding-top: 12px; }
+  .empty-state { padding: 24px 16px; }
+  .empty-state .text-link { display: inline-flex; min-height: 44px; align-items: center; margin: 12px auto 0; }
+  .empty-state h1, .empty-state h2 { font-size: 26px; }
+  .empty-icon { width: 56px; height: 56px; }
+  .about-page { margin: 0; }
+  .about-page h1 { font-size: 34px; margin: 12px 0; }
+  .about-lead { font-size: 14px; }
+  .about-grid { grid-template-columns: 1fr; gap: 16px; margin: 20px 0; }
+  .about-grid h2 { font-size: 22px; margin: 8px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
