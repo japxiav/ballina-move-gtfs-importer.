@@ -1137,20 +1137,6 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 "source_etag": source_etag,
             })
 
-            if not args.dry_run:
-                existing = sb.feed_state(candidate_version)
-                if existing and bool(existing.get("active")):
-                    sb.update_run(run_id, {
-                        "status": "unchanged",
-                        "completed_at": utcnow_iso(),
-                        "active_after": candidate_version,
-                        "metadata": {
-                            "reason": "same_source_config_and_importer_already_active",
-                            "lock_id": lock_id,
-                        },
-                    })
-                    return {"status": "unchanged", "version": candidate_version}
-
             feed = FeedReader(zip_path)
             try:
                 info = feed_info(feed)
@@ -1178,6 +1164,21 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     raise RuntimeError(
                         f"feed_expired:today={today.isoformat()}:start={feed_start.isoformat()}:end={feed_end.isoformat()}"
                     )
+
+                # Even an identical active version must still cover today.
+                if not args.dry_run:
+                    existing = sb.feed_state(candidate_version)
+                    if existing and bool(existing.get("active")):
+                        sb.update_run(run_id, {
+                            "status": "unchanged",
+                            "completed_at": utcnow_iso(),
+                            "active_after": candidate_version,
+                            "metadata": {
+                                "reason": "same_source_config_and_importer_already_active",
+                                "lock_id": lock_id,
+                            },
+                        })
+                        return {"status": "unchanged", "version": candidate_version}
 
                 all_stops = collect_stops(feed)
                 monitored, target_audit = resolve_targets(all_stops, targets)
