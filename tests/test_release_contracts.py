@@ -36,4 +36,19 @@ class ReleaseContracts(unittest.TestCase):
         self.assertIn('coalesce(st.pickup_type,0) <> 1',data)
         self.assertIn('transport_function_backups',data)
 
+    def test_full_runner_cannot_report_success_when_gateway_toolchain_is_missing(self):
+        import os, shutil, subprocess, tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            tools = Path(folder)
+            # Isolate the runner contract: a successful Python stage does not
+            # establish that missing Node/TypeScript gateway checks passed.
+            python = tools / "python"
+            python.write_text("#!/bin/sh\nexit 0\n")
+            python.chmod(0o755)
+            (tools / "dirname").symlink_to(shutil.which("dirname"))
+            result = subprocess.run(["/bin/bash", str(ROOT / "scripts/run_tests.sh")], cwd=ROOT,
+                env={**os.environ,"PATH":str(tools)},capture_output=True,text=True,timeout=5)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("ALL LOCAL TESTS PASSED", result.stdout)
+
 if __name__ == '__main__':unittest.main()

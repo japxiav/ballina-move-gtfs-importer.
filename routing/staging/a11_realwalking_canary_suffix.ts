@@ -29,6 +29,55 @@ const a11Scenarios=Object.freeze({
   'ballina-castlebar-bus':Object.freeze({origin:{lat:54.1118,lon:-9.1613},destination:{lat:53.8546,lon:-9.3032},modes:['bus'],maxWalkingMeters:1800}),
 });
 function a11Answer(body,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});}
+// Bound real bytes, time and cancellation before touching the shared quota or provider.
+const a11BodyLimit=512,a11BodyTimeout=10000;
+async function a11ReadBody(req){
+  const declared=req.headers.get('content-length');
+  if(declared!==null){
+    if(!/^\d+$/.test(declared))throw Error('invalid_content_length');
+    if(!Number.isSafeInteger(Number(declared))||Number(declared)>a11BodyLimit)throw Error('payload_too_large');
+  }
+  if(req.signal.aborted)throw Error('request_aborted');
+  if(!req.body)return '';
+  const reader=req.body.getReader(),buffer=new Uint8Array(a11BodyLimit);
+  const expires=Date.now()+a11BodyTimeout;
+  let size=0,stopped=null,rejectCurrent=null;
+  const stop=code=>{
+    if(!stopped)stopped=Error(code);
+    if(rejectCurrent)rejectCurrent(stopped);
+  };
+  const abort=()=>stop('request_aborted');
+  req.signal.addEventListener('abort',abort,{once:true});
+  const timer=setTimeout(()=>stop('body_timeout'),a11BodyTimeout);
+  try{
+    while(true){
+      if(req.signal.aborted)abort();
+      if(Date.now()>=expires)stop('body_timeout');
+      if(stopped)throw stopped;
+      const part=await new Promise((resolve,reject)=>{
+        rejectCurrent=reject;
+        reader.read().then(resolve,reject);
+      }).finally(()=>{rejectCurrent=null;});
+      // An EOF microtask can arrive before the expired timer gets dispatched.
+      if(Date.now()>=expires)stop('body_timeout');
+      if(req.signal.aborted)abort();
+      if(stopped)throw stopped;
+      if(part.done)break;
+      if(size+part.value.byteLength>a11BodyLimit)throw Error('payload_too_large');
+      buffer.set(part.value,size);size+=part.value.byteLength;
+    }
+    return new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,size));
+  }catch(error){
+    // The HTTP host owns cancellation after request abort; do not cancel it twice.
+    if(!req.signal.aborted){
+      try{Promise.resolve(reader.cancel()).catch(()=>{});}catch{ /* already closed */ }
+    }
+    throw error;
+  }finally{
+    clearTimeout(timer);req.signal.removeEventListener('abort',abort);
+    try{reader.releaseLock();}catch{ /* host already released */ }
+  }
+}
 async function a11TokenMatches(candidate){
   if(!a11TokenReady||!candidate||candidate.length>256)return false;
   const hash=async text=>new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)));
@@ -38,7 +87,7 @@ async function a11TokenMatches(candidate){
 }
 function a11ParseRequest(raw){
   if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).sort().join(',')!=='confirmPaidCalls,departAt,scenarioId,serviceDate')return null;
-  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
+  if(raw.confirmPaidCalls!=='YES_UP_TO_12_WALKS'||typeof raw.scenarioId!=='string'||!Object.hasOwn(a11Scenarios,raw.scenarioId))return null;
   if(typeof raw.serviceDate!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(raw.serviceDate))return null;
   const day=new Date(raw.serviceDate+'T00:00:00Z');
   if(!Number.isFinite(day.getTime())||day.toISOString().slice(0,10)!==raw.serviceDate)return null;
@@ -91,9 +140,15 @@ Deno.serve(async(req)=>{
   if(req.headers.get('content-type')?.split(';',1)[0]?.trim().toLowerCase()!=='application/json')return a11Answer({error:'unsupported_media_type'},415);
   let raw;
   try{
-    const text=await req.text();if(text.length>512)return a11Answer({error:'payload_too_large'},413);
+    const text=await a11ReadBody(req);
     raw=JSON.parse(text);
-  }catch{return a11Answer({error:'invalid_json'},400);}
+  }catch(error){
+    const code=error?.message;
+    if(code==='payload_too_large')return a11Answer({error:code},413);
+    if(code==='body_timeout')return a11Answer({error:code},408);
+    if(code==='request_aborted')return a11Answer({error:code},499);
+    return a11Answer({error:'invalid_json'},400);
+  }
   const input=a11ParseRequest(raw);
   if(!input)return a11Answer({error:'invalid_canary_request'},400);
   // Strict shared DB limiter: no in-memory-only quota that resets across isolates.
