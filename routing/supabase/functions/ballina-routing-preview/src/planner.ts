@@ -1,5 +1,5 @@
-import {planJourneys} from './engine.ts';
-import {buildPedestrianPaths,type WalkingRouter,type BuildPathsOptions} from './pedestrian.ts';
+import {planJourneys,validatePlanRequest} from './engine.ts';
+import {buildPedestrianPaths,validateWalkingOptions,type WalkingRouter,type BuildPathsOptions} from './pedestrian.ts';
 import type {Journey,LatLon,PlanRequest,Stop,Timetable,PedestrianPaths} from './types.ts';
 import {activeService,offsetServiceDate,dstTransitionDay,validDate} from './time.ts';
 import {proximityMeters,routableStopCoordinate} from './boarding.ts';
@@ -282,6 +282,9 @@ function timetableTransferHints(data:Timetable,req:DoorToDoorRequest,
 export async function planDoorToDoor(
   timetable:Timetable,router:WalkingRouter,req:DoorToDoorRequest,opts:DoorToDoorOptions={}
 ):Promise<PlannedJourneys>{
+  validatePlanRequest(timetable,req);
+  validateWalkingOptions(opts);
+  if(opts.modes!==undefined&&(!Array.isArray(opts.modes)||new Set(opts.modes).size!==opts.modes.length))throw new Error('invalid_modes');
   // Preserve bus-only legacy behavior unless rail was explicitly requested.
   // Never infer rail access from the GTFS feed merely containing trains.
   const modes=new Set(opts.modes??(opts.includeRail?['bus','rail']:['bus']));

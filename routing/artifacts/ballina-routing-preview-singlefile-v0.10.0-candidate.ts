@@ -187,6 +187,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.nonDominatedJourneys = nonDominatedJourneys;
 exports.hasExtremeGeographicDetour = hasExtremeGeographicDetour;
 exports.removeLowValueFastestAlternatives = removeLowValueFastestAlternatives;
+exports.validatePlanRequest = validatePlanRequest;
 exports.planJourneys = planJourneys;
 const time_1 = require("./time");
 const boarding_1 = require("./boarding");
@@ -246,7 +247,7 @@ function snapConfirmationRequired(legs) {
 }
 function stateDominates(a, b) {
     if (previousVehicle(a) !== previousVehicle(b) ||
-        a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides)
+        a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides || a.latestLeaveAtSeconds < b.latestLeaveAtSeconds)
         return false;
     // A label with uncertain household-to-street access cannot discard one
     // which does not require explicit confirmation from the passenger.
@@ -261,38 +262,14 @@ function stateDominates(a, b) {
 }
 function addBest(states, state) {
     const entries = states.get(state.stopId) ?? [];
-    const compare = (a, b) => a.at - b.at || a.walkingMeters - b.walkingMeters || a.rides - b.rides;
-    // The bounded algorithm is approximate, but never lose a NEW minimum of
-    // walking distance at the stop (critical for walking-constrained transfers).
-    // This cheap gate prevents an O(24 log 24) selection on every later,
-    // no-less-walk state in highly overlapping timetable feeds.
-    if (entries.length >= MAX_STATES_PER_STOP && compare(state, entries[entries.length - 1]) >= 0 &&
-        entries.some(x => metadata(x).snap === snapConfirmationRequired(state.legs))) {
-        let comparable = 0;
-        const distinct = new Set();
-        for (const old of entries) {
-            if (old.at <= state.at && old.walkingMeters <= state.walkingMeters && old.rides <= state.rides &&
-                (!metadata(old).snap || snapConfirmationRequired(state.legs))) {
-                const history = previousVehicle(old);
-                if (history)
-                    distinct.add(history);
-                if (distinct.size >= 2) {
-                    comparable = 2;
-                    break;
-                }
-            }
-        }
-        // Preserve states that can be the *second* low-walk alternative when a
-        // single earlier history may block reboarding an essential vehicle.
-        if (comparable >= 2)
-            return;
-    }
+    const compare = (a, b) => a.at - b.at || a.walkingMeters - b.walkingMeters || a.rides - b.rides || b.latestLeaveAtSeconds - a.latestLeaveAtSeconds;
     if (entries.some(x => stateDominates(x, state)))
         return;
     const viable = entries.filter(x => !stateDominates(state, x));
     viable.push(state);
     const byTime = compare;
-    const byWalk = (a, b) => a.walkingMeters - b.walkingMeters || a.at - b.at || a.rides - b.rides;
+    const byWalk = (a, b) => a.walkingMeters - b.walkingMeters || a.at - b.at || a.rides - b.rides || b.latestLeaveAtSeconds - a.latestLeaveAtSeconds;
+    const byLeave = (a, b) => b.latestLeaveAtSeconds - a.latestLeaveAtSeconds || byTime(a, b);
     if (viable.length <= MAX_STATES_PER_STOP) {
         viable.sort(byTime);
         states.set(state.stopId, viable);
@@ -300,19 +277,26 @@ function addBest(states, state) {
     }
     // Selecting only the earliest 24 suppresses late but low-walking feeders,
     // including the sole state that can afford a subsequent walking transfer.
-    // Reserve earliest AND lowest-walking labels per snap-risk class. Then
-    // distribute the remaining places equally between time and walking ranks.
+    // Reserve earliest, lowest-walking AND latest-leave labels per snap-risk class.
+    // Distribute remaining places across these three bounded ranks.
     const selected = new Set();
     for (const snap of [false, true]) {
         const same = viable.filter(x => metadata(x).snap === snap);
         if (same.length) {
             selected.add(same.reduce((best, x) => byTime(x, best) < 0 ? x : best));
             selected.add(same.reduce((best, x) => byWalk(x, best) < 0 ? x : best));
+            selected.add(same.reduce((best, x) => byLeave(x, best) < 0 ? x : best));
         }
     }
     const orderedTime = [...viable].sort(byTime);
-    const orderedWalk = [...viable].sort(byWalk);
-    let ti = 0, wi = 0;
+    // Uniform-walk frontiers (common in overlapping feeds) already have the
+    // walking order after time sorting. Strictly increasing leave times can
+    // likewise be reversed without another O(labels log labels) sort.
+    const uniformWalk = viable.every(x => x.walkingMeters === viable[0].walkingMeters);
+    const orderedWalk = uniformWalk ? orderedTime : [...viable].sort(byWalk);
+    const increasingLeave = orderedTime.every((x, i) => i === 0 || orderedTime[i - 1].latestLeaveAtSeconds < x.latestLeaveAtSeconds);
+    const orderedLeave = increasingLeave ? [...orderedTime].reverse() : [...viable].sort(byLeave);
+    let ti = 0, wi = 0, li = 0;
     while (selected.size < MAX_STATES_PER_STOP) {
         const prior = selected.size;
         while (ti < orderedTime.length && selected.has(orderedTime[ti]))
@@ -323,6 +307,10 @@ function addBest(states, state) {
             wi++;
         if (wi < orderedWalk.length && selected.size < MAX_STATES_PER_STOP)
             selected.add(orderedWalk[wi++]);
+        while (li < orderedLeave.length && selected.has(orderedLeave[li]))
+            li++;
+        if (li < orderedLeave.length && selected.size < MAX_STATES_PER_STOP)
+            selected.add(orderedLeave[li++]);
         if (selected.size === prior)
             break;
     }
@@ -418,7 +406,8 @@ function removeLowValueFastestAlternatives(journeys) {
             other.walkingMeters <= candidate.walkingMeters + 20;
     }));
 }
-function planJourneys(data, paths, request) {
+/** Validate before discovering candidates or invoking a metered provider. */
+function validatePlanRequest(data, request) {
     if (data.timezone !== 'Europe/Dublin')
         throw new Error('unsupported_timezone');
     if (!(0, time_1.validDate)(request.serviceDate))
@@ -427,6 +416,16 @@ function planJourneys(data, paths, request) {
         throw new Error('dst_transition_requires_timezone_aware_scheduling');
     if (!Number.isInteger(request.departAfterSeconds) || request.departAfterSeconds < 0 || request.departAfterSeconds >= 86400)
         throw new Error('invalid_departure_time');
+    for (const key of ['maxTransfers', 'limit', 'minBoardingSeconds', 'minTransferSeconds', 'maxWalkingMeters']) {
+        const value = request[key];
+        if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value)))
+            throw new Error('invalid_parameters');
+    }
+    if (request.rankBy !== undefined && !['fastest', 'less_walking', 'fewest_transfers'].includes(request.rankBy))
+        throw new Error('invalid_parameters');
+}
+function planJourneys(data, paths, request) {
+    validatePlanRequest(data, request);
     const maxTransfers = Math.max(0, Math.min(2, Math.floor(request.maxTransfers ?? 1)));
     const limit = Math.max(1, Math.min(5, Math.floor(request.limit ?? 3)));
     const minBoarding = Math.max(0, Math.floor(request.minBoardingSeconds ?? 60));
@@ -532,7 +531,7 @@ function planJourneys(data, paths, request) {
         if (!stop || !assertPath(p, paths.origin, (0, boarding_1.routableStopCoordinate)(stop), 'access') || p.distanceMeters > walkingCap)
             continue;
         addBest(initial, { stopId: stop.id, at: request.departAfterSeconds + p.durationSeconds, rides: 0,
-            walkingMeters: p.distanceMeters, legs: [pathLeg(p, paths.origin, (0, boarding_1.routableStopCoordinate)(stop), 'access')], boardings: [] });
+            walkingMeters: p.distanceMeters, latestLeaveAtSeconds: request.departAfterSeconds, legs: [pathLeg(p, paths.origin, (0, boarding_1.routableStopCoordinate)(stop), 'access')], boardings: [] });
     }
     const candidates = [];
     // Walk-only is a real alternative, never a fabricated road line. Requires
@@ -578,6 +577,8 @@ function planJourneys(data, paths, request) {
                     }
                     if (boardingCandidates.length > 36) {
                         boardingCandidates.sort((a, b) => a.state.walkingMeters - b.state.walkingMeters ||
+                            (b.state.rides === 0 ? rows[b.index].departureSeconds - (b.state.at - request.departAfterSeconds) - minBoarding : b.state.latestLeaveAtSeconds) -
+                                (a.state.rides === 0 ? rows[a.index].departureSeconds - (a.state.at - request.departAfterSeconds) - minBoarding : a.state.latestLeaveAtSeconds) ||
                             a.state.at - b.state.at || a.index - b.index);
                         boardingCandidates.splice(36);
                     }
@@ -586,6 +587,10 @@ function planJourneys(data, paths, request) {
                     continue;
                 const alightStop = stopMap.get(stopTime.stopId);
                 if (!alightStop)
+                    continue;
+                // The final transfer round cannot board another vehicle. Only stops
+                // with a validated egress can produce a completed journey now.
+                if (round === maxTransfers && !egressPaths.has(stopTime.stopId))
                     continue;
                 for (const chosen of boardingCandidates) {
                     if (chosen.index >= i)
@@ -604,27 +609,32 @@ function planJourneys(data, paths, request) {
                     const base = chosen.state;
                     const result = { stopId: stopTime.stopId, at: stopTime.arrivalSeconds, rides: base.rides + 1,
                         legs: [...base.legs, ride], boardings: [...base.boardings, (0, boarding_1.boardingInstruction)(boardingStop)],
-                        walkingMeters: base.walkingMeters };
+                        walkingMeters: base.walkingMeters, latestLeaveAtSeconds: base.rides === 0
+                            ? b.departureSeconds - (base.at - request.departAfterSeconds) - minBoarding
+                            : base.latestLeaveAtSeconds };
                     addBest(next, result);
                 }
             }
         }
-        // Transfer walking only after arriving on a vehicle. Never assume opposite sidewalks connect.
+        // No later round uses transfer frontiers when the ride budget is spent.
         const expanded = new Map();
-        for (const group of next.values())
-            for (const entry of group)
-                addBest(expanded, entry);
-        for (const group of next.values())
-            for (const origin of group) {
-                for (const p of transferMap.get(origin.stopId) ?? []) {
-                    if (origin.walkingMeters + p.distanceMeters > walkingCap)
-                        continue;
-                    const from = stopMap.get(p.fromStopId), to = stopMap.get(p.toStopId);
-                    addBest(expanded, { ...origin, stopId: to.id, at: origin.at + p.durationSeconds,
-                        walkingMeters: origin.walkingMeters + p.distanceMeters,
-                        legs: [...origin.legs, pathLeg(p, (0, boarding_1.routableStopCoordinate)(from), (0, boarding_1.routableStopCoordinate)(to), 'transfer')] });
+        if (round < maxTransfers) {
+            // Transfer walking only after arriving on a vehicle.
+            for (const group of next.values())
+                for (const entry of group)
+                    addBest(expanded, entry);
+            for (const group of next.values())
+                for (const origin of group) {
+                    for (const p of transferMap.get(origin.stopId) ?? []) {
+                        if (origin.walkingMeters + p.distanceMeters > walkingCap)
+                            continue;
+                        const from = stopMap.get(p.fromStopId), to = stopMap.get(p.toStopId);
+                        addBest(expanded, { ...origin, stopId: to.id, at: origin.at + p.durationSeconds,
+                            walkingMeters: origin.walkingMeters + p.distanceMeters,
+                            legs: [...origin.legs, pathLeg(p, (0, boarding_1.routableStopCoordinate)(from), (0, boarding_1.routableStopCoordinate)(to), 'transfer')] });
+                    }
                 }
-            }
+        }
         for (const group of next.values())
             for (const result of group) {
                 const stop = stopMap.get(result.stopId);
@@ -1317,6 +1327,7 @@ function nearbyStops(timetable, origin, radiusMeters = 1200, limit = 8) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StadiaWalkingRouter = void 0;
 exports.decodePolyline6 = decodePolyline6;
+exports.validateWalkingOptions = validateWalkingOptions;
 exports.buildPedestrianPaths = buildPedestrianPaths;
 const boarding_1 = require("./boarding");
 /** No raw coordinates or exact household offsets are logged. */
@@ -1438,8 +1449,23 @@ class StadiaWalkingRouter {
 }
 exports.StadiaWalkingRouter = StadiaWalkingRouter;
 function validCoordinate(c) { return Number.isFinite(c.lat) && Number.isFinite(c.lon) && Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180; }
+/** Reject malformed caps before a fractional/NaN budget can exceed its promise. */
+function validateWalkingOptions(opts) {
+    for (const key of ['maxOriginStops', 'maxDestinationStops', 'maxTransferPairs', 'maxRequestCount', 'requestDeadlineMs', 'maxConcurrentWalkingRequests']) {
+        const value = opts[key];
+        if (value !== undefined && (!Number.isInteger(value) || value < 0 ||
+            ((key === 'requestDeadlineMs' || key === 'maxConcurrentWalkingRequests') && value === 0)))
+            throw new Error('invalid_walking_options');
+    }
+    for (const key of ['candidateRadiusMeters', 'maxPedestrianDistanceMeters', 'maxDirectWalkMeters']) {
+        const value = opts[key];
+        if (value !== undefined && (typeof value !== 'number' || !Number.isFinite(value) || value < 0))
+            throw new Error('invalid_walking_options');
+    }
+}
 /** Candidate discovery MAY use straight-line proximity, but every accepted leg requires a real walking-route response. */
 async function buildPedestrianPaths(router, stops, origin, destination, opts = {}) {
+    validateWalkingOptions(opts);
     if (!validCoordinate(origin) || !validCoordinate(destination))
         throw new Error('invalid_coordinates');
     const originCap = Math.max(0, Math.min(opts.maxOriginStops ?? 8, 20));
@@ -2023,6 +2049,10 @@ function timetableTransferHints(data, req, pairs, radius, walkCap) {
  * is ever serialized into the response. Missing pedestrian routes mean no itinerary.
  */
 async function planDoorToDoor(timetable, router, req, opts = {}) {
+    (0, engine_1.validatePlanRequest)(timetable, req);
+    (0, pedestrian_1.validateWalkingOptions)(opts);
+    if (opts.modes !== undefined && (!Array.isArray(opts.modes) || new Set(opts.modes).size !== opts.modes.length))
+        throw new Error('invalid_modes');
     // Preserve bus-only legacy behavior unless rail was explicitly requested.
     // Never infer rail access from the GTFS feed merely containing trains.
     const modes = new Set(opts.modes ?? (opts.includeRail ? ['bus', 'rail'] : ['bus']));

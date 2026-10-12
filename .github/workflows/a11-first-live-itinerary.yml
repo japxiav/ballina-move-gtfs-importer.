@@ -4,8 +4,16 @@ name: A11 first GTFS plus Stadia itinerary (max 12 paid walking requests)
 on:
   workflow_dispatch:
     inputs:
+      service_date:
+        description: 'Reviewed GTFS service date (YYYY-MM-DD), today through +14 days in Europe/Dublin'
+        required: true
+        type: string
+      depart_at:
+        description: 'Reviewed departure time (HH:MM) in Europe/Dublin; must be future if today'
+        required: true
+        type: string
       confirm_paid_test:
-        description: 'I approve ONE private Oct 11 Ballina–Foxford itinerary search, max 12 Stadia calls'
+        description: 'I approve ONE private Ballina–Foxford itinerary on the selected date/time, max 12 Stadia calls'
         required: true
         type: choice
         options:
@@ -34,6 +42,8 @@ jobs:
           node-version: '22'
       - name: Preflight GTFS then explicitly approved single private journey
         env:
+          A11_SERVICE_DATE: ${{ inputs.service_date }}
+          A11_DEPART_AT: ${{ inputs.depart_at }}
           BALLINA_SUPABASE_ANON_JWT: ${{ secrets.BALLINA_SUPABASE_ANON_JWT }}
           BALLINA_ROUTING_PREVIEW_TOKEN: ${{ secrets.BALLINA_ROUTING_PREVIEW_TOKEN }}
         run: node routing/scripts/a11_first_live_itinerary.cjs --live
