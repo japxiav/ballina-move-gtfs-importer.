@@ -1,0 +1,40 @@
+name: Importer and gateway offline validation
+on:
+  push:
+    paths:
+      - 'import_gtfs.py'
+      - 'scripts/**'
+      - 'supabase/functions/**'
+      - 'tests/**'
+      - '.github/workflows/importer-validation.yml'
+  pull_request:
+    paths:
+      - 'import_gtfs.py'
+      - 'scripts/**'
+      - 'supabase/functions/**'
+      - 'tests/**'
+      - '.github/workflows/importer-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: routing/package-lock.json
+      - name: Install pinned compiler for local gateway checks
+        working-directory: routing
+        run: npm ci --ignore-scripts
+      - name: Importer regressions, strict gateway types and mocked requests
+        run: PATH="$PWD/routing/node_modules/.bin:$PATH" bash scripts/run_tests.sh
