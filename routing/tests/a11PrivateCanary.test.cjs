@@ -33,7 +33,7 @@ function boot({configured=true,limitAllowed=true,result,provider='stadia-valhall
  };
  const context={__ballinaRequire:name=>{assert.ok(modules[name],name);return modules[name];},
   Deno:{env:{get:key=>env[key]??''},serve:handler=>{fn=handler;}},
-  crypto:webcrypto,TextEncoder,Request,Response,URL,Date,Number,Object,JSON,console:{error:()=>{}},fetch:async()=>{throw Error('unexpected_external_request')},
+  crypto:webcrypto,TextEncoder,TextDecoder,setTimeout,clearTimeout,Request,Response,URL,Date,Number,Object,JSON,console:{error:()=>{}},fetch:async()=>{throw Error('unexpected_external_request')},
  };
  vm.runInNewContext(suffix,context,{timeout:2000});
  return {fn,get routeCalls(){return routeCalls;},get dbLoads(){return dbLoads;},get limiterCalls(){return limiterCalls;},payloads};
@@ -160,7 +160,7 @@ test('A11 P3 complete original 16-module bundle uses GTFS snapshot and mocked St
  const env={SUPABASE_URL:'https://example.supabase.co',SUPABASE_SECRET_KEYS:'{"default":"secret_fake"}',
    STADIA_API_KEY:'mock-secret-stadia',BALLINA_ROUTING_PREVIEW_TOKEN:token};
  const context={Deno:{env:{get:name=>env[name]??''},serve:fn=>{handler=fn;}},
-  Request,Response,URL,TextEncoder,TextDecoder,AbortSignal,crypto:webcrypto,fetch:fakeFetch,console:{error:()=>{}}};
+  Request,Response,URL,TextEncoder,TextDecoder,setTimeout,clearTimeout,AbortSignal,crypto:webcrypto,fetch:fakeFetch,console:{error:()=>{}}};
  vm.runInNewContext(generated.replace(/^import "jsr:@supabase\/functions-js\/edge-runtime\.d\.ts";\s*/,''),context,{timeout:5000});
  assert.equal(typeof handler,'function');
  const input=validInput();
