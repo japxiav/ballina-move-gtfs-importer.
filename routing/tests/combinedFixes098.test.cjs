@@ -42,7 +42,7 @@ test('combined: preserve a second lower-walking history, not only the absolute m
  const src=fs.readFileSync(path.join(__dirname,'../dist/engine.js'),'utf8');
  const a=src.indexOf('const MAX_STATES_PER_STOP ='),b=src.indexOf('function sortStopTimes(',a);
  const ctx={};vm.runInNewContext(src.slice(a,b)+'\nthis.addBest=addBest;',ctx);
- const m=new Map(), mk=(i,meter)=>({stopId:'connection',at:30000+i*100,walkingMeters:meter,rides:1,legs:[{type:'ride',tripId:'trip'+i,serviceDate:DATE}],boardings:[]});
+ const m=new Map(), mk=(i,meter)=>({stopId:'connection',at:30000+i*100,walkingMeters:meter,rides:1,latestLeaveAtSeconds:29000,legs:[{type:'ride',tripId:'trip'+i,serviceDate:DATE}],boardings:[]});
  for(let i=0;i<24;i++)ctx.addBest(m,mk(i,i===0?50:500+i));
  ctx.addBest(m,mk(24,80));
  const saved=m.get('connection');
