@@ -395,6 +395,49 @@ class ImporterTests(unittest.TestCase):
              mock.patch.object(mod, "download", side_effect=fake_download):
             return mod.run(args)
 
+    def _run_same_active_at(self, year, month, day, *, dry_run=False, fake=None):
+        from datetime import datetime as RealDatetime
+        class Clock(RealDatetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls(year, month, day, 12, tzinfo=tz)
+        fake = fake or self._fake_supabase_for_run()
+        fake.feed_state = lambda version: {"version":version,"active":True,"feed_start_date":"2026-10-06","feed_end_date":"2027-10-06"}
+        with mock.patch.object(mod, "datetime", Clock), mock.patch.object(fake, "release_import_lock", wraps=fake.release_import_lock) as released:
+            try:
+                result = self._run_with_fake_supabase(fake, dry_run=dry_run, force=True)
+            finally:
+                self.assertEqual(released.call_count, 1)
+        return result, fake
+
+    def test_same_active_http_200_force_cannot_mask_expired_feed(self):
+        fake = self._fake_supabase_for_run()
+        with self.assertRaisesRegex(RuntimeError, "feed_expired"):
+            self._run_same_active_at(2027, 10, 7, fake=fake)
+        self.assertEqual(fake.finalize_calls, [])
+        self.assertEqual(fake.aborts, [])
+        self.assertTrue(any(row.get("status") == "failed" for _, _, row in fake.patches))
+
+    def test_same_active_future_feed_remains_deferred(self):
+        result, fake = self._run_same_active_at(2026, 10, 5)
+        self.assertEqual(result["status"], "deferred")
+        self.assertEqual(fake.finalize_calls, [])
+        self.assertEqual(fake.aborts, [])
+
+    def test_same_active_current_feed_still_unchanged_after_reading_window(self):
+        with mock.patch.object(mod, "FeedReader", wraps=mod.FeedReader) as reader:
+            result, fake = self._run_same_active_at(2027, 10, 6)
+        self.assertEqual(result["status"], "unchanged")
+        self.assertEqual(reader.call_count, 1)
+        self.assertEqual(fake.finalize_calls, [])
+        self.assertEqual(fake.aborts, [])
+
+    def test_same_active_dry_run_still_validates_unique_inactive_staging(self):
+        result, fake = self._run_same_active_at(2026, 10, 6, dry_run=True)
+        self.assertEqual(result["status"], "dry_run_ok")
+        self.assertEqual(len(fake.validate_calls), 1)
+        self.assertEqual(fake.finalize_calls, [])
+
     def test_dry_run_stages_database_validation_and_cleans_up(self):
         fake = self._fake_supabase_for_run()
         result = self._run_with_fake_supabase(fake, dry_run=True)

@@ -80,8 +80,66 @@ async function checkRate(key: string, limit: number): Promise<boolean> {
   });
   if (!response.ok) throw new Error("import_rate_limiter_unavailable");
   const rows = await response.json() as Array<{allowed: boolean}>;
-  if (!Array.isArray(rows) || rows.length < 1) throw new Error("import_rate_limiter_invalid");
+  if (!Array.isArray(rows) || rows.length < 1 || !rows[0] || typeof rows[0].allowed !== "boolean") throw new Error("import_rate_limiter_invalid");
   return rows[0].allowed;
+}
+
+const BODY_LIMIT_BYTES = 1_000_000;
+const BODY_READ_TIMEOUT_MS = 10_000;
+
+/** Bound allocation and time before parsing or any privileged operation. */
+async function readImportBody(req: Request): Promise<string> {
+  const declared = req.headers.get("content-length");
+  if (declared && (!/^\d+$/.test(declared) || Number(declared) > BODY_LIMIT_BYTES)) {
+    throw new Error("invalid_or_oversized_json");
+  }
+  if (!req.body) throw new Error("invalid_or_oversized_json");
+  const reader = req.body.getReader();
+  let stopped: Error | null = null;
+  let rejectCurrent: ((error: Error) => void) | null = null;
+  const stop = (error: Error) => { stopped = stopped ?? error; rejectCurrent?.(stopped); };
+  const onAbort = () => stop(new Error("request_aborted"));
+  req.signal.addEventListener("abort", onAbort, {once:true});
+  const expiresAt = Date.now() + BODY_READ_TIMEOUT_MS;
+  const timer = setTimeout(() => stop(new Error("body_read_timeout")), BODY_READ_TIMEOUT_MS);
+  let bytes = new Uint8Array(64 * 1024);
+  let size = 0;
+  try {
+    if (req.signal.aborted) throw new Error("request_aborted");
+    for (;;) {
+      if (stopped) throw stopped;
+      if (Date.now() >= expiresAt) throw new Error("body_read_timeout");
+      // Only one interruptible read is retained. Reusing a pending promise in
+      // Promise.race would accumulate handlers for every tiny fragment.
+      const pending = new Promise<ReadableStreamReadResult<Uint8Array>>((resolve,reject) => {
+        rejectCurrent = reject;
+        void reader.read().then(resolve,reject);
+      });
+      const {done,value} = await pending.finally(() => { rejectCurrent = null; });
+      if (stopped) throw stopped;
+      if (Date.now() >= expiresAt) throw new Error("body_read_timeout");
+      if (done) break;
+      const nextSize = size + value.byteLength;
+      if (nextSize > BODY_LIMIT_BYTES) throw new Error("invalid_or_oversized_json");
+      if (nextSize > bytes.byteLength) {
+        const grown = new Uint8Array(Math.min(BODY_LIMIT_BYTES,Math.max(nextSize,bytes.byteLength * 2)));
+        grown.set(bytes.subarray(0,size));
+        bytes = grown;
+      }
+      bytes.set(value,size);
+      size = nextSize;
+    }
+    return new TextDecoder("utf-8",{fatal:true}).decode(bytes.subarray(0,size));
+  } catch (error) {
+    // The host owns an aborted request's stream. For size/time failures,
+    // cancel without awaiting a possibly uncooperative underlying source.
+    if (!req.signal.aborted) void reader.cancel().catch(() => undefined);
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    req.signal.removeEventListener("abort",onAbort);
+    reader.releaseLock();
+  }
 }
 
 Deno.serve(async (req: Request) => {
@@ -95,7 +153,14 @@ Deno.serve(async (req: Request) => {
     return json({ error: "unauthorized" }, 401);
   }
 
-  const bodyText = await req.text().catch(() => "");
+  let bodyText: string;
+  try { bodyText = await readImportBody(req); }
+  catch (error) {
+    const code = error instanceof Error ? error.message : "";
+    if (code === "request_aborted") return json({error:"request_aborted"},499);
+    if (code === "body_read_timeout") return json({error:"body_read_timeout"},408);
+    return json({error:"invalid_or_oversized_json"},400);
+  }
   if (!bodyText || bodyText.length > 1_000_000) {
     return json({ error: "invalid_or_oversized_json" }, 400);
   }
@@ -107,7 +172,7 @@ Deno.serve(async (req: Request) => {
   if (!body) return json({ error: "invalid_json" }, 400);
 
   const action = typeof body.action === "string" ? body.action : "";
-  const rpcName = ACTIONS[action];
+  const rpcName = Object.hasOwn(ACTIONS,action) ? ACTIONS[action] : null;
   if (!rpcName) return json({ error: "unknown_action" }, 404);
 
   const importToken = typeof body.import_token === "string" ? body.import_token : "";

@@ -5,8 +5,8 @@ echo '[1/3] Python importer, workflow and API-contract tests'
 python -m unittest discover -s tests -v
 python -m py_compile import_gtfs.py scripts/check_post_activation.py
 if ! command -v tsc >/dev/null 2>&1 || ! command -v node >/dev/null 2>&1; then
-  echo '[2/3] TypeScript compiler/Node unavailable: runtime mocks not executed'
-  exit 0
+  echo '[2/3] Required TypeScript compiler/Node unavailable: gateway checks NOT executed'
+  exit 1
 fi
 echo '[2/3] TypeScript strict type checks'
 TMP="$(mktemp -d)"
@@ -22,4 +22,5 @@ tsc --target es2022 --lib es2022,dom --strict --skipLibCheck --module commonjs -
 echo '[3/3] Simulated transport and importer API request tests'
 node tests/runtime/test_transport_api.cjs
 node tests/runtime/test_import_api.cjs
+node --test tests/runtime/test_import_body_bounds.cjs
 echo 'ALL LOCAL TESTS PASSED'
