@@ -4,11 +4,13 @@ on:
     paths:
       - 'routing/**'
       - 'staging/**'
+      - '.github/workflows/a11-*.yml'
       - '.github/workflows/routing-validation.yml'
   pull_request:
     paths:
       - 'routing/**'
       - 'staging/**'
+      - '.github/workflows/a11-*.yml'
       - '.github/workflows/routing-validation.yml'
   workflow_dispatch:
 permissions:
