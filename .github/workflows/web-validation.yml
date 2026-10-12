@@ -17,10 +17,17 @@ on:
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
+    inputs:
+      render_connection_probe:
+        description: "Read-only Render connectivity diagnostic; no credentials or deployment"
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: read
 jobs:
   web-validation:
+    if: ${{ inputs.render_connection_probe != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -73,4 +80,25 @@ jobs:
           assert response.status == 200
           assert "connect-src 'self'" in response.headers['Content-Security-Policy']
           assert b'Ballina Move' in response.read()
+          PY
+  render-connection-probe:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.render_connection_probe == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check Render API transport without credentials
+        run: |
+          python - <<'PY'
+          import json, urllib.request, urllib.error
+          request = urllib.request.Request('https://api.render.com/v1/owners', headers={'Accept': 'application/json', 'User-Agent': 'BallinaMoveDeployment/0.1'})
+          try:
+              response = urllib.request.urlopen(request, timeout=15)
+          except urllib.error.HTTPError as error:
+              response = error
+          with response:
+              body = response.read(16384).decode('utf-8', 'replace').lower()
+              result = {'status': response.status, 'jsonResponse': response.headers.get('Content-Type', '').startswith('application/json'), 'cloudflareBlock': 'sorry, you have been blocked' in body, 'credentialsUsed': False, 'deploymentAttempted': False}
+          print(json.dumps(result))
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('Render transport diagnostic: ' + json.dumps(result) + '\n')
           PY
