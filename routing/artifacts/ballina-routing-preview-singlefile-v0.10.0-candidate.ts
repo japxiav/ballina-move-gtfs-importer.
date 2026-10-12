@@ -314,8 +314,13 @@ function addBest(states, state) {
         }
     }
     const orderedTime = [...viable].sort(byTime);
-    const orderedWalk = [...viable].sort(byWalk);
-    const orderedLeave = [...viable].sort(byLeave);
+    // Uniform-walk frontiers (common in overlapping feeds) already have the
+    // walking order after time sorting. Strictly increasing leave times can
+    // likewise be reversed without another O(labels log labels) sort.
+    const uniformWalk = viable.every(x => x.walkingMeters === viable[0].walkingMeters);
+    const orderedWalk = uniformWalk ? orderedTime : [...viable].sort(byWalk);
+    const increasingLeave = orderedTime.every((x, i) => i === 0 || orderedTime[i - 1].latestLeaveAtSeconds < x.latestLeaveAtSeconds);
+    const orderedLeave = increasingLeave ? [...orderedTime].reverse() : [...viable].sort(byLeave);
     let ti = 0, wi = 0, li = 0;
     while (selected.size < MAX_STATES_PER_STOP) {
         const prior = selected.size;

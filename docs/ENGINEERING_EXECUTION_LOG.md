@@ -58,3 +58,10 @@ PASSOU: revisão independente reproduziu correções, rodou70 testes vizinhos e 
 ## Critérios de piloto (ainda não satisfeitos)
 
 Exigir autenticação+allowlist no gateway público revisado, limiter atômico fail-closed, body/time/cancellation bounds, nenhuma credencial browser, GTFS atual e coverage declarada, trajetos pedestres/embarques verificados, distinção scheduled/realtime/stale, quota rígida12 com monitoramento, teste remoto privado autorizado, kill switch de buscas reais e rollback revisado. Antes de deploy, preservar bytes e versões anteriores e testar rota de rollback em staging. Não alegar conformidade jurídica/GDPR com checklist; retenção/localização mínima, atribuição NTA/OSM/provedor e termos reais exigem revisão própria.
+
+
+### Checkpoint A12 e custo residual
+
+Commits locais: correção principal `592b286`; otimização seguinte reduz ordenações por equivalência, sem alterar seleção. PASSOU:398 routing após otimização;30 focados; differential review independente600sequências/25–99labels idênticas após cada inserção, incluindo ties, dois snap-risks e ordem invertida.
+
+FALHOU/P2: meta exploratória de manter custo do baseline não foi atingida. Benchmark controlado3repetições,1518trips/30360stopTimes: median baseline1540mswall/2364msCPU/79MBRSS; nova versão2581mswall/3642msCPU/98MBRSS. A dimensão de saída preserva mais estados úteis; limites24/36 e orçamento pago não aumentaram. Estes dados são sintéticos e variam com a máquina; NÃO TESTADO: runtime privado real, cold start e limite CPU do host. A12 global/piloto NÃO concluído; evitar promoção antes de perf gate real. Não ocultar esse custo em uma afirmação de regressão zero. Após tentativa segura de otimização e nova medição, avançar no P1 independente de gateway/importador, mantendo a pendência P2 aberta.
