@@ -223,14 +223,14 @@ function metadata(state) {
     const cached = stateMetadata.get(state);
     if (cached)
         return cached;
-    const used = new Set();
-    let last = null;
-    for (const leg of state.legs)
-        if (leg.type === 'ride') {
+    let last = null, snap = false;
+    for (const leg of state.legs) {
+        if (leg.type === 'ride')
             last = `${leg.serviceDate}:${leg.tripId}`;
-            used.add(last);
-        }
-    const item = { last, used, snap: snapConfirmationRequired(state.legs) };
+        if (leg.type === 'walk' && leg.requiresSnapConfirmation === true)
+            snap = true;
+    }
+    const item = { last, snap };
     stateMetadata.set(state, item);
     return item;
 }
@@ -240,14 +240,24 @@ function previousVehicle(state) {
 /** State A must not prohibit any trip that state B could still board.
  * The planner forbids reusing trip IDs, so history is part of state identity. */
 function usedVehicles(state) {
-    return metadata(state).used;
+    const item = metadata(state);
+    // Most labels have different last vehicles or already fail scalar Pareto
+    // checks. Allocate history only when subset comparison is actually needed.
+    if (!item.used) {
+        item.used = new Set();
+        for (const leg of state.legs)
+            if (leg.type === 'ride')
+                item.used.add(`${leg.serviceDate}:${leg.tripId}`);
+    }
+    return item.used;
 }
 function snapConfirmationRequired(legs) {
     return legs.some(leg => leg.type === 'walk' && leg.requiresSnapConfirmation === true);
 }
 function stateDominates(a, b) {
-    if (previousVehicle(a) !== previousVehicle(b) ||
-        a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides || a.latestLeaveAtSeconds < b.latestLeaveAtSeconds)
+    if (a.at > b.at || a.walkingMeters > b.walkingMeters || a.rides > b.rides || a.latestLeaveAtSeconds < b.latestLeaveAtSeconds)
+        return false;
+    if (previousVehicle(a) !== previousVehicle(b))
         return false;
     // A label with uncertain household-to-street access cannot discard one
     // which does not require explicit confirmation from the passenger.

@@ -26,14 +26,16 @@ function pathLeg(path:WalkPath,from:{lat:number;lon:number},to:{lat:number;lon:n
 /** Preserve arrival/walk/boarding trade-offs and future-trip eligibility.
  * The 24-label cap bounds work but is not a proof of globally optimal routing. */
 const MAX_STATES_PER_STOP=24;
-const stateMetadata=new WeakMap<State,{last:string|null;used:Set<string>;snap:boolean}>();
-function metadata(state:State):{last:string|null;used:Set<string>;snap:boolean}{
+interface StateMetadata {last:string|null;used?:Set<string>;snap:boolean;}
+const stateMetadata=new WeakMap<State,StateMetadata>();
+function metadata(state:State):StateMetadata{
   const cached=stateMetadata.get(state);if(cached)return cached;
-  const used=new Set<string>();let last:string|null=null;
-  for(const leg of state.legs)if(leg.type==='ride'){
-    last=`${leg.serviceDate}:${leg.tripId}`;used.add(last);
+  let last:string|null=null,snap=false;
+  for(const leg of state.legs){
+    if(leg.type==='ride')last=`${leg.serviceDate}:${leg.tripId}`;
+    if(leg.type==='walk'&&leg.requiresSnapConfirmation===true)snap=true;
   }
-  const item={last,used,snap:snapConfirmationRequired(state.legs)};
+  const item={last,snap};
   stateMetadata.set(state,item);return item;
 }
 function previousVehicle(state:State):string|null {
@@ -42,14 +44,21 @@ function previousVehicle(state:State):string|null {
 /** State A must not prohibit any trip that state B could still board.
  * The planner forbids reusing trip IDs, so history is part of state identity. */
 function usedVehicles(state:State):Set<string> {
-  return metadata(state).used;
+  const item=metadata(state);
+  // Most labels have different last vehicles or already fail scalar Pareto
+  // checks. Allocate history only when subset comparison is actually needed.
+  if(!item.used){
+    item.used=new Set<string>();
+    for(const leg of state.legs)if(leg.type==='ride')item.used.add(`${leg.serviceDate}:${leg.tripId}`);
+  }
+  return item.used;
 }
 function snapConfirmationRequired(legs:Leg[]):boolean {
   return legs.some(leg=>leg.type==='walk'&&leg.requiresSnapConfirmation===true);
 }
 function stateDominates(a:State,b:State):boolean {
-  if(previousVehicle(a)!==previousVehicle(b)||
-    a.at>b.at||a.walkingMeters>b.walkingMeters||a.rides>b.rides||a.latestLeaveAtSeconds<b.latestLeaveAtSeconds)return false;
+  if(a.at>b.at||a.walkingMeters>b.walkingMeters||a.rides>b.rides||a.latestLeaveAtSeconds<b.latestLeaveAtSeconds)return false;
+  if(previousVehicle(a)!==previousVehicle(b))return false;
   // A label with uncertain household-to-street access cannot discard one
   // which does not require explicit confirmation from the passenger.
   if(metadata(a).snap&&!metadata(b).snap)return false;
