@@ -8,6 +8,7 @@ on:
       - 'tests/**'
       - 'routing/package.json'
       - 'routing/package-lock.json'
+      - 'docs/applied_migrations/transport_quality_hardening_20261008.sql'
       - '.github/workflows/*.yml'
       - '.github/workflows/importer-validation.yml'
   pull_request:
@@ -18,6 +19,7 @@ on:
       - 'tests/**'
       - 'routing/package.json'
       - 'routing/package-lock.json'
+      - 'docs/applied_migrations/transport_quality_hardening_20261008.sql'
       - '.github/workflows/*.yml'
       - '.github/workflows/importer-validation.yml'
   workflow_dispatch:

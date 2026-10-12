@@ -48,5 +48,11 @@ class OfflineCiTriggers(unittest.TestCase):
         ))
 
 
+    def test_archived_sql_release_contract_triggers_importer_checks(self):
+        self.assert_triggers('importer-validation.yml', (
+            'docs/applied_migrations/transport_quality_hardening_20261008.sql',
+        ))
+
+
 if __name__ == '__main__':
     unittest.main()
