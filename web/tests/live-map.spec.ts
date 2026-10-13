@@ -183,6 +183,25 @@ test('a surrounding group never places its marker on the separate central vehicl
   expect(Math.hypot(a!.x - b!.x, a!.y - b!.y)).toBeGreaterThan(48);
 });
 
+test('stalled map tiles disclose their delay while vehicle data remains usable; a late tile clears the warning', async ({ page }) => {
+  await page.clock.pauseAt(new Date(now + 1000));
+  await page.unroute('https://tile.openstreetmap.org/**');
+  let requested = false, finish!: () => void;
+  const held = new Promise<void>(resolve => { finish = resolve; });
+  await page.route('https://tile.openstreetmap.org/**', async route => { requested = true; await held; await route.fulfill({ contentType: 'image/png', body: png }).catch(() => {}); });
+  await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
+  await page.goto('/#/live'); await expect.poll(() => requested).toBe(true);
+  await page.clock.fastForward(15001);
+  await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toBeVisible();
+  await expect(page.locator('.map-count')).toContainText('2 locations in this view');
+  await page.getByRole('button', { name: 'Buses', exact: true }).click();
+  await page.locator('.vehicle-bus').click();
+  await expect(page.getByRole('region', { name: 'Selected vehicle' })).toContainText('GPS observation');
+  await page.getByRole('button', { name: 'Close vehicle details', exact: true }).click();
+  finish();
+  await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
+});
+
 test('selecting from a scrolled vehicle list brings the desktop card into the visible viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 500 });
   await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
