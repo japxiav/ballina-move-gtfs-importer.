@@ -15,6 +15,7 @@ export function LiveMap() {
   const returnFocus = useRef<HTMLElement | null>(null), filterFallback = useRef<HTMLButtonElement>(null);
   const [viewVersion, setViewVersion] = useState(0), [clusterIds, setClusterIds] = useState<string[]>([]), [selectionNotice, setSelectionNotice] = useState("");
   const tiles = useRef<L.TileLayer | null>(null);
+  const resetTileCycle = useRef<() => void>(() => {});
   const [tilesLoading, setTilesLoading] = useState(true), [tileError, setTileError] = useState(false);
   const [tilesDelayed, setTilesDelayed] = useState(false);
   const [data, setData] = useState<LiveData | null>(null), [error, setError] = useState("");
@@ -62,19 +63,23 @@ export function LiveMap() {
     const instance = L.map(container.current, { scrollWheelZoom: false, attributionControl: true, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).fitBounds(mayo);
     const layer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, referrerPolicy: "strict-origin-when-cross-origin", attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' });
     let tileTimeout: number | undefined;
-    layer.on("loading", () => {
+    let cycleHadError = false;
+    const beginTileCycle = () => {
       window.clearTimeout(tileTimeout); setTilesLoading(true); setTileError(false); setTilesDelayed(false);
+      cycleHadError = false;
       tileTimeout = window.setTimeout(() => setTilesDelayed(true), 15000);
-    });
-    layer.on("load", () => { window.clearTimeout(tileTimeout); setTilesLoading(false); setTilesDelayed(false); });
-    layer.on("tileerror", () => setTileError(true));
+    };
+    resetTileCycle.current = beginTileCycle;
+    layer.on("loading", beginTileCycle);
+    layer.on("load", () => { window.clearTimeout(tileTimeout); setTilesLoading(false); setTilesDelayed(false); setTileError(cycleHadError); });
+    layer.on("tileerror", () => { cycleHadError = true; setTileError(true); });
     layer.addTo(instance); tiles.current = layer;
     map.current = instance;
     const moved = () => setViewVersion(n => n + 1);
     instance.on("moveend zoomend resize", moved); moved();
     const resizeObserver = new ResizeObserver(() => instance.invalidateSize({ animate: false }));
     resizeObserver.observe(container.current);
-    return () => { window.clearTimeout(tileTimeout); resizeObserver.disconnect(); markers.current.clear(); map.current = null; tiles.current = null; layer.off(); instance.remove(); };
+    return () => { resetTileCycle.current = () => {}; window.clearTimeout(tileTimeout); resizeObserver.disconnect(); markers.current.clear(); map.current = null; tiles.current = null; layer.off(); instance.remove(); };
   }, []);
   useEffect(() => {
     const instance = map.current; if (!instance) return;
@@ -113,7 +118,7 @@ export function LiveMap() {
     else if (cluster.length) map.current?.fitBounds(L.latLngBounds(cluster.map(v => [v.lat, v.lon])), { padding: [48, 48], maxZoom: 17, animate: false });
   };
   return <article className="live-page">
-    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); tiles.current?.redraw(); }} disabled={loading}>Refresh</button></div>
+    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); resetTileCycle.current(); tiles.current?.redraw(); }} disabled={loading}>Refresh</button></div>
     <div className="live-status" role="status">
       {loading && !data ? "Loading official transport data…" : data?.mode === "snapshot" ? `Published snapshot · retrieved ${time(data.generatedAt)}` : data ? `Auto-refresh every 30s · retrieved ${time(data.generatedAt)}` : "Transport feeds unavailable."}
     </div>

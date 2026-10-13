@@ -202,6 +202,31 @@ test('stalled map tiles disclose their delay while vehicle data remains usable; 
   await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
 });
 
+test('refresh restarts a pending tile deadline and clears an old partial error after successful redraw', async ({ page }) => {
+  await page.clock.pauseAt(new Date(now + 1000));
+  await page.unroute('https://tile.openstreetmap.org/**');
+  let calls = 0, finish!: () => void;
+  const held = new Promise<void>(resolve => { finish = resolve; });
+  await page.route('https://tile.openstreetmap.org/**', async route => {
+    if (++calls === 1) return route.fulfill({ status: 500, body: 'offline test error' });
+    await held; await route.fulfill({ contentType: 'image/png', body: png }).catch(() => {});
+  });
+  await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
+  await page.goto('/#/live');
+  await expect(page.getByText('Some map tiles could not load. Use the vehicle list or refresh to retry.', { exact: true })).toBeVisible();
+  await page.clock.fastForward(14000);
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await expect(page.getByText('Some map tiles could not load. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
+  await page.clock.fastForward(14000);
+  await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
+  await page.clock.fastForward(1001);
+  await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toBeVisible();
+  finish();
+  await expect(page.getByText('Map tiles are taking too long. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Some map tiles could not load. Use the vehicle list or refresh to retry.', { exact: true })).toHaveCount(0);
+  await expect(page.locator('.map-count')).toContainText('2 locations in this view');
+});
+
 test('selecting from a scrolled vehicle list brings the desktop card into the visible viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 500 });
   await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
