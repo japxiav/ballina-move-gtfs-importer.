@@ -1475,3 +1475,21 @@ main {
   .position-detail > div { display: block; }.position-detail > div span { display: block; margin-top: 5px; }
   .live-attribution { font-size: 11px; }
 }
+
+/* Passenger search: same-origin exact stop requests behind readable choices. */
+.schedule-note summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }
+.schedule-note > p { margin:4px 0 0; }
+.stop-picker { position:relative; }
+.stop-picker > label { font-weight:600; font-size:12px; }
+.stop-picker > input { min-height:44px; border:1px solid var(--line); border-radius:8px; padding:10px; font:inherit; color:var(--green); background:white; }
+.stop-picker > small { display:block; color:var(--muted); font-size:11px; margin-top:4px; }
+.stop-suggestions { position:absolute; z-index:500; top:100%; left:0; right:0; min-width:min(280px, calc(100vw - 48px)); max-height:260px; overflow:auto; border:1px solid var(--line); border-radius:8px; background:white; box-shadow:0 6px 20px #254e4325; }
+.stop-picker:last-child .stop-suggestions { left:auto; }
+.stop-suggestions > button { display:block; width:100%; min-height:48px; text-align:left; padding:10px; border:0; border-bottom:1px solid var(--line); background:white; color:var(--green); font:inherit; cursor:pointer; }
+.stop-suggestions > button[aria-selected=true] { background:#eef2df; }
+.stop-suggestions small { display:block; margin-top:3px; font-size:11px; color:var(--muted); }
+.stop-suggestions p { padding:10px; font-size:12px; }
+.planner-actions { display:flex; gap:12px; justify-content:space-between; margin:-4px 0 8px; }
+.planner-actions > button { background:transparent; border:0; min-height:44px; color:var(--green); font:inherit; font-size:12px; text-decoration:underline; cursor:pointer; }
+.next-day-notice { font-weight:600; color:#705020; }
+@media(max-width:600px) { .schedule-note { padding:0 10px !important; }.schedule-note[open] { padding-bottom:10px !important; }.official-form .stop-picker > input { font-size:12px; } }

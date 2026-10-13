@@ -1,0 +1,641 @@
+{
+  "provenance": {
+    "scope": "Retained official NTA capture replayed only in offline browser tests; not a live backend or walking proof",
+    "observedAt": "2026-10-13",
+    "timetableDate": "2026-10-14",
+    "license": "NTA CC BY4.0",
+    "source": "https://ballina-move-live.onrender.com/api/",
+    "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3"
+  },
+  "catalog": {
+    "version": 1,
+    "source": "nta_gtfs",
+    "timezone": "Europe/Dublin",
+    "scope": "stop_to_stop_same_stop_transfers",
+    "loadedAt": "2026-10-13T19:10:55.332Z",
+    "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+    "validFrom": "2026-10-07",
+    "validUntil": "2027-10-07",
+    "stops": [
+      {
+        "id": "8490B5550501",
+        "name": "Ballina Bus Stn",
+        "code": "555051",
+        "lat": 54.11101,
+        "lon": -9.1599
+      },
+      {
+        "id": "8490B151081",
+        "name": "Mayo Hospital",
+        "code": "15108",
+        "lat": 53.85194,
+        "lon": -9.30559
+      },
+      {
+        "id": "8490B151091",
+        "name": "Mayo Hospital",
+        "code": "15109",
+        "lat": 53.85184,
+        "lon": -9.30599
+      }
+    ]
+  },
+  "byStop": {
+    "15108": {
+      "version": 1,
+      "source": "nta_gtfs",
+      "timezone": "Europe/Dublin",
+      "scope": "stop_to_stop_same_stop_transfers",
+      "loadedAt": "2026-10-13T19:11:01.255Z",
+      "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "serviceDate": "2026-10-14",
+      "predictionType": "scheduled",
+      "walkingIncluded": false,
+      "realTimeApplied": false,
+      "minBoardingSeconds": 60,
+      "minTransferSeconds": 120,
+      "journeys": [
+        {
+          "id": "j-3d05643f283f90544e0150d1c1a8559cf30f6a8ee8c3e835dde5acf985e08539",
+          "departureAt": 28800,
+          "arrivalAt": 33840,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96273",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 28800,
+              "alightAt": 31920,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            },
+            {
+              "tripId": "5940_98212",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Knock Airport",
+              "from": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 33720,
+              "alightAt": 33840,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 6,
+              "alightSequence": 8
+            }
+          ]
+        },
+        {
+          "id": "j-1cda6d626d3cdabd6b5b2eca1702b565b67cd201e957b712984ca2d63fced280",
+          "departureAt": 28800,
+          "arrivalAt": 33840,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96273",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "boardAt": 28800,
+              "alightAt": 31680,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 10
+            },
+            {
+              "tripId": "5940_98212",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Knock Airport",
+              "from": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 33780,
+              "alightAt": 33840,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 7,
+              "alightSequence": 8
+            }
+          ]
+        },
+        {
+          "id": "j-b72443101c6c5b1e7ad5e8ee68da176f14089a72afc3562bcdc42579c68b7277",
+          "departureAt": 38700,
+          "arrivalAt": 44100,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96293",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 38700,
+              "alightAt": 41580,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            },
+            {
+              "tripId": "5940_98079",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Westport",
+              "from": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 43980,
+              "alightAt": 44100,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 11,
+              "alightSequence": 13
+            }
+          ]
+        },
+        {
+          "id": "j-9ef539e7950429d947f348cdc10c8c858ebfadbcb3ac2c484431284b764979c0",
+          "departureAt": 38700,
+          "arrivalAt": 44100,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96293",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "boardAt": 38700,
+              "alightAt": 41340,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 10
+            },
+            {
+              "tripId": "5940_98079",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Westport",
+              "from": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 44040,
+              "alightAt": 44100,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 12,
+              "alightSequence": 13
+            }
+          ]
+        },
+        {
+          "id": "j-0f82b97a5f1c2b8ee0b4ab0b7b0fff5864d60b6b5dd89c10082c33f3c4babc43",
+          "departureAt": 60300,
+          "arrivalAt": 69210,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96313",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 60300,
+              "alightAt": 63360,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            },
+            {
+              "tripId": "5940_98157",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Westport",
+              "from": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 69090,
+              "alightAt": 69210,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 11,
+              "alightSequence": 13
+            }
+          ]
+        },
+        {
+          "id": "j-73fcefd95ad00063c1399addd9464f12a4e2882b2b3cec739d0a19e5ae8e70f5",
+          "departureAt": 60300,
+          "arrivalAt": 69210,
+          "changes": 1,
+          "rides": [
+            {
+              "tripId": "5940_96313",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "boardAt": 60300,
+              "alightAt": 63120,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 10
+            },
+            {
+              "tripId": "5940_98157",
+              "route": "440",
+              "mode": "bus",
+              "destination": "Westport",
+              "from": {
+                "id": "8490B5557201",
+                "name": "Castlebar",
+                "code": "555721",
+                "lat": 53.85412,
+                "lon": -9.303623
+              },
+              "to": {
+                "id": "8490B151081",
+                "name": "Mayo Hospital",
+                "code": "15108",
+                "lat": 53.85194,
+                "lon": -9.30559
+              },
+              "boardAt": 69150,
+              "alightAt": 69210,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 440 c a",
+              "boardSequence": 12,
+              "alightSequence": 13
+            }
+          ]
+        }
+      ]
+    },
+    "15109": {
+      "version": 1,
+      "source": "nta_gtfs",
+      "timezone": "Europe/Dublin",
+      "scope": "stop_to_stop_same_stop_transfers",
+      "loadedAt": "2026-10-13T19:11:07.215Z",
+      "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "serviceDate": "2026-10-14",
+      "predictionType": "scheduled",
+      "walkingIncluded": false,
+      "realTimeApplied": false,
+      "minBoardingSeconds": 60,
+      "minTransferSeconds": 120,
+      "journeys": [
+        {
+          "id": "j-836edc41fca3a1ed1d95a951555a5bf6ee918a5841e0319850d5cee3dd5e0432",
+          "departureAt": 28800,
+          "arrivalAt": 31920,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96273",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 28800,
+              "alightAt": 31920,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        },
+        {
+          "id": "j-d159da3cb4e4f7263e58b9283760deb72d3d149720351aaaa6b0fc84cae04fa9",
+          "departureAt": 38700,
+          "arrivalAt": 41580,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96293",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 38700,
+              "alightAt": 41580,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        },
+        {
+          "id": "j-87e0b2672171467916a4f7c76e1ae1d27ffd8ff132b286696febc544d498f5ff",
+          "departureAt": 60300,
+          "arrivalAt": 63360,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96313",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 60300,
+              "alightAt": 63360,
+              "serviceDate": "2026-10-14",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        },
+        {
+          "id": "j-48dd9770b66eb8dcb894fe8a978dc2f4b95032ab41b257ea460409dbe0a26cd1",
+          "departureAt": 115200,
+          "arrivalAt": 118320,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96272",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 115200,
+              "alightAt": 118320,
+              "serviceDate": "2026-10-15",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        },
+        {
+          "id": "j-d8d46ada394fee633a1625abde112c7ddf900090728bde6eb8e9530e1f5fe41a",
+          "departureAt": 125100,
+          "arrivalAt": 127980,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96292",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 125100,
+              "alightAt": 127980,
+              "serviceDate": "2026-10-15",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        },
+        {
+          "id": "j-61f6a619bf3edc8f8b0773b318bbc7fd4c5c7b714cafc00ad2b210808687251d",
+          "departureAt": 146700,
+          "arrivalAt": 149760,
+          "changes": 0,
+          "rides": [
+            {
+              "tripId": "5940_96312",
+              "route": "420",
+              "mode": "bus",
+              "destination": "Mayo Hospital",
+              "from": {
+                "id": "8490B5550501",
+                "name": "Ballina Bus Stn",
+                "code": "555051",
+                "lat": 54.11101,
+                "lon": -9.1599
+              },
+              "to": {
+                "id": "8490B151091",
+                "name": "Mayo Hospital",
+                "code": "15109",
+                "lat": 53.85184,
+                "lon": -9.30599
+              },
+              "boardAt": 146700,
+              "alightAt": 149760,
+              "serviceDate": "2026-10-15",
+              "routeId": "2 420 c a",
+              "boardSequence": 1,
+              "alightSequence": 11
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -49,12 +49,12 @@ export function decodeStopSearch(search: string): StopSearch | null {
   const q = Object.fromEntries(p) as unknown as StopSearch;
   return identifier(q.from) && identifier(q.to) && q.from !== q.to && validDate(q.date) && validTime(q.time) && ['bus', 'rail', 'bus,rail'].includes(q.modes) && ['0', '1', '2'].includes(q.changes) ? q : null;
 }
-export const encodeStopSearch = (q: StopSearch) => new URLSearchParams({ ...q }).toString();
+export const encodeStopSearch = (q: StopSearch) => new URLSearchParams({ from: q.from, to: q.to, date: q.date, time: q.time, modes: q.modes, changes: q.changes }).toString();
 async function request(path: string, signal: AbortSignal): Promise<unknown> {
   // Only same-origin, credentials omitted. No fallback to illustrative data.
   const response = await fetch(new URL(path, window.location.href), { signal, credentials: 'omit', cache: 'no-store', redirect: 'error' });
   if (!response.ok) {
-    if (response.status === 429) throw Error('Too many searches. Wait a minute and try again.');
+    if (response.status === 429) throw new ScheduleRequestError(429, 'Too many searches. Wait a minute and try again.');
     let code: unknown;
     try {
       // Bounded parsing of an HTTP error body; this is never decoded as a
@@ -70,9 +70,10 @@ async function request(path: string, signal: AbortSignal): Promise<unknown> {
       clock_change_unsupported: 'Searches around the Ireland clock change are not supported yet. Choose another date.',
       search_capacity_reached: 'This search could not finish. Try Direct only or a later departure time.',
     } : {};
-    throw Error(typeof code === 'string' && Object.hasOwn(known, code) ? known[code] : 'Official schedules are unavailable. Try again later.');
+    throw new ScheduleRequestError(response.status, typeof code === 'string' && Object.hasOwn(known, code) ? known[code]! : 'Official schedules are unavailable. Try again later.');
   }
   return boundedJson(response);
 }
+export class ScheduleRequestError extends Error { constructor(public readonly status: number, message: string) { super(message); } }
 export const fetchCatalog = async (signal: AbortSignal) => decodeCatalog(await request('api/stops', signal));
 export const fetchSchedules = async (q: StopSearch, signal: AbortSignal) => decodeSchedules(await request(`api/journeys?${encodeStopSearch(q)}`, signal), q);
