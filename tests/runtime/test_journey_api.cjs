@@ -18,6 +18,20 @@ test('published keys alone, forged or duplicate gateway credentials cannot spend
   assert.equal(r.status,401);assert.equal(requests.length,0);assert.equal(await r.text(),'{"error":"unauthorized"}');
  }
 });
+test('private admission confirms protocol only without quota or snapshot reads and rejects browser or extra input',async()=>{
+ globalThis.fetch=async()=>{throw Error('Admission must not read a source or quota');};
+ requests=[];
+ const result=await req('action=admission',{apikey:'gateway-public-fixture'});
+ assert.equal(result.status,200);assert.deepEqual(await result.json(),{version:1,source:'journey-api',admission:'gateway-secret-v1',quotaConsumed:false,snapshotRead:false});
+ assert.equal(result.headers.get('cache-control'),'no-store');assert.equal(requests.length,0);
+ for(const [path,headers,method,status] of [
+  ['action=admission',{apikey:'gateway-public-fixture','x-ballina-gateway':'b'.repeat(64)},'GET',401],
+  ['action=admission',{apikey:'gateway-public-fixture',origin:'https://browser.example'},'GET',403],
+  ['action=admission&url=https://private.example',{apikey:'gateway-public-fixture'},'GET',400],
+  ['action=admission&action=stops',{apikey:'gateway-public-fixture'},'GET',404],
+  ['action=admission',{apikey:'gateway-public-fixture'},'POST',405],
+ ])assert.equal((await req(path,headers,method)).status,status);
+});
 test('missing or malformed private configuration never falls back to publishable authorization',async()=>{
  const vm=require('node:vm'),fs=require('node:fs'),{createRequire}=require('node:module');
  const path='/tmp/ballina-ts-compiled/ballina_journey_api.js',code=fs.readFileSync(path,'utf8');

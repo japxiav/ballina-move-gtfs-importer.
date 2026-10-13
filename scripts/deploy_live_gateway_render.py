@@ -7,6 +7,7 @@ import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
+from schedule_admission_guard import requires_private_admission
 
 API = "https://api.render.com/v1"
 REPO = "https://github.com/japxiav/ballina-move-gtfs-importer."
@@ -87,6 +88,9 @@ def main(argv=None):
         raise ValueError("Unexpected deployment API schema.")
     if existing:
         raise ValueError("A service with this name already exists; inspect before modifying or duplicating it.")
+    if requires_private_admission(root, 'gateway'):
+        # This creator only provisions the public port, not private bindings.
+        raise ValueError("Reviewed source requires secure private provisioning; this creator cannot configure it. No service created.")
     result = request("/services", key, payload)
     if not isinstance(result, dict):
         raise ValueError("Unexpected create response; inspect Render before retrying.")

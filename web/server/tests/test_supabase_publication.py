@@ -21,7 +21,7 @@ class IsolatedPublication(unittest.TestCase):
 
     def test_existing_or_malformed_function_list_never_posts(self):
         for value in [[{'slug': 'journey-api'}], [{}], ['invalid'], [{'slug': 'other', 'name': 'journey-api'}], {'not': 'list'}]:
-            with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', return_value=value) as api:
+            with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64, 'BALLINA_EXPECTED_SOURCE_COMMIT': 'a' * 40}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', return_value=value) as api:
                 with self.assertRaises(ValueError): deploy.main()
                 self.assertEqual(api.call_count, 1); self.assertEqual(api.call_args.args[0], '/functions')
 
@@ -29,7 +29,7 @@ class IsolatedPublication(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(deploy, 'request') as api:
             with self.assertRaises(ValueError): deploy.main()
             api.assert_not_called()
-        with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', return_value=' M user-code.ts'), mock.patch.object(deploy, 'request') as api:
+        with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64, 'BALLINA_EXPECTED_SOURCE_COMMIT': 'a' * 40}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', return_value=' M user-code.ts'), mock.patch.object(deploy, 'request') as api:
             with self.assertRaises(ValueError): deploy.main()
             api.assert_not_called()
 
@@ -43,9 +43,9 @@ class IsolatedPublication(unittest.TestCase):
     def test_update_only_accepts_the_inspected_existing_version_and_never_recreates(self):
         good = {'slug': 'journey-api', 'version': 1, 'status': 'ACTIVE', 'verify_jwt': False}
         for existing in [[], [{**good, 'version': 2}], [{**good, 'verify_jwt': True}], [{**good, 'status': 'FAILED'}], [{**good, 'slug': 'other', 'name': 'journey-api'}]]:
-            with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', return_value=existing) as api:
+            with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64, 'BALLINA_EXPECTED_SOURCE_COMMIT': 'a' * 40, 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', return_value=existing) as api:
                 with self.assertRaises(ValueError): deploy.main()
                 self.assertEqual(api.call_count, 1)
-        with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', side_effect=[[good], {**good, 'version': 2}]) as api:
+        with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64, 'BALLINA_EXPECTED_SOURCE_COMMIT': 'a' * 40, 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', side_effect=[[good], {**good, 'version': 2}]) as api:
             deploy.main(); self.assertEqual(api.call_count, 2)
             self.assertEqual(api.call_args.args[0], '/functions/deploy?slug=journey-api')

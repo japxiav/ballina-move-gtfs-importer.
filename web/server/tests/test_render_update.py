@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 import update_live_gateway_render as update
 
 SHA = 'a' * 40
-ENV = {'BALLINA_EXPECTED_SOURCE_COMMIT': SHA, 'GITHUB_EVENT_NAME': 'workflow_dispatch', 'GITHUB_REF': 'refs/heads/ops/live-gateway-hosting', 'GITHUB_SHA': SHA, 'RENDER_API_KEY': 'offline-only'}
+ENV = {'BALLINA_EXPECTED_SOURCE_COMMIT': SHA, 'GITHUB_EVENT_NAME': 'workflow_dispatch', 'GITHUB_REF': 'refs/heads/ops/live-gateway-hosting', 'GITHUB_SHA': SHA, 'RENDER_API_KEY': 'offline-only', 'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64}
 def git(args, **kwargs):
     if args[1:3] == ['rev-parse', 'HEAD']: return SHA
     if args[1:3] == ['status', '--porcelain']: return ''
@@ -48,6 +48,7 @@ class UpdateSafety(unittest.TestCase):
             self.assertEqual([(p, b) for p, b in calls if b is not None], [('/services/' + update.SERVICE_ID + '/deploys', {'commitId': SHA})])
             self.assertNotIn('RENDER_API_KEY', browser.call_args.kwargs['env'])
             self.assertNotIn('SUPABASE_ACCESS_TOKEN', browser.call_args.kwargs['env'])
+            self.assertNotIn('BALLINA_JOURNEY_GATEWAY_SECRET', browser.call_args.kwargs['env'])
 
     def test_manual_update_and_create_are_exclusive_and_use_existing_serial_gate(self):
         workflow = (ROOT / '.github/workflows/web-validation.yml').read_text()

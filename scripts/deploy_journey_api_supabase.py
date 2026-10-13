@@ -11,6 +11,7 @@ import subprocess
 import urllib.error
 import urllib.request
 import uuid
+from schedule_admission_guard import require_local_binding
 
 PROJECT = 'giwiqbnyozjbpmetrjhe'
 ROOT = 'https://api.supabase.com/v1/projects/' + PROJECT
@@ -61,7 +62,11 @@ def main():
         raise ValueError('Secure publication binding missing.')
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip():
         raise ValueError('Publish requires preserved clean source.')
+    require_local_binding(root, 'edge')
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+    expected_source = os.environ.get('BALLINA_EXPECTED_SOURCE_COMMIT', '')
+    if not re.fullmatch(r'[a-f0-9]{40}', expected_source) or sha != expected_source:
+        raise ValueError('Publish requires the exact explicitly reviewed source commit.')
     functions = request('/functions', key)
     if not isinstance(functions, list) or any(not isinstance(f, dict) or not isinstance(f.get('slug', f.get('name')), str) or not re.fullmatch(r'[a-z0-9_-]{1,100}', f.get('slug', f.get('name'))) for f in functions):
         raise ValueError('Function list did not establish absence safely.')
