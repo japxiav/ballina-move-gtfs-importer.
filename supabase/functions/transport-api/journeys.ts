@@ -73,7 +73,9 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   type Event = { key: string; trip: Row; route: Row; rows: Row[]; index: number; at: number; offset: number; date: string };
   type Ride = { tripId: string; route: string; mode: 'bus' | 'rail'; destination: string; from: typeof data.stops[number]; to: typeof data.stops[number]; boardAt: number; alightAt: number; serviceDate: string };
   type State = { stop: string; at: number; rides: Ride[]; used: string[] };
-  const departures = new Map<string, Event[]>(), tripIds = new Set<unknown>();
+  const departures = new Map<string, Event[]>(), terminalDepartures = new Map<string, Event[]>(), tripIds = new Set<unknown>();
+  const eligibleTrips: Row[][] = [];
+  const destinationRows = new Map<unknown, number[]>();
   for (const trip of snapshot.tables.trips!) {
     if (tripIds.has(trip.trip_id)) throw Error('duplicate_trip');
     tripIds.add(trip.trip_id);
@@ -88,6 +90,9 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
       if (seconds(d)) previous = d;
       sequence = Number(r.stop_sequence);
     }
+    const ends = rows.map((r, i) => r.stop_id === q.to && regular(r.drop_off_type) && seconds(r.arrival_seconds) ? i : -1).filter(i => i >= 0);
+    destinationRows.set(trip.trip_id, ends);
+    let eligible = false;
     for (let offset = -2; offset <= 2; offset++) {
       const date = dayAt(q.date, offset);
       if (date < snapshot.start || date > snapshot.end || !operates(calendars, exceptions, trip.service_id, date)) continue;
@@ -95,27 +100,49 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
         const row = rows[index]!, at = Number(row.departure_seconds) + offset * 86400;
         if (!seconds(row.departure_seconds) || !regular(row.pickup_type) || at < depart + 60 || at > horizon) continue;
         const id = String(row.stop_id), group = departures.get(id) ?? [];
-        group.push({ key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date }); departures.set(id, group);
+        const event = { key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date };
+        group.push(event); departures.set(id, group); eligible = true;
+        if (ends.some(end => end > index)) { const final = terminalDepartures.get(id) ?? []; final.push(event); terminalDepartures.set(id, final); }
       }
     }
+    if (eligible) eligibleTrips.push(rows);
   }
-  for (const group of departures.values()) group.sort((a, b) => a.at - b.at || a.key.localeCompare(b.key));
+  for (const map of [departures, terminalDepartures]) for (const group of map.values()) group.sort((a, b) => a.at - b.at || a.key.localeCompare(b.key));
+  // Optimistic GTFS topology only: proves an impossible continuation may be
+  // skipped, never that a connection is timed, walkable or on the correct bay.
+  const reachable: Set<string>[] = [new Set([q.to])];
+  for (let remaining = 1; remaining <= Number(q.changes); remaining++) {
+    const previous = reachable[remaining - 1]!, current = new Set(previous);
+    for (const rows of eligibleTrips) {
+      let canAlight = false;
+      for (let i = rows.length - 1; i >= 0; i--) {
+        const row = rows[i]!;
+        if (canAlight && regular(row.pickup_type) && seconds(row.departure_seconds)) current.add(String(row.stop_id));
+        if (previous.has(String(row.stop_id)) && regular(row.drop_off_type) && seconds(row.arrival_seconds)) canAlight = true;
+      }
+    }
+    reachable.push(current);
+  }
   let frontier: State[] = [{ stop: q.from, at: depart, rides: [], used: [] }], work = 0, labels = 1;
   const found: Ride[][] = [], seen = new Set<string>();
   for (let round = 0; round <= Number(q.changes); round++) {
     const next: State[] = [];
     for (const state of frontier) {
-      const earliest = state.at + (round === 0 ? 60 : 120), events = departures.get(state.stop) ?? [];
+      const finalRound = round === Number(q.changes);
+      const earliest = state.at + (round === 0 ? 60 : 120), events = (finalRound ? terminalDepartures : departures).get(state.stop) ?? [];
       let lo = 0, hi = events.length;
       while (lo < hi) { const mid = (lo + hi) >>> 1; if (events[mid]!.at < earliest) lo = mid + 1; else hi = mid; }
       for (let i = lo; i < events.length; i++) {
         const event = events[i]!;
         if (++work > 150000) throw Error('search_capacity_reached');
         if (state.used.includes(event.key)) continue;
-        for (let k = event.index + 1; k < event.rows.length; k++) {
+        const alights = finalRound ? destinationRows.get(event.trip.trip_id)! : event.rows.map((_, k) => k).slice(event.index + 1);
+        for (const k of alights) {
+          if (k <= event.index) continue;
           if (++work > 150000) throw Error('search_capacity_reached');
           const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset * 86400;
           if (!seconds(row.arrival_seconds) || at > horizon || !regular(row.drop_off_type)) continue;
+          if (!reachable[Number(q.changes) - round]!.has(String(row.stop_id))) continue;
           const ride: Ride = { tripId: clean(event.trip.trip_id, 120), route: clean(event.route.route_short_name) || clean(event.route.route_long_name), mode: event.route.route_type === 2 ? 'rail' : 'bus', destination: clean(event.trip.trip_headsign), from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, serviceDate: event.date };
           const rides = [...state.rides, ride], identity = rides.map(r => `${r.serviceDate}:${r.tripId}:${r.from.id}:${r.to.id}`).join('|');
           if (seen.has(identity)) continue;
