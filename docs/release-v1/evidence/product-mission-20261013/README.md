@@ -1,6 +1,6 @@
 # Product mission evidence
 
-All screenshot images are local unpublished candidate captures; hospital14Oct official replay, map13Oct21:11UK retained official replay. Map imagery is native-TLS PNG replay, partial tiles, not a public candidate or continuous live tracking.
+All screenshots are local unpublished candidate captures. Hospital images replay official14Oct responses. The early `candidate-vehicle-mobile.png` and `candidate-vehicle-desktop.png` use illustrative vehicle fixtures and stub tiles. Only `candidate-real-map-mobile.png` and `candidate-real-vehicle-mobile.png` replay the actual43-position13Oct21:11UK capture, with native-TLS tile PNGs delivered to the browser and partial tile loading. None depicts a deployed candidate or continuous live tracking.
 
 Tested code: `06b72b428fa623e7daf4d244b4851683506b78d0`. Four code Draft PRs45–48 have green exact-head web checks, including offline gateway/browser/static/unprivileged-container validation. Main and the published3a preview were not modified.
 
