@@ -262,11 +262,15 @@ def public_schedule(value, params=None):
     journeys = value.get("journeys")
     if not isinstance(journeys, list) or len(journeys) > 6:
         raise ValueError("invalid_journeys")
-    cleaned = []
+    cleaned, journey_ids = [], set()
     depart = int(params["time"][:2]) * 3600 + int(params["time"][3:]) * 60
     for j in journeys:
         if not isinstance(j, dict) or not isinstance(j.get("rides"), list) or not 1 <= len(j["rides"]) <= int(params["changes"]) + 1:
             raise ValueError("invalid_journey")
+        identity = j.get("id")
+        if not isinstance(identity, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", identity) or identity in journey_ids:
+            raise ValueError("invalid_journey_identity")
+        journey_ids.add(identity)
         rides, trip_keys = [], set()
         for r in j["rides"]:
             if not isinstance(r, dict) or r.get("mode") not in params["modes"].split(",") or not isinstance(r.get("tripId"), str) or not r["tripId"] or len(r["tripId"]) > 120:
@@ -281,10 +285,16 @@ def public_schedule(value, params=None):
             if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or abs((dt.date.fromisoformat(date) - dt.date.fromisoformat(params["date"])).days) > 2 or (date, r["tripId"]) in trip_keys:
                 raise ValueError("invalid_service_day")
             trip_keys.add((date, r["tripId"]))
-            rides.append({"tripId": text(r["tripId"], 120), "route": text(r.get("route")), "mode": r["mode"], "destination": text(r.get("destination")), "from": start, "to": end, "boardAt": board, "alightAt": alight, "serviceDate": date})
+            operational = {}
+            if any(k in r for k in ["routeId", "boardSequence", "alightSequence"]):
+                route_id, board_seq, alight_seq = r.get("routeId"), r.get("boardSequence"), r.get("alightSequence")
+                if not isinstance(route_id, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", route_id) or type(board_seq) is not int or type(alight_seq) is not int or not 0 <= board_seq < alight_seq:
+                    raise ValueError("invalid_operational_sequence")
+                operational = {"routeId": route_id, "boardSequence": board_seq, "alightSequence": alight_seq}
+            rides.append({"tripId": text(r["tripId"], 120), "route": text(r.get("route")), "mode": r["mode"], "destination": text(r.get("destination")), "from": start, "to": end, "boardAt": board, "alightAt": alight, "serviceDate": date, **operational})
         if rides[-1]["to"]["id"] != params["to"] or j.get("departureAt") != rides[0]["boardAt"] or j.get("arrivalAt") != rides[-1]["alightAt"] or j.get("changes") != len(rides) - 1:
             raise ValueError("invalid_journey_summary")
-        cleaned.append({"id": str(len(cleaned) + 1), "departureAt": rides[0]["boardAt"], "arrivalAt": rides[-1]["alightAt"], "changes": len(rides) - 1, "rides": rides})
+        cleaned.append({"id": identity, "departureAt": rides[0]["boardAt"], "arrivalAt": rides[-1]["alightAt"], "changes": len(rides) - 1, "rides": rides})
     return {**base, "serviceDate": params["date"], "predictionType": "scheduled", "walkingIncluded": False, "realTimeApplied": False, "minBoardingSeconds": 60, "minTransferSeconds": 120, "journeys": cleaned}
 
 
