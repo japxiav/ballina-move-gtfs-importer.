@@ -55,14 +55,16 @@ def package(root):
     return b''.join(chunks), 'multipart/form-data; boundary=' + boundary, hashes
 
 
-def main():
+def main(binding=None):
     root = Path(__file__).resolve().parents[1]
     key = os.environ.get('SUPABASE_ACCESS_TOKEN', '')
     if not key:
         raise ValueError('Secure publication binding missing.')
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip():
         raise ValueError('Publish requires preserved clean source.')
-    require_local_binding(root, 'edge')
+    # An authorized operator can supply the canonical app binding in memory;
+    # no environment export, temporary secret file or browser is required.
+    require_local_binding(root, 'edge', binding=binding)
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     expected_source = os.environ.get('BALLINA_EXPECTED_SOURCE_COMMIT', '')
     if not re.fullmatch(r'[a-f0-9]{40}', expected_source) or sha != expected_source:
