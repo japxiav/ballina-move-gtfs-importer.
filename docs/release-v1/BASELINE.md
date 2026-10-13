@@ -1,6 +1,6 @@
 # S0 baseline — 13 October 2026
 
-Exact local and remote main: `22bf89cbbe5eb81ca40dee52410a4d11c99382d5`, clean before work. Current Render management GET verified service srv-db6nhvrbc2fs739pb7mg LIVE commit `643bc525c1ab5f79c694259002258ed3af8468f6`; main differs only by three reviewed documentation files. The earlier Cloudflare403 is historical; this read succeeded with normal proxy/TLS. Supabase management GET verified journey-api v2 ACTIVE/JWTfalse and transport-api v10 ACTIVE/JWTfalse. Published function source hashes are retained in prior publication evidence, not re-downloaded in this audit.
+Exact local and remote main: `22bf89cbbe5eb81ca40dee52410a4d11c99382d5`, clean before work. Current Render management GET verified service srv-db6nhvrbc2fs739pb7mg LIVE commit `643bc525c1ab5f79c694259002258ed3af8468f6`; main differs only by three reviewed documentation files. The earlier Cloudflare403 is historical; this read succeeded with normal proxy/TLS. Supabase management GET verified journey-api v2 ACTIVE/JWTfalse and transport-api v10 ACTIVE/JWTfalse. A read-only official Management multipart source download freshly verified both deployed function files byte-for-byte against main22bf; metadata afterwards confirmed ACTIVE version2. Hash proof is retained in deployed-function-source-proof.json.
 
 Active official feed public queries reverified768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3. The prior captured official snapshot contains227stops/1518trips/30115stopTimes/9routes, calendar35/exceptions93, validity2026-10-07 through2027-10-07. FeedVersion hashes ZIP+import configuration+importer version; loadedAt is snapshot loading time, not NTA publication or GPS observation time.
 
@@ -8,4 +8,4 @@ Local full baseline on the exact main source: routing404pass/0fail/0skip, stagin
 
 Actual bounded read-only Mayo queries:15108 HTTP200/19.236s,15109 HTTP200/5.219s. Different queries/process caches; cache and cold-start state unverified. These two samples are neither p95 nor uptime/SLA evidence. Actual result captures are under /workspace/.ballina-execution/launch-document-review. Full baseline logs and service identity are under /workspace/.ballina-execution/release-v1/baseline and s0-runtime-and-service-identity.json.
 
-Remaining S0 evidence: current deployed function-byte hash independently retrieved, exact target-runtime resource margins, controlled rollback/restore rehearsal and an approved observation plan. No production mutation or reliable-launch claim.
+Remaining S0 evidence: exact target-runtime resource margins, controlled rollback/restore rehearsal and an approved observation plan. No production mutation or reliable-launch claim.

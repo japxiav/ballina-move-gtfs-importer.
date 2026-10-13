@@ -9,3 +9,5 @@ Preexisting coverage retained: calendar/DST rejection, midnight service dates, p
 External tests UNVERIFIED: physical pedestrian paths/entrances/boarding, iOS Safari/VoiceOver real device, target Supabase CPU/RSS/cold start, real matching of RT identity, rehearsal of production restore, pilot observations. Do not fill these with synthetic results.
 
 Independent review approved skyline/opaque-ID/UI paths; adversarial review discovered overlong source IDs could alias under truncation. They now fail closed before search; supported IDs are exact public references, not a global GTFS constraint.
+
+Integrated compositioncbd1152:414routing,116desktop/mobile browser,63gateway/operations,11staging,50rootPython plus existing strict/runtime/API suites and1642oracle comparisons; zero suite skips. Observer adds10meaningful offline regressions, making root60. Final frozen-SHA logs/CI are collected separately before a quality claim. Regional matrix32local queries:28options/4empty; no field/network proof.

@@ -1,33 +1,33 @@
 # Regional v1 progress / checkpoint
 
-Current state: **technical preview; NO-GO for reliable public v1**. Deployed source643bc52, official functionv2; local base/main22bf89c. User adopted launch roadmap13Oct2026. New changes are isolated, not deployed/merged.
+Current state: **implemented technical candidate; NO-GO for reliable public v1**. Published Render643bc52 and journey-api v2 unchanged; base/main22bf89c. User adopted roadmap13Oct2026. No new main merge or deployment.
 
 | Stage | State | Evidence / remaining |
 |---|---|---|
-| S0 | PARTIAL | Complete local baseline/service identities verified; target resource/rollback evidence missing |
-| S1 | PARTIAL | RED→GREEN selection/IDs/cards implemented; independent exhaustive oracle1642 comparisons and reviews pass; exact candidateCI pending |
-| S2 | BLOCKED | Physical walking data/access audits unavailable; experimental transport hardening next |
-| S3 | BLOCKED | A12 staysDraft; target-host comparison/rollout authorization missing |
-| S4 | PARTIAL | RT remains separate; cancellation freshness defect identified; matching requires complete identity |
-| S5 | PARTIAL | Compact English UI retained, S1 transfer/wait improved; external/device/manual accessibility incomplete |
-| S6 | PARTIAL | Negative contracts pass; shared quota/private consumer policy and terms remain |
-| S7 | BLOCKED | No authorized recurring monitor/SLO observation/restore rehearsal |
-| S8 | BLOCKED | No regional field/pilot7day evidence |
-| S9 | PARTIAL | Baseline/architecture/risk/tests/decisions checkpoint persisted; gates not complete |
-| S10 | BLOCKED | Human finalGO and complete preceding evidence missing; no release mutation |
+| S0 | PARTIAL | Local/service/source provenance complete; target margins and restore proof absent |
+| S1 | DONE scoped correction | Hospital destination, operational loops, Pareto/cap, stable IDs and distinct transfer cards implemented; regional field acceptance pending |
+| S2 | PARTIAL |16-module bounded transport/redirect parity complete; physical walking unverified/disabled |
+| S3 | BLOCKED | A12 separate Draft; Deno/host/rollout evidence pending |
+| S4 | PARTIAL | Cancellation freshness/unconfirmed fixed; complete RT itinerary matching unavailable |
+| S5 | PARTIAL | English compact results and116 desktop/mobile cases; actual device/manual accessibility pending |
+| S6 | PARTIAL | Safe errors/DTO/logs/validation-before-quota; anonymous consumer policy and terms remain |
+| S7 | PARTIAL | Manual bounded observer/runbook implemented; no recurring monitor/restore rehearsal/SLO window |
+| S8 | BLOCKED |32 local official-capture cases do not replace physical tests or7day pilot |
+| S9 | PARTIAL | Required audit/release documents populated with evidence and limits; final CI packet pending |
+| S10 | BLOCKED | Human finalGO and complete preceding gates missing; no release mutation |
 
 | Gate | Status | Evidence / owner |
 |---|---|---|
-| G0 provenance | UNVERIFIED | Current main/Render/function versions/feed tied to historical publish hashes; deployed function bytes not freshly retrieved / Codex |
-| G1 journey | UNVERIFIED | Mayo destination preserved; broader actual matrix/field tests pending / Codex + regional testers |
-| G2 walking | UNVERIFIED | No verified geometry/physical access; excluded publicly / data source + testers |
-| G3 quality | UNVERIFIED | S1 RED→GREEN local evidence; independent oracle1642 comparisons passes; candidateCI pending / Codex |
-| G4 realtime | FAIL | Cancellation freshness defect; no deterministic itinerary matching / Codex |
-| G5 security | FAIL | Private experimental redirects; shared consumer quota/fairness gaps / Codex + owner |
-| G6 resources | UNVERIFIED | Local baselines only; not Edge margins / Codex + owner |
-| G7 operations | UNVERIFIED | No approved monitor/restore/SLO proof / owner + Codex |
-| G8 UX/legal | UNVERIFIED | Browser coverage is not manual accessibility/terms/contact acceptance / owner + reviewers |
-| G9 external proof | UNVERIFIED | No field/pilot window elapsed / regional testers |
-| G10 release | BLOCKED-APPROVAL | Freeze candidate after gates; human final approval required / owner |
+| G0 provenance | PASS | Render643bc52, main22bf89c, Edgev2 exact downloaded source hashes, active feed identified / Codex |
+| G1 journeys | PARTIAL | Hospital fixes, independent1642 oracle,32 regional local cases; field/completeness pending / Codex + testers |
+| G2 walking | UNVERIFIED | Excluded; entrances/geometry/access unverified / regional testers |
+| G3 quality | PARTIAL |414routing/116browser/63gateway/11staging, oracle, reviews; final frozen-SHA CI packet must be checked / Codex |
+| G4 realtime | PARTIAL | Own cancellation freshness fixed in candidate; public old source/full identity matching incomplete / Codex + operator data |
+| G5 security | PARTIAL | Bounded reads/redirect/error/privacy fixes; anonymous quota P1 remains / Codex + owner |
+| G6 resources | UNVERIFIED | S1CPU+10.9% local, A12 separate local proof; no Deno-host margin / Codex + owner |
+| G7 operations | PARTIAL | Manual observer/runbook; no recurring SLO window or restore rehearsal / owner + Codex |
+| G8 UX/legal | PARTIAL | English compact mobile and browser tests; real-device accessibility/terms pending / owner + reviewers |
+| G9 external proof | UNVERIFIED | No field/pilot7days / regional testers |
+| G10 release | BLOCKED | Preceding gates and human finalGO absent / owner |
 
-Next safe work: independent S1 oracle/review, experimental redirect/byte bounds, cancellation freshness and safe failure contracts. Preserve logs/history, mark real blocks instead of inventing completion.
+Next work must address genuine remaining evidence: approved target-host/consumer-policy/recovery experiment and field observations. No paid walking calls or invented completion. Final candidate SHA/CI source is pinned in its Draft PR and evidence manifest.
