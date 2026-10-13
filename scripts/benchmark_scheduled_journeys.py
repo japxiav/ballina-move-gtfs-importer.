@@ -16,6 +16,20 @@ BASELINE = '22bf89cbbe5eb81ca40dee52410a4d11c99382d5'
 REFERENCE = '138951b5156b0174cdd61d7491eec7f0c77d9c2f'
 
 
+def performance_gate(summaries, equal):
+    # PR36 has the corrected journeys and native IDs; main is also reported,
+    # but its wrong selection/positional IDs are not an equivalent workload.
+    current, reference, main = (summaries[k] for k in ('candidate', 'pr36', 'main'))
+    checks = {'samePublicJourneys': equal,
+              'cpuNotAbovePr36': current['cpuMs']['median'] <= reference['cpuMs']['median'],
+              'wallNotAbovePr36': current['wallMs']['median'] <= reference['wallMs']['median'],
+              'rssNotAbovePr36': current['peakRssMb']['median'] <= reference['peakRssMb']['median']}
+    return {'scope': 'local equivalent corrected PR36; not A12/host certification',
+            'checks': checks, 'passed': all(checks.values()),
+            'mainComparisons': {'cpuNotAboveMain': current['cpuMs']['median'] <= main['cpuMs']['median'],
+                                'rssNotAboveMain': current['peakRssMb']['median'] <= main['peakRssMb']['median']}}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--snapshot', required=True, type=Path)
@@ -54,15 +68,16 @@ def main():
     summaries = {label: {metric: {'median': statistics.median(values), 'min': min(values), 'max': max(values)}
                    for metric in ('cpuMs', 'wallMs', 'peakRssMb')
                    for values in [[r[metric] for r in samples if r['version'] == label]]} for label in labels}
+    gate = performance_gate(summaries, equal)
     report = {'scope': 'offline captured official snapshot; fresh serial rotated processes; no warmup or provider calls; not hosted performance',
               'refs': versions, 'hashes': hashes, 'runtime': subprocess.check_output(['node', '--version'], text=True).strip(),
               'snapshotSha256': hashlib.sha256(raw).hexdigest(), 'snapshotVersion': snapshot['version'],
               'snapshotRows': {k: len(v) for k, v in snapshot['tables'].items()},
-              'candidateJourneysEqualPr36': equal, 'summaries': summaries, 'samples': samples}
+              'candidateJourneysEqualPr36': equal, 'performanceGate': gate, 'summaries': summaries, 'samples': samples}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2))
-    print(json.dumps({'candidateJourneysEqualPr36': equal, 'summaries': summaries}))
-    return 0 if equal else 1
+    print(json.dumps({'candidateJourneysEqualPr36': equal, 'performanceGate': gate, 'summaries': summaries}))
+    return 0 if gate['passed'] else 1
 
 
 if __name__ == '__main__':
