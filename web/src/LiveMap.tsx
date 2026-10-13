@@ -15,7 +15,9 @@ export function LiveMap() {
   const returnFocus = useRef<HTMLElement | null>(null), filterFallback = useRef<HTMLButtonElement>(null);
   const [viewVersion, setViewVersion] = useState(0), [clusterIds, setClusterIds] = useState<string[]>([]), [selectionNotice, setSelectionNotice] = useState("");
   const tiles = useRef<L.TileLayer | null>(null);
+  const resetTileCycle = useRef<() => void>(() => {});
   const [tilesLoading, setTilesLoading] = useState(true), [tileError, setTileError] = useState(false);
+  const [tilesDelayed, setTilesDelayed] = useState(false);
   const [data, setData] = useState<LiveData | null>(null), [error, setError] = useState("");
   const [loading, setLoading] = useState(true), [refresh, setRefresh] = useState(0), [now, setNow] = useState(Date.now());
   const [mode, setMode] = useState<"all" | "bus" | "train">("all"), [selectedId, setSelectedId] = useState<string | null>(null);
@@ -60,16 +62,24 @@ export function LiveMap() {
     if (!container.current) return;
     const instance = L.map(container.current, { scrollWheelZoom: false, attributionControl: true, zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false }).fitBounds(mayo);
     const layer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, referrerPolicy: "strict-origin-when-cross-origin", attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' });
-    layer.on("loading", () => { setTilesLoading(true); setTileError(false); });
-    layer.on("load", () => setTilesLoading(false));
-    layer.on("tileerror", () => setTileError(true));
+    let tileTimeout: number | undefined;
+    let cycleHadError = false;
+    const beginTileCycle = () => {
+      window.clearTimeout(tileTimeout); setTilesLoading(true); setTileError(false); setTilesDelayed(false);
+      cycleHadError = false;
+      tileTimeout = window.setTimeout(() => setTilesDelayed(true), 15000);
+    };
+    resetTileCycle.current = beginTileCycle;
+    layer.on("loading", beginTileCycle);
+    layer.on("load", () => { window.clearTimeout(tileTimeout); setTilesLoading(false); setTilesDelayed(false); setTileError(cycleHadError); });
+    layer.on("tileerror", () => { cycleHadError = true; setTileError(true); });
     layer.addTo(instance); tiles.current = layer;
     map.current = instance;
     const moved = () => setViewVersion(n => n + 1);
     instance.on("moveend zoomend resize", moved); moved();
     const resizeObserver = new ResizeObserver(() => instance.invalidateSize({ animate: false }));
     resizeObserver.observe(container.current);
-    return () => { resizeObserver.disconnect(); markers.current.clear(); map.current = null; tiles.current = null; layer.off(); instance.remove(); };
+    return () => { resetTileCycle.current = () => {}; window.clearTimeout(tileTimeout); resizeObserver.disconnect(); markers.current.clear(); map.current = null; tiles.current = null; layer.off(); instance.remove(); };
   }, []);
   useEffect(() => {
     const instance = map.current; if (!instance) return;
@@ -108,7 +118,7 @@ export function LiveMap() {
     else if (cluster.length) map.current?.fitBounds(L.latLngBounds(cluster.map(v => [v.lat, v.lon])), { padding: [48, 48], maxZoom: 17, animate: false });
   };
   return <article className="live-page">
-    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); tiles.current?.redraw(); }} disabled={loading}>Refresh</button></div>
+    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); resetTileCycle.current(); tiles.current?.redraw(); }} disabled={loading}>Refresh</button></div>
     <div className="live-status" role="status">
       {loading && !data ? "Loading official transport data…" : data?.mode === "snapshot" ? `Published snapshot · retrieved ${time(data.generatedAt)}` : data ? `Auto-refresh every 30s · retrieved ${time(data.generatedAt)}` : "Transport feeds unavailable."}
     </div>
@@ -121,7 +131,7 @@ export function LiveMap() {
     <div className="map-stage"><div ref={container} className="live-map" role="region" aria-label="Map of reported bus and train locations" />
     {(selected || cluster.length > 0) && <VehicleCard vehicle={selected} cluster={cluster} now={now} snapshot={data?.mode === "snapshot"} inView={!!selected && inView.some(v => v.id === selected.id)} onClose={() => closeSelection()} onSelect={v => { setSelectedId(v.id); setClusterIds([]); }} onZoom={focusSelection} />}
     </div>
-    {(tilesLoading || tileError) && <p className="live-status" role="status">{tileError ? "Some map tiles could not load. Use the vehicle list or refresh to retry." : "Loading map…"}</p>}
+    {(tilesLoading || tileError) && <p className="live-status" role="status">{tileError ? "Some map tiles could not load. Use the vehicle list or refresh to retry." : tilesDelayed ? "Map tiles are taking too long. Use the vehicle list or refresh to retry." : "Loading map…"}</p>}
     <div className="map-legend"><span><b className="bus-dot" /> Buses: timestamped observations</span><span><b className="train-dot" /> Trains: reported locations, age unknown</span></div>
     <details className="live-list"><summary>{inView.length} locations in this view · vehicle list</summary>{inView.length ? <ul>{inView.map(v => <li key={v.id}><button onClick={e => locate(v, e.currentTarget)}><strong>{v.label}</strong><span>{v.destination || (v.mode === "bus" ? "Bus" : "Train")} · {v.mode === "bus" ? `${age(v.observedAt!, now)}s ago` : "observation age unknown"}</span></button></li>)}</ul> : <p>No recent locations in this view. Try Ireland or another filter. Vehicles appear only when the source supplies valid coordinates.</p>}</details>
     <details className="live-list"><summary>Next departures · Ballina</summary>{departures.length ? <ul>{departures.slice(0, 12).map(d => <li key={d.id} className="departure-row"><div><strong>{d.route} · {d.destination}</strong><span>{d.stop}</span></div><div><strong>{time(d.status === "predicted" && d.expectedAt ? d.expectedAt : d.scheduledAt)}</strong><span>{d.status === "cancellation_unconfirmed" ? "Cancellation unconfirmed · check operator" : d.status === "cancelled" ? "Cancelled" : d.status === "predicted" ? "Prediction" : "Scheduled"}</span></div></li>)}</ul> : <p>No departures are available from this source right now.</p>}</details>
