@@ -110,6 +110,35 @@ def inspect(fetcher=read_management, root=ROOT):
     return report
 
 
+def validate_worker_report(value, returncode):
+    flags = {'runtimeBindingsMatchVerified', 'hostPeerIdentityVerified', 'candidateHostedPerformanceVerified', 'edgeSourceMatchesVerified',
+             'deploymentPerformed', 'runtimeSecretValuesQueried', 'quotaConsumed', 'recurringMonitoringEnabled'}
+    common = {'scope', 'candidateHead', 'cleanSource', 'sourceHashes', 'requiresPrivateAdmission', 'bindingNamesPresentLocally',
+              'mode', 'observedAtUtc', 'requestsMaximum', 'managementIdentityConfirmed'} | flags
+    if not isinstance(value, dict) or returncode not in {0, 1} or type(value.get('managementIdentityConfirmed')) is not bool or returncode != (0 if value['managementIdentityConfirmed'] else 1):
+        raise ValueError('unproven_inventory_worker')
+    success = value['managementIdentityConfirmed']
+    expected = common | ({'publishedGatewayCommit', 'gatewayCandidateCommitMatches', 'servicePlan', 'autoDeploy', 'journeyFunctionVersion'} if success else {'error'})
+    if value.keys() != expected or value['scope'] != 'read-only transition inventory, not activation approval' or value['mode'] != 'read_only_inventory' or type(value['requestsMaximum']) is not int or value['requestsMaximum'] != 3:
+        raise ValueError('unproven_inventory_worker')
+    if not isinstance(value['candidateHead'], str) or not re.fullmatch(r'[a-f0-9]{40}', value['candidateHead']) or type(value['cleanSource']) is not bool or any(value[k] is not False for k in flags):
+        raise ValueError('unproven_inventory_worker')
+    sources = {'web/server/live_gateway.py', 'supabase/functions/journey-api/index.ts', 'supabase/functions/transport-api/journeys.ts'}
+    if not isinstance(value['sourceHashes'], dict) or value['sourceHashes'].keys() != sources or any(not isinstance(v, str) or not re.fullmatch(r'[a-f0-9]{64}', v) for v in value['sourceHashes'].values()):
+        raise ValueError('unproven_inventory_worker')
+    for key, names in [('requiresPrivateAdmission', {'gateway', 'edge'}), ('bindingNamesPresentLocally', {'RENDER_API_KEY', 'SUPABASE_ACCESS_TOKEN', NAME})]:
+        if not isinstance(value[key], dict) or value[key].keys() != names or any(type(v) is not bool for v in value[key].values()):
+            raise ValueError('unproven_inventory_worker')
+    if not isinstance(value['observedAtUtc'], str) or len(value['observedAtUtc']) > 40 or dt.datetime.fromisoformat(value['observedAtUtc']).utcoffset() != dt.timedelta(0):
+        raise ValueError('unproven_inventory_worker')
+    if success:
+        if not isinstance(value['publishedGatewayCommit'], str) or not re.fullmatch(r'[a-f0-9]{40}', value['publishedGatewayCommit']) or type(value['gatewayCandidateCommitMatches']) is not bool or value['gatewayCandidateCommitMatches'] != (value['publishedGatewayCommit'] == value['candidateHead']) or value['servicePlan'] != 'free' or value['autoDeploy'] is not False or type(value['journeyFunctionVersion']) is not int or not 1 <= value['journeyFunctionVersion'] <= 999999:
+            raise ValueError('unproven_inventory_worker')
+    elif value['error'] != 'inventory_unavailable_or_unproven':
+        raise ValueError('unproven_inventory_worker')
+    return value
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group()
@@ -124,9 +153,9 @@ def main(argv=None):
     parent_binding_presence = {name: bool(os.environ.get(name)) for name in ['RENDER_API_KEY', 'SUPABASE_ACCESS_TOKEN', NAME]}
     try:
         result = subprocess.run([sys.executable, __file__, '--inventory-worker'], env={k: v for k, v in os.environ.items() if k in allowed}, capture_output=True, text=True, timeout=32)
-        report = json.loads(result.stdout)
-        if result.returncode not in {0, 1} or not isinstance(report, dict) or type(report.get('managementIdentityConfirmed')) is not bool or result.returncode != (0 if report['managementIdentityConfirmed'] else 1):
-            raise ValueError('inventory_worker_failed')
+        if len(result.stdout) > MAX_BYTES:
+            raise ValueError('inventory_worker_output_limit')
+        report = validate_worker_report(json.loads(result.stdout), result.returncode)
         report['bindingNamesPresentLocally'] = parent_binding_presence
         print(json.dumps(report)); return result.returncode
     except Exception:

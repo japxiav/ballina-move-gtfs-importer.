@@ -76,7 +76,9 @@ class ReleaseInventory(unittest.TestCase):
             self.assertNotIn('private', str(raised.exception)); self.assertTrue(body.closed)
 
     def test_inventory_child_has_whole_process_watchdog_and_no_provider_or_runtime_credentials(self):
-        out = io.StringIO(); good = {**LOCAL, 'managementIdentityConfirmed': True}
+        out = io.StringIO()
+        base = inventory.local_report()
+        good = {**base, 'mode': 'read_only_inventory', 'observedAtUtc': '2026-10-13T00:00:00+00:00', 'requestsMaximum': 3, 'managementIdentityConfirmed': True, 'publishedGatewayCommit': 'b' * 40, 'gatewayCandidateCommitMatches': base['candidateHead'] == 'b' * 40, 'servicePlan': 'free', 'autoDeploy': False, 'journeyFunctionVersion': 2}
         with mock.patch.dict(inventory.os.environ, {'PATH': '/offline/bin', 'RENDER_API_KEY': 'offline-render', 'SUPABASE_ACCESS_TOKEN': 'offline-management', inventory.NAME: 'a' * 64, 'STADIA_API_KEY': 'offline-provider'}, clear=True), mock.patch.object(inventory.subprocess, 'run', return_value=mock.Mock(stdout=json.dumps(good), returncode=0)) as child, contextlib.redirect_stdout(out):
             self.assertEqual(inventory.main(['--inspect']), 0)
         self.assertEqual(child.call_args.kwargs['timeout'], 32)
@@ -86,3 +88,14 @@ class ReleaseInventory(unittest.TestCase):
         with mock.patch.object(inventory.subprocess, 'run', side_effect=subprocess.TimeoutExpired(['offline'], 32)) as child, contextlib.redirect_stdout(out):
             self.assertEqual(inventory.main(['--inspect']), 1)
         child.assert_called_once(); self.assertFalse(json.loads(out.getvalue())['deploymentPerformed'])
+
+    def test_inventory_worker_cannot_echo_extra_private_fields_or_promote_unverified_gates(self):
+        base = inventory.local_report()
+        good = {**base, 'mode': 'read_only_inventory', 'observedAtUtc': '2026-10-13T00:00:00+00:00', 'requestsMaximum': 3, 'managementIdentityConfirmed': False, 'error': 'inventory_unavailable_or_unproven'}
+        self.assertEqual(inventory.validate_worker_report(good, 1), good)
+        for changed in [{**good, 'private_debug': 'must-not-echo'}, {**good, 'runtimeBindingsMatchVerified': True}, {**good, 'requestsMaximum': True}, {**good, 'bindingNamesPresentLocally': {**good['bindingNamesPresentLocally'], inventory.NAME: 'must-not-echo'}}, {**good, 'error': 'private-must-not-echo'}]:
+            out = io.StringIO()
+            with mock.patch.object(inventory.subprocess, 'run', return_value=mock.Mock(stdout=json.dumps(changed), returncode=1)), contextlib.redirect_stdout(out):
+                self.assertEqual(inventory.main(['--inspect']), 1)
+            self.assertNotIn('must-not-echo', out.getvalue())
+            self.assertFalse(json.loads(out.getvalue())['managementIdentityConfirmed'])
