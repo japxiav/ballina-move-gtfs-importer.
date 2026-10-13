@@ -7,6 +7,7 @@ on:
       - ".dockerignore"
       - "scripts/deploy_live_gateway_render.py"
       - "scripts/run_live_gateway_deployment.py"
+      - "scripts/update_live_gateway_render.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
@@ -16,6 +17,7 @@ on:
       - ".dockerignore"
       - "scripts/deploy_live_gateway_render.py"
       - "scripts/run_live_gateway_deployment.py"
+      - "scripts/update_live_gateway_render.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
@@ -27,6 +29,11 @@ on:
         default: false
       deploy_live_gateway:
         description: "Create the already-authorized FREE read-only service and verify browser"
+        type: boolean
+        required: false
+        default: false
+      update_live_gateway:
+        description: "Update only the already-authorized FREE app at reviewed commit"
         type: boolean
         required: false
         default: false
@@ -123,7 +130,7 @@ jobs:
           PY
   deploy-live-gateway:
     needs: web-validation
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_live_gateway == true && inputs.render_connection_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
+    if: ${{ github.event_name == 'workflow_dispatch' && ((inputs.deploy_live_gateway == true && inputs.update_live_gateway != true) || (inputs.update_live_gateway == true && inputs.deploy_live_gateway != true)) && inputs.render_connection_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:
@@ -132,8 +139,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Attach verified immutable source to local hosting branch
+        run: git switch -c ops/live-gateway-hosting
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -148,9 +157,17 @@ jobs:
           cd web
           npx playwright install --with-deps chromium
       - name: Create free target, verify deployed commit and open actual app
+        if: ${{ inputs.deploy_live_gateway == true && inputs.update_live_gateway != true }}
         env:
           PYTHONDONTWRITEBYTECODE: "1"
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
           BALLINA_RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
         run: python scripts/run_live_gateway_deployment.py
+      - name: Update existing free app and verify exact deployed source and actual browser
+        if: ${{ inputs.update_live_gateway == true && inputs.deploy_live_gateway != true }}
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
+        run: python scripts/update_live_gateway_render.py
