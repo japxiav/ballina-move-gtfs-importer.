@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-10-13T17:17:22.873Z",
+  "target": "https://ballina-move-live.onrender.com",
+  "publishedSource": "643bc525c1ab5f79c694259002258ed3af8468f6",
+  "candidateDeployed": false,
+  "tlsVerification": true,
+  "browserVerified": true,
+  "stage": "map",
+  "coldStartState": "unknown",
+  "hostCpuMeasured": false,
+  "hostRssMeasured": false,
+  "httpStatus": 200,
+  "scheduledOptions": 6,
+  "planRenderedMs": 8017,
+  "itineraryRendered": true,
+  "mapMarkers": 71,
+  "mapTilesLoaded": true,
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "width": 601,
+      "overflow": false
+    },
+    {
+      "width": 801,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "pageErrors": 0,
+  "credentialsInBrowser": false,
+  "foreignRequests": 0,
+  "mapScope": "separate reported locations; no itinerary realtime claim"
+}

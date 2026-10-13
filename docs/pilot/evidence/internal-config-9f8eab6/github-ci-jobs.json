@@ -1,0 +1,139 @@
+[
+  {
+    "runId": 38436277644,
+    "jobs": [
+      {
+        "name": "web-validation",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install pinned dependencies",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Test read-only gateway without external queries",
+            "conclusion": "success"
+          },
+          {
+            "name": "Build browser application",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install test browser",
+            "conclusion": "success"
+          },
+          {
+            "name": "Test navigation and map contracts on desktop and mobile",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify static preview boundary",
+            "conclusion": "success"
+          },
+          {
+            "name": "Build and verify unprivileged container without provider access",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "render-connection-probe",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "name": "publisher-binding-probe",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "name": "deploy-live-gateway",
+        "conclusion": "skipped",
+        "steps": []
+      }
+    ]
+  },
+  {
+    "runId": 38436277690,
+    "jobs": [
+      {
+        "name": "offline-validation",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Install pinned compiler for local gateway checks",
+            "conclusion": "success"
+          },
+          {
+            "name": "Importer regressions, strict gateway types and mocked requests",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  }
+]

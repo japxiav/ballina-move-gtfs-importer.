@@ -1,0 +1,7 @@
+{
+  "reviewer": "security_integration_review",
+  "outcome": "approved_in_authorized_scope",
+  "source": "9f8eab630736fd51eb874eaf3f10ba2b7b14dfc2",
+  "readOnlyReview": true,
+  "findings": "Fixed-target read only, no secret export/log/file/browser, probe excluded from deployment; future publication and runtime agreement remain pending."
+}

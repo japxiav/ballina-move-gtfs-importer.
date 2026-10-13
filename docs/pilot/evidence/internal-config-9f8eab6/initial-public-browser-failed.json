@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-10-13T17:13:56.390Z",
+  "target": "https://ballina-move-live.onrender.com",
+  "publishedSource": "643bc525c1ab5f79c694259002258ed3af8468f6",
+  "candidateDeployed": false,
+  "tlsVerification": true,
+  "browserVerified": false,
+  "coldStartState": "unknown",
+  "hostCpuMeasured": false,
+  "hostRssMeasured": false,
+  "error": "actual_browser_verification_failed"
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "id": 38436946220,
+    "name": "Ballina Move web validation (offline contracts)",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "9f8eab630736fd51eb874eaf3f10ba2b7b14dfc2",
+    "html_url": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38436946220",
+    "jobs": [
+      {
+        "id": 115433307506,
+        "name": "publisher-binding-probe",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify only the existing canonical app binding without exposing it",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 115433309376,
+        "name": "render-connection-probe",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 115433310226,
+        "name": "deploy-live-gateway",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 115433310395,
+        "name": "web-validation",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      }
+    ]
+  },
+  {
+    "id": 38436277644,
+    "name": "Ballina Move web validation (offline contracts)",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "9f8eab630736fd51eb874eaf3f10ba2b7b14dfc2",
+    "html_url": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38436277644"
+  },
+  {
+    "id": 38436277690,
+    "name": "Importer and gateway offline validation",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "9f8eab630736fd51eb874eaf3f10ba2b7b14dfc2",
+    "html_url": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38436277690"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "confirmed": true,
+  "sameValueVerifiedAcrossServerStores": true,
+  "valueExposed": false,
+  "githubSecretCopyCreated": false,
+  "publisherRunnerVerified": true,
+  "publisherRunId": 38436946220,
+  "deployAttempted": false,
+  "renderSource": "643bc525c1ab5f79c694259002258ed3af8468f6",
+  "renderDeploymentId": "dep-db6osr8m7kps73aothjg",
+  "renderStatus": "live",
+  "autoDeploy": "no",
+  "plan": "free",
+  "functions": [
+    {
+      "slug": "transport-api",
+      "version": 11,
+      "status": "ACTIVE"
+    },
+    {
+      "slug": "journey-api",
+      "version": 3,
+      "status": "ACTIVE"
+    }
+  ],
+  "confirmationScope": "configuration and publisher retrieval; runtime protocol not activated",
+  "initialPostcheckFailurePreserved": true,
+  "supabaseConfigVersionAdvanced": true,
+  "sourcePackageUploaded": false
+}

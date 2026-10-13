@@ -1,0 +1,6 @@
+{
+  "gatewayTests": 88,
+  "outcome": "passed",
+  "providerCalls": 0,
+  "originalLog": "retained outside checkout; contains explicitly mocked deployment fixtures, not actual deployment evidence"
+}

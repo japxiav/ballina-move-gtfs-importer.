@@ -1,0 +1,16 @@
+{
+  "name": "BALLINA_JOURNEY_GATEWAY_SECRET",
+  "authorized": true,
+  "generated": true,
+  "renderConfigured": true,
+  "supabaseConfigured": true,
+  "githubSecretStored": false,
+  "publisherMethod": "pending existing Render binding retrieval",
+  "deploymentRequested": false,
+  "secretValueExposed": false,
+  "supabaseDigestVerified": true,
+  "renderReadbackVerified": true,
+  "confirmed": false,
+  "failedStage": "postcheck",
+  "error": "configuration_unconfirmed_no_automatic_retry"
+}

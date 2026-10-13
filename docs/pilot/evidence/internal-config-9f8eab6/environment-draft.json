@@ -1,0 +1,9 @@
+{
+  "status": "saved_and_readback_verified",
+  "revision": 25,
+  "source": "9f8eab630736fd51eb874eaf3f10ba2b7b14dfc2",
+  "startInstructionsSaved": true,
+  "installNetworkSecretMetadataPreserved": true,
+  "published": false,
+  "requiresPublishForFutureSnapshot": true
+}

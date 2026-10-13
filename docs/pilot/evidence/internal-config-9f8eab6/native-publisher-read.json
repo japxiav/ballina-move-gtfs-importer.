@@ -1,0 +1,1 @@
+{"check": "publisher_app_binding", "confirmed": true, "serviceId": "srv-db6nhvrbc2fs739pb7mg", "canonicalStore": "Render", "bindingName": "BALLINA_JOURNEY_GATEWAY_SECRET", "requestsMaximum": 2, "valueExposed": false, "githubSecretCopyCreated": false, "deploymentAttempted": false, "scope": "configuration retrieval only; not active gateway/Edge agreement"}
