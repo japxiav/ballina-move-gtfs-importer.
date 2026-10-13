@@ -1,0 +1,487 @@
+{
+  "scope": "offline_replay_of_official_gtfs_capture_not_field_or_live_api",
+  "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "sourceSha256": "9f634dbbe9c07828be4fce98c60a338fa10aa41c24ecacbbf4b861426c1bd2fe",
+  "rows": [
+    {
+      "case": "Ballina-Castlebar-bus",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Ballina-Castlebar-rail",
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Ballina-Westport-bus",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 0,
+      "status": "NO_OPTIONS_LOCAL",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Ballina-Westport-rail",
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Ballina-Foxford-bus",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Ballina-Foxford-rail",
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Ballina-bus",
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 5,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Ballina-rail",
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Westport-bus",
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 0,
+      "status": "NO_OPTIONS_LOCAL",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Westport-rail",
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Foxford-bus",
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Castlebar-Foxford-rail",
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Ballina-bus",
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Ballina-rail",
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Castlebar-bus",
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 4,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Castlebar-rail",
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Foxford-bus",
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 0,
+      "status": "NO_OPTIONS_LOCAL",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Westport-Foxford-rail",
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Ballina-bus",
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Ballina-rail",
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Castlebar-bus",
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 3,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Castlebar-rail",
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Westport-bus",
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "options": 0,
+      "status": "NO_OPTIONS_LOCAL",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Foxford-Westport-rail",
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-13-02:59-8490B151081",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-13-02:59-8490B151091",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 5,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-13-16:00-8490B151091",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-13",
+        "time": "16:00",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 4,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-14-07:00-8490B151081",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-14",
+        "time": "07:00",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-17-07:00-8490B151081",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-17",
+        "time": "07:00",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-18-07:00-8490B151091",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-13-23:30-8490B151081",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-13",
+        "time": "23:30",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    },
+    {
+      "case": "Hospital-2026-10-20-07:00-8490B151091",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-20",
+        "time": "07:00",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "options": 6,
+      "status": "PASS_LOCAL_CONTRACT",
+      "field": "UNVERIFIED",
+      "networkCalls": 0
+    }
+  ]
+}

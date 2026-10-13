@@ -1,0 +1,772 @@
+{
+  "scope": "Nine fresh-process samples per version, serial alternating order, original official captured1518trips/30115stopTimes, query15108/02:59/max2changes. No warmup; cache only captured in-process data; no HTTP. Selection behavior intentionally differs. Not target Edge limits or p95/SLA.",
+  "sourceHashes": {
+    "baselineCompiled": "5ed0e6507a2131340b8fc88e9199c64d270bcc4b8b8dcacad5c396987e7ffea8",
+    "candidateCompiled": "4a0b1a01d38c9e1490a64cd6176df07294eca08370f4802e710897eb25c591a7"
+  },
+  "samples": [
+    {
+      "repeat": 1,
+      "version": "baseline",
+      "wallMs": 57.255893,
+      "cpuMs": 94.818,
+      "peakRssMb": 77.61328125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 1,
+      "version": "candidate",
+      "wallMs": 51.812212,
+      "cpuMs": 88.344,
+      "peakRssMb": 80.7578125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 2,
+      "version": "candidate",
+      "wallMs": 57.270303999999996,
+      "cpuMs": 92.507,
+      "peakRssMb": 75.53515625,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 2,
+      "version": "baseline",
+      "wallMs": 47.16080699999999,
+      "cpuMs": 78.346,
+      "peakRssMb": 75.44921875,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 3,
+      "version": "baseline",
+      "wallMs": 52.378221,
+      "cpuMs": 86.131,
+      "peakRssMb": 80.70703125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 3,
+      "version": "candidate",
+      "wallMs": 52.243302,
+      "cpuMs": 87.178,
+      "peakRssMb": 76.390625,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 4,
+      "version": "candidate",
+      "wallMs": 50.235960000000006,
+      "cpuMs": 83.049,
+      "peakRssMb": 76.421875,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 4,
+      "version": "baseline",
+      "wallMs": 45.87631100000001,
+      "cpuMs": 76.767,
+      "peakRssMb": 78.40625,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 5,
+      "version": "baseline",
+      "wallMs": 43.587009,
+      "cpuMs": 71.237,
+      "peakRssMb": 77.37109375,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 5,
+      "version": "candidate",
+      "wallMs": 49.18619499999999,
+      "cpuMs": 80.626,
+      "peakRssMb": 75.90625,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 6,
+      "version": "candidate",
+      "wallMs": 55.32164,
+      "cpuMs": 91.352,
+      "peakRssMb": 77.51953125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 6,
+      "version": "baseline",
+      "wallMs": 44.56013,
+      "cpuMs": 75.547,
+      "peakRssMb": 77.58203125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 7,
+      "version": "baseline",
+      "wallMs": 49.955787,
+      "cpuMs": 79.778,
+      "peakRssMb": 75.4921875,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 7,
+      "version": "candidate",
+      "wallMs": 50.726341,
+      "cpuMs": 85.116,
+      "peakRssMb": 77.74609375,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 8,
+      "version": "candidate",
+      "wallMs": 46.204781,
+      "cpuMs": 75.839,
+      "peakRssMb": 77.91015625,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 8,
+      "version": "baseline",
+      "wallMs": 41.11519500000001,
+      "cpuMs": 69.916,
+      "peakRssMb": 76.62109375,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 9,
+      "version": "baseline",
+      "wallMs": 41.955807,
+      "cpuMs": 68.532,
+      "peakRssMb": 75.96875,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 21600,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 44100,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    },
+    {
+      "repeat": 9,
+      "version": "candidate",
+      "wallMs": 50.073803000000005,
+      "cpuMs": 80.55,
+      "peakRssMb": 77.5703125,
+      "results": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "changes": 1
+        }
+      ],
+      "networkCalls": 0
+    }
+  ],
+  "medians": {
+    "baseline": {
+      "wallMs": 45.87631100000001,
+      "cpuMs": 76.767,
+      "peakRssMb": 77.37109375
+    },
+    "candidate": {
+      "wallMs": 50.726341,
+      "cpuMs": 85.116,
+      "peakRssMb": 77.51953125
+    }
+  },
+  "finalScheduledCompiledHashMatches": true,
+  "ranges": {
+    "baseline": {
+      "wallMs": {
+        "min": 41.11519500000001,
+        "max": 57.255893
+      },
+      "cpuMs": {
+        "min": 68.532,
+        "max": 94.818
+      },
+      "peakRssMb": {
+        "min": 75.44921875,
+        "max": 80.70703125
+      }
+    },
+    "candidate": {
+      "wallMs": {
+        "min": 46.204781,
+        "max": 57.270303999999996
+      },
+      "cpuMs": {
+        "min": 75.839,
+        "max": 92.507
+      },
+      "peakRssMb": {
+        "min": 75.53515625,
+        "max": 80.7578125
+      }
+    }
+  }
+}

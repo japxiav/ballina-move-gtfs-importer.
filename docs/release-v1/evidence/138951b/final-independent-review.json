@@ -1,0 +1,24 @@
+{
+  "head": "138951b5156b0174cdd61d7491eec7f0c77d9c2f",
+  "scope": "read-only source/contract/document review, not pentest/field acceptance",
+  "reviewers": [
+    "routing_adversarial_review",
+    "independent_review",
+    "security_integration_review",
+    "handoff_independent_review"
+  ],
+  "resolvedFindings": [
+    "source ID alias truncation",
+    "hanging body cancellation and late EOF",
+    "parallel catalog sibling abort",
+    "observer per-response freshness and DNS watchdog",
+    "all four Playwright clock jump races"
+  ],
+  "newCodeP0P1BlockerFound": false,
+  "openGateP1": [
+    "anonymous quota/fairness",
+    "target host resource/availability/restore proof",
+    "physical walking/boarding/access and 7-day pilot"
+  ],
+  "historicalPR35FailedAssertion": "unclassified; redirected logs unavailable; retained"
+}

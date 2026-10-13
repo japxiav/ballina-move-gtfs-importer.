@@ -1,0 +1,26 @@
+{
+  "function": "journey-api",
+  "expectedVersion": 2,
+  "method": "read-only official Management multipart download",
+  "status": "VERIFIED",
+  "partsMatched": {
+    "supabase/functions/journey-api/index.ts": {
+      "sha256": "2b5b9d16ac9a51e511530021c761ba75ef32f643c64019651d43d68c086ba07a",
+      "matchesMainBaseline": true,
+      "bytes": 3501
+    },
+    "supabase/functions/transport-api/journeys.ts": {
+      "sha256": "15dc49a81a7738341b1e9da4b3e310cc98f687ca3b54870dc5e52aad4c1b2c01",
+      "matchesMainBaseline": true,
+      "bytes": 16806
+    }
+  },
+  "archiveSha256": "805c76039faa624622f6012402e8caa928fd8049228903e22da6f6e12dfbe0d5",
+  "metadataAfterDownload": {
+    "slug": "journey-api",
+    "name": "journey-api",
+    "version": 2,
+    "status": "ACTIVE",
+    "verify_jwt": false
+  }
+}

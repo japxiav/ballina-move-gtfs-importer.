@@ -1,0 +1,40 @@
+{
+  "url": "https://ballina-move-live.onrender.com/#/live",
+  "browserVerified": true,
+  "mode": "live",
+  "sources": {
+    "bus": {
+      "status": "empty",
+      "retrievedAt": "2026-10-13T04:18:13.814816Z"
+    },
+    "rail": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T04:18:13.814816Z"
+    },
+    "departures": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T04:18:13.814816Z"
+    }
+  },
+  "vehiclesAtVerification": 10,
+  "generatedAt": "2026-10-13T04:18:13.814816Z",
+  "responsiveWidths": [
+    320,
+    360,
+    390,
+    601,
+    801,
+    1440
+  ],
+  "busGpsPositionsAtVerification": 0,
+  "railPositionsAreReported": true,
+  "realMapTiles": true,
+  "browserCredentials": false,
+  "journeySearchRemainsDemo": false,
+  "officialScheduledSearch": true,
+  "officialItineraryDetails": true,
+  "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "scheduledOptions": 6,
+  "walkingDirectionsVerified": false,
+  "realTimeAppliedToItineraries": false
+}
