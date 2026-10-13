@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { catalog, createScheduleReader, parseStopQuery, searchSchedules } from "../transport-api/journeys.ts";
+import { catalog, createScheduleReader, parseStopQuery, searchScheduledJourneys } from "../transport-api/journeys.ts";
 
 // Isolated read-only schedule endpoint. Existing transport-api and private
 // walking canary stay untouched. Keys come only from Supabase's runtime.
@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
   try {
     if (!await quota()) return answer({ error: 'rate_limited' }, 429);
     const data = await snapshot();
-    return answer(action === 'stops' ? catalog(data) : searchSchedules(data, q!));
+    return answer(action === 'stops' ? catalog(data) : await searchScheduledJourneys(data, q!));
   } catch (error) {
     const code = error instanceof Error ? error.message : '';
     const safe = ['unknown_stop', 'date_outside_feed', 'clock_change_unsupported', 'search_capacity_reached'].includes(code) ? code : 'schedules_unavailable';

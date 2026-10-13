@@ -62,3 +62,38 @@ test('official mobile home keeps the search button visible without scrolling and
   await expect(page.getByLabel('Schedule date')).toHaveAttribute('max', lastDay);
   await expect(page.locator('.demo-note')).toHaveCount(0);
 });
+
+const identityA = 'j-' + 'a'.repeat(64), identityB = 'j-' + 'b'.repeat(64);
+test('stable official deep links never become a different itinerary after result order changes', async ({page}) => {
+ await page.route('**/api/stops', route=>route.fulfill({json:catalog}));
+ const a={...result().journeys[0],id:identityA};
+ const b={...structuredClone(a),id:identityB,departureAt:30000,arrivalAt:33120};
+ b.rides[0]={...b.rides[0],tripId:'other-offline-trip',boardAt:30000,alightAt:33120};
+ let journeys=[a,b];
+ await page.route('**/api/journeys?*', route=>route.fulfill({json:{...result(),journeys}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));
+ await page.getByRole('link',{name:'View itinerary'}).first().click();
+ await expect(page).toHaveURL(new RegExp('/scheduled/'+identityA));
+ await expect(page.locator('.scheduled-itinerary')).toBeVisible();
+ journeys=[b,a];await page.reload();
+ await page.getByText('Service reference').click();
+ await expect(page.locator('.scheduled-itinerary')).toContainText('offline-fixture-420');
+ journeys=[b];await page.reload();
+ await expect(page.getByRole('heading',{name:'Itinerary unavailable.'})).toBeVisible();
+ await expect(page.locator('.scheduled-itinerary')).toHaveCount(0);
+});
+test('equal-time official cards distinguish actual transfer stops and wait durations', async ({page})=>{
+ const castlebar={...to,id:'8490B5557201',name:'Castlebar',code:'555721'};
+ const otherHospital={...to,id:'8490B151081',code:'15108'};
+ await page.route('**/api/stops',route=>route.fulfill({json:{...catalog,stops:[from,to,castlebar,otherHospital]}}));
+ const make=(transfer:typeof to,id:string,firstArrival:number,secondBoard:number)=>({id,departureAt:28800,arrivalAt:33840,changes:1,rides:[
+ {...result().journeys[0].rides[0],to:transfer,alightAt:firstArrival},
+ {...result().journeys[0].rides[0],tripId:'offline-440',route:'440',from:transfer,to:otherHospital,boardAt:secondBoard,alightAt:33840}
+ ]});
+ const journeys=[make(castlebar,identityA,31680,33780),make(to,identityB,31920,33720)];
+ await page.route('**/api/journeys?*',route=>route.fulfill({json:{...result(),journeys}}));
+ await page.goto('/#/plan?'+encodeStopSearch({...q,to:otherHospital.id}));
+ const cards=page.locator('.journey-card');await expect(cards).toHaveCount(2);
+ await expect(cards.nth(0)).toContainText('Castlebar · 555721');await expect(cards.nth(0)).toContainText('35 min wait');
+ await expect(cards.nth(1)).toContainText('Mayo Hospital · 15109');await expect(cards.nth(1)).toContainText('30 min wait');
+});

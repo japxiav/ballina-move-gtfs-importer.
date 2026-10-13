@@ -939,7 +939,7 @@ function App() {
     isJourney = journeyMatch !== null;
   const query = React.useMemo(() => decodeQuery(search), [search]),
     defaults = React.useMemo(defaultQuery, []);
-  const scheduledMatch = /^\/scheduled\/([1-6])$/.exec(path);
+  const scheduledMatch = /^\/scheduled\/([1-6]|j-[a-f0-9]{64})$/.exec(path);
   const isHome = !path || path === "/", isLive = path === "/live", isDemo = path === "/demo", isPlan = isHome || path === "/plan" || !!scheduledMatch;
   useEffect(() => {
     document.title = `${isLive ? "Live map" : isPlan ? "Official journeys" : isDemo ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
