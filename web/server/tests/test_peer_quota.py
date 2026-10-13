@@ -100,6 +100,40 @@ class PeerQuotas(unittest.TestCase):
             self.assertEqual(schedules.get.call_count, 7)
         finally: server.shutdown(); server.server_close(); thread.join()
 
+    def test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation(self):
+        for refresh in [False, True]:
+            with self.subTest(refresh=refresh):
+                now = [0]; entered, release = threading.Event(), threading.Event(); calls = []
+                base = {'version': 1, 'source': 'nta_gtfs', 'loadedAt': '2026-10-13T00:00:00Z', 'timezone': 'Europe/Dublin', 'scope': 'stop_to_stop_same_stop_transfers', 'validFrom': '2026-10-07', 'validUntil': '2027-10-07', 'stops': [{'id': 'A', 'name': 'Offline A', 'code': 'A', 'lat': 54.1, 'lon': -9.1}]}
+                def loader(*args):
+                    calls.append(len(calls) + 1)
+                    return {**base, 'feedVersion': f'offline-generation-{len(calls)}'}
+                sanitize = g.public_schedule
+                def delayed_sanitize(raw, params):
+                    if threading.current_thread().name == 'old-catalog-waiter':
+                        entered.set(); release.wait(2)
+                    return sanitize(raw, params)
+                service = g.ScheduleService(loader, key='offline'); results = []
+                worker = threading.Thread(name='old-catalog-waiter', target=lambda: results.append(service.get()))
+                with mock.patch.object(g.time, 'monotonic', side_effect=lambda: now[0]), mock.patch.object(g, 'public_schedule', side_effect=delayed_sanitize):
+                    worker.start()
+                    try:
+                        self.assertTrue(entered.wait(1))
+                        first = service.get()
+                        self.assertEqual(first['feedVersion'], 'offline-generation-1')
+                        now[0] = 46 if refresh else 20
+                        if refresh:
+                            second = service.get()
+                            self.assertEqual(second['feedVersion'], 'offline-generation-2')
+                        expected_cache, expected_at = service.catalog_cache, service.catalog_at
+                        release.set(); worker.join(1)
+                        self.assertFalse(worker.is_alive())
+                        self.assertEqual(results[0]['feedVersion'], 'offline-generation-1')
+                        self.assertEqual(service.catalog_cache, expected_cache)
+                        self.assertEqual(service.catalog_at, expected_at)
+                        self.assertEqual(len(calls), 2 if refresh else 1)
+                    finally: release.set(); worker.join(2); service.pool.shutdown(wait=True)
+
     def test_hung_caller_keeps_one_worker_and_cannot_block_a_second_peer(self):
         release = threading.Event(); entered = threading.Event()
         stop = {'id': 'A', 'name': 'Fixture A', 'code': 'A', 'lat': 54.1, 'lon': -9.1}

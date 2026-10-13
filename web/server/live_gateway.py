@@ -385,8 +385,12 @@ class ScheduleService:
             raise
         if params is None:
             with self.lock:
-                self.catalog_cache, self.catalog_at = value, time.monotonic()
-                self.catalog_ready = True
+                # Only the first publisher of the current flight can install
+                # its result. A delayed waiter must not renew its TTL or
+                # overwrite a newer feed generation after a refresh.
+                if self.catalog_work is future and not self.catalog_ready:
+                    self.catalog_cache, self.catalog_at = value, time.monotonic()
+                    self.catalog_ready = True
         return value
 
 
