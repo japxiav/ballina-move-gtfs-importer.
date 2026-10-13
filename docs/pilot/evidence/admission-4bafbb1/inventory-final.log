@@ -1,0 +1,11 @@
+test_dry_run_makes_no_network_calls_and_no_readiness_claim (test_release_transition.ReleaseInventory.test_dry_run_makes_no_network_calls_and_no_readiness_claim) ... ok
+test_inventory_child_has_whole_process_watchdog_and_no_provider_or_runtime_credentials (test_release_transition.ReleaseInventory.test_inventory_child_has_whole_process_watchdog_and_no_provider_or_runtime_credentials) ... ok
+test_inventory_worker_cannot_echo_extra_private_fields_or_promote_unverified_gates (test_release_transition.ReleaseInventory.test_inventory_worker_cannot_echo_extra_private_fields_or_promote_unverified_gates) ... ok
+test_management_reader_never_redirects_and_bounds_utf8_body_and_deadline (test_release_transition.ReleaseInventory.test_management_reader_never_redirects_and_bounds_utf8_body_and_deadline) ... ok
+test_valid_inventory_is_only_three_fixed_reads_and_sanitizes_private_metadata (test_release_transition.ReleaseInventory.test_valid_inventory_is_only_three_fixed_reads_and_sanitizes_private_metadata) ... ok
+test_wrong_host_plan_busy_deployment_bad_version_and_source_fault_fail_closed (test_release_transition.ReleaseInventory.test_wrong_host_plan_busy_deployment_bad_version_and_source_fault_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.103s
+
+OK

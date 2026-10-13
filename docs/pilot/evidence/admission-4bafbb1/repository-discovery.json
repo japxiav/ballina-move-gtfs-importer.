@@ -1,0 +1,12 @@
+{
+  "repositories": [
+    {
+      "name": "japxiav/ballina-move-gtfs-importer.",
+      "host": "github.com",
+      "commit": "4bafbb13857e3b18b81f7c668803e9feec2e3256",
+      "mount_path": "ballina-move-gtfs-importer."
+    }
+  ],
+  "completeTraversal": true,
+  "directories": 1376
+}

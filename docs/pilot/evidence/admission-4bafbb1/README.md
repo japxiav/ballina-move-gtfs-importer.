@@ -1,0 +1,5 @@
+# Prepared admission evidence
+
+Tested application source4bafbb13857e3b18b81f7c668803e9feec2e3256, DraftPR41. This evidence-only commit is not a deployment source; mainf388/publicRender643/Edgev2 unchanged. Source/CI/local/tests/independentreview and actualmanagementinventory retained; no secret value/header response body or private query data captured. Exactstrictworker refuses arbitraryprivatefields.
+
+actual-management-inventory.json is the earlier dirty working-tree snapshot at6c, explicitly not the frozen source. frozen-management-inventory.json binds clean4baf source hashes, reports actualmanagementidentities only. actual-admission-blocked.json is the real configuration_missing/zero-request result, not hostedacceptance. The earlier failed fixture test is preserved; corrected fullroot70/browser118/gateway82 and exact-head CI passed. No routing/A12/source-performance/physical/multiday proof inferred. See FINAL_REPORT.md and docs/pilot/ADMISSION_TRANSITION.md for remaining gates and the reviewable futureproposal requiring specificauthorization.

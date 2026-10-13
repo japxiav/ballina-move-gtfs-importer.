@@ -1,0 +1,22 @@
+{
+  "candidate": "4bafbb13857e3b18b81f7c668803e9feec2e3256",
+  "scope": "read-only code/evidence preparatory review, not hosted/security/field certification",
+  "reviewers": [
+    "security_integration_review",
+    "handoff_independent_review"
+  ],
+  "resolved": [
+    "explicit parent binding booleans",
+    "runtime-secret query vs auth label",
+    "gateway commit vs Edge source scope",
+    "legacy exceptions pinned hashes/default-deny unknown contract",
+    "strict inventory worker schema/private debug refusal"
+  ],
+  "newScopedBlockerFound": false,
+  "remaining": [
+    "actual runtime binding agreement",
+    "host proxy/NAT/client policy/distributed abuse",
+    "hosted performance/restore",
+    "field/realtime/pilot/terms"
+  ]
+}

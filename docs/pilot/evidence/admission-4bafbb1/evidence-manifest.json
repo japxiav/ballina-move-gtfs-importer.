@@ -1,0 +1,90 @@
+{
+  "source": "4bafbb13857e3b18b81f7c668803e9feec2e3256",
+  "files": [
+    {
+      "path": "FINAL_REPORT.md",
+      "bytes": 3454,
+      "sha256": "6dc03ac45c2d451ac71c79560aabc87b4a1ec3c02aedd9c610172aa94893a347"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1062,
+      "sha256": "5ab7b3e64c88205fdf648005587ad8549e09568ed40efb4010eb1941ea769c73"
+    },
+    {
+      "path": "actual-admission-blocked.json",
+      "bytes": 108,
+      "sha256": "f2b737200ba7717cbf517186d714e014842608d548fea63f6611ebb5978cb6f4"
+    },
+    {
+      "path": "actual-management-inventory.json",
+      "bytes": 1293,
+      "sha256": "0bbd03070eeb8ae44dad5f03db6910d2709308a15261fbb2f630fa5f77059d93"
+    },
+    {
+      "path": "browser-final.log",
+      "bytes": 15969,
+      "sha256": "faa3eede47aac09058de0023735b3e96d2ad745b19c44f115176fa2e48484543"
+    },
+    {
+      "path": "build-final.log",
+      "bytes": 1005,
+      "sha256": "600840b53cea63ee0af9b9c205fdb9db30effe976e586e59c4cdba77c89cd1e1"
+    },
+    {
+      "path": "draft-pr.json",
+      "bytes": 164,
+      "sha256": "002f8b690c7bd5a68aeba656ae1fdf56283f49ce3cb2c0ed4b30d0770d8fead1"
+    },
+    {
+      "path": "final-ci.json",
+      "bytes": 1471,
+      "sha256": "63d86924090d36664c646525653c01dcbd42a470acc82eb82a53824081547615"
+    },
+    {
+      "path": "final-dry-run.json",
+      "bytes": 1005,
+      "sha256": "e96f2c549c33a5973295d2d8d87e0a60bfa19a0540fbdd8a76fed724b3abeb1c"
+    },
+    {
+      "path": "frozen-management-inventory.json",
+      "bytes": 1292,
+      "sha256": "004e9dd03188636abb2be8ae3b3e426a3fbfa99c8ee41d7bdcd911542b0069fc"
+    },
+    {
+      "path": "gateway-guarded.log",
+      "bytes": 15757,
+      "sha256": "060b6a3199498723989af1dfa207935935df6e348d31c14d5fd0746362f7e3e0"
+    },
+    {
+      "path": "independent-review.json",
+      "bytes": 740,
+      "sha256": "73b930256bd6025d7170570d73b5606f57c30f165a0b0fbe743cffd1e877115a"
+    },
+    {
+      "path": "inventory-final.log",
+      "bytes": 1314,
+      "sha256": "c1aac7118814f5d863d48918cc3ccdb01a15c4e17860272153dfebf87d7c12d4"
+    },
+    {
+      "path": "inventory-tests-first.log",
+      "bytes": 1916,
+      "sha256": "5132c054426a876de465e70e8957fbc8f005feafe8e0b5105582a6c0cb050a72"
+    },
+    {
+      "path": "repository-discovery.json",
+      "bytes": 282,
+      "sha256": "564c9ac7194724274ee04f14068fc94690bfe28de238686da74651668a63c5e5"
+    },
+    {
+      "path": "root-final.log",
+      "bytes": 16892,
+      "sha256": "b30aa55e77eff06405a6cdf14ca7cf0d442e376eab8e2e4d831fac1c38e6c51c"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 38562,
+      "sha256": "a8fe3794323f65498c1cbd814ec8f8dc15ccf6f19d89f8407be35ea8dceb8a43"
+    }
+  ]
+}

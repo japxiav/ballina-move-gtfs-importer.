@@ -1,0 +1,184 @@
+[1/3] Python importer, workflow and API-contract tests
+test_after_midnight_timetable_accepted (test_hardening.HardeningTests.test_after_midnight_timetable_accepted) ... ok
+test_conditional_http_prevents_false_304_after_rollback (test_hardening.HardeningTests.test_conditional_http_prevents_false_304_after_rollback) ... ok
+test_departure_before_arrival_rejected (test_hardening.HardeningTests.test_departure_before_arrival_rejected) ... ok
+test_departure_response_shape (test_hardening.HardeningTests.test_departure_response_shape) ... ok
+test_health_bad_feed_version_rejected (test_hardening.HardeningTests.test_health_bad_feed_version_rejected) ... ok
+test_health_happy_path (test_hardening.HardeningTests.test_health_happy_path) ... ok
+test_health_nested_not_root (test_hardening.HardeningTests.test_health_nested_not_root) ... ok
+test_health_old_feed_run_rejected (test_hardening.HardeningTests.test_health_old_feed_run_rejected) ... ok
+test_health_only_one_channel_rejected (test_hardening.HardeningTests.test_health_only_one_channel_rejected) ... ok
+test_health_stale_collector_run_rejected (test_hardening.HardeningTests.test_health_stale_collector_run_rejected) ... ok
+test_health_status_degraded_rejected (test_hardening.HardeningTests.test_health_status_degraded_rejected) ... ok
+test_non_monotonic_stop_times_rejected (test_hardening.HardeningTests.test_non_monotonic_stop_times_rejected) ... ok
+test_all_trips_scope_does_not_require_target_stop (test_importer.ImporterTests.test_all_trips_scope_does_not_require_target_stop) ... ok
+test_conditional_download_uses_304 (test_importer.ImporterTests.test_conditional_download_uses_304) ... ok
+test_conditional_lookup_is_scoped_to_current_config_hash (test_importer.ImporterTests.test_conditional_lookup_is_scoped_to_current_config_hash) ... ok
+test_coordinate_fallback_rejects_ambiguous_pair (test_importer.ImporterTests.test_coordinate_fallback_rejects_ambiguous_pair) ... ok
+test_dry_run_stages_database_validation_and_cleans_up (test_importer.ImporterTests.test_dry_run_stages_database_validation_and_cleans_up) ... ok
+test_duplicate_stop_time_key_is_not_silently_replaced (test_importer.ImporterTests.test_duplicate_stop_time_key_is_not_silently_replaced) ... ok
+test_end_to_end_selection_uses_disk_sqlite (test_importer.ImporterTests.test_end_to_end_selection_uses_disk_sqlite) ... ok
+test_exact_id_must_stay_within_configured_radius (test_importer.ImporterTests.test_exact_id_must_stay_within_configured_radius) ... ok
+test_exact_id_reused_far_away_is_rejected (test_importer.ImporterTests.test_exact_id_reused_far_away_is_rejected) ... ok
+test_fallback_name_requires_more_than_one_generic_token (test_importer.ImporterTests.test_fallback_name_requires_more_than_one_generic_token) ... ok
+test_feed_window_must_include_today (test_importer.ImporterTests.test_feed_window_must_include_today) ... ok
+test_finalize_timeout_reconciles_active_version_without_abort (test_importer.ImporterTests.test_finalize_timeout_reconciles_active_version_without_abort) ... ok
+test_future_feed_is_classified_for_defer_not_generic_failure (test_importer.ImporterTests.test_future_feed_is_classified_for_defer_not_generic_failure) ... ok
+test_gtfs_time_over_24h (test_importer.ImporterTests.test_gtfs_time_over_24h) ... ok
+test_import_rpc_calls_edge_gateway_not_public_rest_rpc (test_importer.ImporterTests.test_import_rpc_calls_edge_gateway_not_public_rest_rpc) ... ok
+test_missing_expected_csv_column_is_rejected (test_importer.ImporterTests.test_missing_expected_csv_column_is_rejected) ... ok
+test_missing_required_file_rejected (test_importer.ImporterTests.test_missing_required_file_rejected) ... ok
+test_monitored_stop_requires_real_time_value (test_importer.ImporterTests.test_monitored_stop_requires_real_time_value) ... ok
+test_same_active_current_feed_still_unchanged_after_reading_window (test_importer.ImporterTests.test_same_active_current_feed_still_unchanged_after_reading_window) ... ok
+test_same_active_dry_run_still_validates_unique_inactive_staging (test_importer.ImporterTests.test_same_active_dry_run_still_validates_unique_inactive_staging) ... ok
+test_same_active_future_feed_remains_deferred (test_importer.ImporterTests.test_same_active_future_feed_remains_deferred) ... ok
+test_same_active_http_200_force_cannot_mask_expired_feed (test_importer.ImporterTests.test_same_active_http_200_force_cannot_mask_expired_feed) ... ok
+test_subset_validation_rejects_missing_service_calendar (test_importer.ImporterTests.test_subset_validation_rejects_missing_service_calendar) ... ok
+test_subset_validation_rejects_partial_shape_coverage (test_importer.ImporterTests.test_subset_validation_rejects_partial_shape_coverage) ... ok
+test_subset_validation_rejects_short_trip (test_importer.ImporterTests.test_subset_validation_rejects_short_trip) ... ok
+test_target_collision_is_rejected (test_importer.ImporterTests.test_target_collision_is_rejected) ... ok
+test_target_exact_id_has_coordinate_sanity (test_importer.ImporterTests.test_target_exact_id_has_coordinate_sanity) ... ok
+test_target_requires_service_within_next_7_days (test_importer.ImporterTests.test_target_requires_service_within_next_7_days) ... ok
+test_a11_workflows_trigger_their_offline_routing_contracts (test_offline_ci_triggers.OfflineCiTriggers.test_a11_workflows_trigger_their_offline_routing_contracts) ... ok
+test_archived_sql_release_contract_triggers_importer_checks (test_offline_ci_triggers.OfflineCiTriggers.test_archived_sql_release_contract_triggers_importer_checks) ... ok
+test_gateway_compiler_manifests_trigger_importer_checks (test_offline_ci_triggers.OfflineCiTriggers.test_gateway_compiler_manifests_trigger_importer_checks) ... ok
+test_workflow_contract_inputs_trigger_importer_checks (test_offline_ci_triggers.OfflineCiTriggers.test_workflow_contract_inputs_trigger_importer_checks) ... ok
+test_entities_large_bodies_and_unexpected_schemas_fail_closed (test_open_map_capture.OpenMapCapture.test_entities_large_bodies_and_unexpected_schemas_fail_closed) ... ok
+test_offline_capture_whitelists_geometry_not_editors_or_private_metadata (test_open_map_capture.OpenMapCapture.test_offline_capture_whitelists_geometry_not_editors_or_private_metadata) ... ok
+test_full_runner_cannot_report_success_when_gateway_toolchain_is_missing (test_release_contracts.ReleaseContracts.test_full_runner_cannot_report_success_when_gateway_toolchain_is_missing) ... ok
+test_health_only_workflow_does_not_import (test_release_contracts.ReleaseContracts.test_health_only_workflow_does_not_import) ... ok
+test_history_archived_before_prune (test_release_contracts.ReleaseContracts.test_history_archived_before_prune) ... ok
+test_import_gateway_guards_token_and_postgres_errors (test_release_contracts.ReleaseContracts.test_import_gateway_guards_token_and_postgres_errors) ... ok
+test_no_cron_gtfs_import_enabled (test_release_contracts.ReleaseContracts.test_no_cron_gtfs_import_enabled) ... ok
+test_public_api_whitelists_action_before_limits (test_release_contracts.ReleaseContracts.test_public_api_whitelists_action_before_limits) ... ok
+test_cli_watchdog_kills_worker_without_exposing_partial_output (test_release_observation.ReleaseObservation.test_cli_watchdog_kills_worker_without_exposing_partial_output) ... ok
+test_expired_catalog_is_not_availability_success (test_release_observation.ReleaseObservation.test_expired_catalog_is_not_availability_success) ... ok
+test_faults_are_bounded_three_reads_without_raw_error_text (test_release_observation.ReleaseObservation.test_faults_are_bounded_three_reads_without_raw_error_text) ... ok
+test_freshness_uses_each_response_time_after_slow_reads (test_release_observation.ReleaseObservation.test_freshness_uses_each_response_time_after_slow_reads) ... ok
+test_html_shell_success_does_not_claim_browser_or_pilot (test_release_observation.ReleaseObservation.test_html_shell_success_does_not_claim_browser_or_pilot) ... ok
+test_large_bodies_and_unexpected_schema_are_not_silently_accepted (test_release_observation.ReleaseObservation.test_large_bodies_and_unexpected_schema_are_not_silently_accepted) ... ok
+test_no_arbitrary_url_or_nonfixed_path_can_be_requested (test_release_observation.ReleaseObservation.test_no_arbitrary_url_or_nonfixed_path_can_be_requested) ... ok
+test_partial_source_failure_is_explicit_and_no_rail_gps_is_invented (test_release_observation.ReleaseObservation.test_partial_source_failure_is_explicit_and_no_rail_gps_is_invented) ... ok
+test_reader_rejects_declared_and_streamed_oversized_bodies (test_release_observation.ReleaseObservation.test_reader_rejects_declared_and_streamed_oversized_bodies) ... ok
+test_reader_rejects_late_eof_and_closes_stalled_response (test_release_observation.ReleaseObservation.test_reader_rejects_late_eof_and_closes_stalled_response) ... ok
+test_dry_run_makes_no_network_calls_and_no_readiness_claim (test_release_transition.ReleaseInventory.test_dry_run_makes_no_network_calls_and_no_readiness_claim) ... ok
+test_inventory_child_has_whole_process_watchdog_and_no_provider_or_runtime_credentials (test_release_transition.ReleaseInventory.test_inventory_child_has_whole_process_watchdog_and_no_provider_or_runtime_credentials) ... ok
+test_inventory_worker_cannot_echo_extra_private_fields_or_promote_unverified_gates (test_release_transition.ReleaseInventory.test_inventory_worker_cannot_echo_extra_private_fields_or_promote_unverified_gates) ... ok
+test_management_reader_never_redirects_and_bounds_utf8_body_and_deadline (test_release_transition.ReleaseInventory.test_management_reader_never_redirects_and_bounds_utf8_body_and_deadline) ... ok
+test_valid_inventory_is_only_three_fixed_reads_and_sanitizes_private_metadata (test_release_transition.ReleaseInventory.test_valid_inventory_is_only_three_fixed_reads_and_sanitizes_private_metadata) ... ok
+test_wrong_host_plan_busy_deployment_bad_version_and_source_fault_fail_closed (test_release_transition.ReleaseInventory.test_wrong_host_plan_busy_deployment_bad_version_and_source_fault_fail_closed) ... ok
+test_identical_journeys_do_not_hide_cpu_rss_or_latency_regression (test_schedule_benchmark_gate.BenchmarkGate.test_identical_journeys_do_not_hide_cpu_rss_or_latency_regression) ... ok
+test_main_memory_difference_is_explicit_and_not_an_a12_certification (test_schedule_benchmark_gate.BenchmarkGate.test_main_memory_difference_is_explicit_and_not_an_a12_certification) ... ok
+
+----------------------------------------------------------------------
+Ran 70 tests in 0.648s
+
+OK
+[2/3] TypeScript strict type checks
+[3/3] Simulated transport and importer API request tests
+PASS: healthy two-channel response and sanitized metadata
+PASS: unknown actions rejected before any database writes
+PASS: independently detect failed TripUpdates channel
+PASS: detect HTTP 200 with stale NTA feed timestamp
+PASS: departures still work and Humbert Place is included
+PASS: global rate-limit fail-closed
+✔ historical official 420 timetable retains actual IDs, stops, pickup and 08:00→08:52 (17.556184ms)
+✔ never projects historical calendar onto the next day or manufactures no-service after schema failure (1.033901ms)
+✔ GTFS untimed intermediate stop is preserved without interpolation or disabling timed endpoints (3.539946ms)
+✔ same-stop connection requires 120 seconds and preserves both trip histories; identical coordinates do not prove bay transfer (3.92951ms)
+✔ midnight continuation uses previous GTFS service day without relabelling its date (0.479425ms)
+✔ GTFS services outside declared feed validity never leak through adjacent-day search (0.358101ms)
+✔ rail is included only for official rail route_type; ferry never becomes bus or train (0.47663ms)
+✔ public inputs enforce unique whitelist, dates today through +14 and bounded modes/changes before querying (14.310597ms)
+✔ snapshot loader single-flight, rejects mixed/changed feeds, and uses existing runtime headers only on fixed root (56.596904ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.42017
+✔ destination-directed search preserves a dense direct journey and a two-change feeder without raising caps (44.439594ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122.586679
+✔ Mayo Hospital 15108 and 15109 remain different destinations with operationally distinct transfer stops (14.870457ms)
+✔ completed Pareto selection removes dominated early detours before the six-result cap and retains later direct departures (1.766928ms)
+✔ repeated stop visits preserve separate boarding/alighting sequences and later departures (0.632475ms)
+✔ published itinerary IDs are native SHA256 identities, stable across row order, result insertion and text changes (20.264124ms)
+✔ source operational IDs outside public protocol bounds fail instead of aliasing distinct trips (7.003246ms)
+✔ calendar reuse is query-local and observes mutations under the same feed version (3.922334ms)
+✔ calendar exceptions shared by many trips override the query-local weekday memo (1.456921ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 144.2297
+{"status":"PASS","comparisons":1642,"seededDatasets":120,"explicitDatasets":11,"maxResults":6,"scope":"exhaustive small-dataset DFS, pairwise completed-journey Pareto, operational tuples, permutations, native SHA256 IDs; zero network/provider calls"}
+✔ isolated journey API refuses credentials, browser origins, unknown actions and malformed input before DB or quota (36.87851ms)
+✔ published keys alone, forged or duplicate gateway credentials cannot spend quota (2.373625ms)
+✔ private admission confirms protocol only without quota or snapshot reads and rejects browser or extra input (1.953701ms)
+✔ missing or malformed private configuration never falls back to publishable authorization (8.347757ms)
+✔ quota streamed body limits and abort deadlines fail closed without snapshot reads (3016.23681ms)
+✔ shared quota denial and schema failure stop before snapshot and never return key or raw error (2.606798ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3158.27561
+PASS: body params cannot override verified token
+PASS: rejects unknown actions before database calls
+PASS: missing token rejected before database calls
+PASS: Postgres error body sanitized
+✔ A13: oversized stream is interrupted without EOF and without privileged requests (173.589085ms)
+✔ A13: Content-Length rejects before reading the body (39.165133ms)
+✔ A13: body cap counts UTF-8 bytes, not JS characters (29.418256ms)
+✔ A13: aborted pending read releases the host stream and does no DB work (24.477437ms)
+✔ A13: pending body times out without limiter or RPC (36.714286ms)
+✔ A13: exact-limit valid batch keeps token precedence and normal throughput (73.547932ms)
+✔ A13: malformed UTF-8, absent token and unknown action stay nonprivileged (51.228785ms)
+✔ A13: inherited object keys are not whitelisted import actions (68.543833ms)
+✔ A13: malformed limiter responses fail closed before import RPC (125.766227ms)
+✔ A13: tiny fragments keep heap bounded instead of retaining one promise/object per byte (1672.215606ms)
+✔ A13: EOF arriving after the absolute deadline cannot run the RPC before timer dispatch (19.728939ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2683.843036
+✔ exact trip instance and repeated-stop sequence can supply evidence without changing scheduled times (26.964508ms)
+✔ equivalent timestamps, own-age boundaries and newest identical vehicle are deterministic (2.738706ms)
+✔ prediction evidence requires Dublin schedule alignment, query date and DST fail-closed behavior (1.426254ms)
+✔ source receipt, train code, GPS proximity and incomplete identities cannot renew predictions (0.595509ms)
+✔ fresh whole-trip cancellation expires by its own timestamp and conflicts never silently restore schedule (0.30445ms)
+✔ ambiguous, impossible or far-future predictions fail closed with no private-field exposure (0.744104ms)
+✔ matched fresh vehicle provides a position only, never an ETA or rail-code inference (0.230278ms)
+✔ different Hospital15108/15109 points retain geometry without claiming physical safety or safe ETA (2.367796ms)
+✔ no path or connector never substitutes a geodesic line as walkable geometry (0.51649ms)
+✔ closed gates, conditional access, stairs and unmapped crossings retain explicit uncertainty (2.116226ms)
+✔ source enums and oversized references are rejected before walking the references (1.918708ms)
+✔ malformed topology and private metadata cannot create verified or leaked routes (0.532715ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.272967
+ALL LOCAL TESTS PASSED
