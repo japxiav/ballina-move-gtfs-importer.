@@ -65,11 +65,16 @@ def main():
     functions = request('/functions', key)
     if not isinstance(functions, list) or any(not isinstance(f, dict) or not isinstance(f.get('slug', f.get('name')), str) or not re.fullmatch(r'[a-z0-9_-]{1,100}', f.get('slug', f.get('name'))) for f in functions):
         raise ValueError('Function list did not establish absence safely.')
-    if any(f.get('slug') == 'journey-api' or f.get('name') == 'journey-api' for f in functions):
-        raise ValueError('Isolated function already exists; inspect before modifying it.')
+    existing = [f for f in functions if f.get('slug') == 'journey-api' or f.get('name') == 'journey-api']
+    expected = os.environ.get('BALLINA_SUPABASE_EXPECTED_VERSION')
+    if existing:
+        if not expected or not re.fullmatch(r'[1-9]\d{0,5}', expected) or len(existing) != 1 or existing[0].get('slug', existing[0].get('name')) != 'journey-api' or type(existing[0].get('version')) is not int or existing[0]['version'] != int(expected) or existing[0].get('verify_jwt') is not False or existing[0].get('status') != 'ACTIVE':
+            raise ValueError('Existing function differs from explicitly reviewed version; no update.')
+    elif expected:
+        raise ValueError('Reviewed existing function is missing; no recreation.')
     body, content_type, hashes = package(root)
     response = request('/functions/deploy?slug=journey-api', key, body, content_type)
-    if not isinstance(response, dict) or response.get('slug', response.get('name')) != 'journey-api' or response.get('verify_jwt') is not False:
+    if not isinstance(response, dict) or response.get('slug', response.get('name')) != 'journey-api' or response.get('verify_jwt') is not False or (expected and response.get('version') != int(expected) + 1):
         raise ValueError('Deployment response needs inspection; no automatic retry.')
     print(json.dumps({'function': 'journey-api', 'project': PROJECT, 'version': response.get('version'), 'status': response.get('status'), 'sourceCommit': sha, 'sourceFileHashes': hashes, 'privateCanaryChanged': False}))
 

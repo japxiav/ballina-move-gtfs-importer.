@@ -39,3 +39,13 @@ class IsolatedPublication(unittest.TestCase):
                 with self.assertRaises(ValueError): deploy.request('/functions', key)
                 opener.assert_not_called()
         with self.assertRaises(ValueError): deploy.NoRedirect().redirect_request(None, None, 302, '', {}, 'https://elsewhere.example')
+
+    def test_update_only_accepts_the_inspected_existing_version_and_never_recreates(self):
+        good = {'slug': 'journey-api', 'version': 1, 'status': 'ACTIVE', 'verify_jwt': False}
+        for existing in [[], [{**good, 'version': 2}], [{**good, 'verify_jwt': True}], [{**good, 'status': 'FAILED'}], [{**good, 'slug': 'other', 'name': 'journey-api'}]]:
+            with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', return_value=existing) as api:
+                with self.assertRaises(ValueError): deploy.main()
+                self.assertEqual(api.call_count, 1)
+        with mock.patch.dict(os.environ, {'SUPABASE_ACCESS_TOKEN': 'offline-only', 'BALLINA_SUPABASE_EXPECTED_VERSION': '1'}, clear=True), mock.patch.object(deploy.subprocess, 'check_output', side_effect=['', 'a' * 40]), mock.patch.object(deploy, 'request', side_effect=[[good], {**good, 'version': 2}]) as api:
+            deploy.main(); self.assertEqual(api.call_count, 2)
+            self.assertEqual(api.call_args.args[0], '/functions/deploy?slug=journey-api')
