@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 import deploy_journey_api_supabase as edge
 import publisher_admission_binding as publisher
@@ -60,11 +61,50 @@ def main():
     return result
 
 
+def failure():
+    return {'check': 'internal_rollout_configuration', 'confirmed': False,
+            'error': 'configuration_unconfirmed', 'deploymentAttempted': False,
+            'valueExposed': False, 'runtimeAdmissionVerified': False}
+
+
+def checked_process(runner=subprocess.run):
+    # Socket timeouts do not bound DNS or slow bodies; kill the whole worker.
+    allowed = ('PATH', 'HOME', 'HTTPS_PROXY', 'HTTP_PROXY', 'ALL_PROXY', 'NO_PROXY',
+               'https_proxy', 'http_proxy', 'all_proxy', 'no_proxy',
+               'SSL_CERT_FILE', 'SSL_CERT_DIR', 'REQUESTS_CA_BUNDLE',
+               'RENDER_API_KEY', 'SUPABASE_ACCESS_TOKEN',
+               'BALLINA_EXPECTED_SOURCE_COMMIT', 'BALLINA_SUPABASE_EXPECTED_VERSION')
+    env = {name: os.environ[name] for name in allowed if name in os.environ}
+    try:
+        child = runner([sys.executable, str(Path(__file__).resolve()), '--worker'],
+                       capture_output=True, text=True, timeout=35, env=env)
+        if child.returncode != 0 or len(child.stdout) > 2048:
+            return failure()
+        result = json.loads(child.stdout)
+        expected = {'check': 'internal_rollout_configuration', 'confirmed': True,
+                    'sourceCommit': env.get('BALLINA_EXPECTED_SOURCE_COMMIT', ''),
+                    'journeyConfigurationVersion': int(env.get('BALLINA_SUPABASE_EXPECTED_VERSION', '')),
+                    'serverStoresMatch': True, 'requestsMaximum': 4,
+                    'deploymentAttempted': False, 'valueExposed': False,
+                    'runtimeAdmissionVerified': False, 'hostClientIdentityVerified': False,
+                    'passengerReleaseApproved': False}
+        if not isinstance(result, dict) or set(result) != set(expected) or any(type(result[k]) is not type(v) or result[k] != v for k, v in expected.items()):
+            return failure()
+        return expected
+    except Exception:
+        return failure()
+
+
 if __name__ == '__main__':
     try:
-        main()
+        if sys.argv[1:] == ['--worker']:
+            main()
+        elif not sys.argv[1:]:
+            result = checked_process()
+            print(json.dumps(result))
+            raise SystemExit(0 if result['confirmed'] else 1)
+        else:
+            raise ValueError('Unsupported invocation.')
     except Exception:
-        print(json.dumps({'check': 'internal_rollout_configuration', 'confirmed': False,
-                          'error': 'configuration_unconfirmed', 'deploymentAttempted': False,
-                          'valueExposed': False, 'runtimeAdmissionVerified': False}))
+        print(json.dumps(failure()))
         raise SystemExit(1)

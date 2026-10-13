@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import unittest
 from unittest import mock
 
@@ -37,6 +38,26 @@ class InternalRollout(unittest.TestCase):
                 package.assert_not_called()
                 self.assertTrue(all(len(c.args) == 2 for c in render.call_args_list + supabase.call_args_list))
         return result, render, supabase
+
+    def test_cli_worker_has_dns_inclusive_watchdog_and_allowlisted_environment(self):
+        result, _, _ = self.run_check()
+        runner = mock.Mock(return_value=mock.Mock(returncode=0, stdout=json.dumps(result)))
+        with mock.patch.dict(os.environ, {**ENV, 'HTTPS_PROXY': 'http://offline.invalid', NAME: VALUE, 'GTFS_IMPORT_TOKEN': 'must-not-copy', 'PYTHONPATH': 'must-not-inject'}, clear=True):
+            self.assertEqual(check.checked_process(runner), result)
+        self.assertEqual(runner.call_args.kwargs['timeout'], 35)
+        self.assertEqual(set(runner.call_args.kwargs['env']), set(ENV) | {'HTTPS_PROXY'})
+        self.assertEqual(runner.call_args.args[0][-1], '--worker')
+        runner = mock.Mock(side_effect=subprocess.TimeoutExpired(['offline'], 35))
+        self.assertEqual(check.checked_process(runner), check.failure())
+        runner.assert_called_once()
+
+    def test_worker_failures_and_unknown_fields_never_echo_private_output(self):
+        result, _, _ = self.run_check()
+        for payload, code in [(json.dumps({**result, 'private': VALUE}), 0), (json.dumps({**result, 'confirmed': 1}), 0), (json.dumps({**result, 'deploymentAttempted': True}), 0), (json.dumps({**result, 'sourceCommit': 'b'*40}), 0), (VALUE, 1), ('x'*2049, 0)]:
+            runner = mock.Mock(return_value=mock.Mock(returncode=code, stdout=payload))
+            with mock.patch.dict(os.environ, ENV, clear=True): safe = check.checked_process(runner)
+            self.assertEqual(safe, check.failure())
+            self.assertNotIn(VALUE, json.dumps(safe))
 
     def test_matching_configuration_uses_four_fixed_reads_and_never_publishes(self):
         result, render, supabase = self.run_check()
