@@ -1,0 +1,5 @@
+
+> @ballina-move/routing-engine@0.10.0 verify:artifact
+> node scripts/verify_singlefile_parity_010.cjs
+
+Compiled source vs v0.10.0 single-file candidate: 16/16 module tokens match; mismatches: []

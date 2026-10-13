@@ -1,0 +1,1466 @@
+{
+  "scope": "offline official-capture contract matrix; not field/live completeness",
+  "snapshotSha256": "5681a97d1aca78cc9ab0c93d287ed76344da0be5210161a033de06228e1cf912",
+  "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "cases": 112,
+  "providerCalls": 0,
+  "fieldVerified": 0,
+  "rows": [
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 3,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 3,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B151011",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B151011",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0078",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0078",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 3,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5557201",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 3,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5557201",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0081",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0081",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B141651",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B141651",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0080",
+        "date": "2026-10-13",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0080",
+        "date": "2026-10-18",
+        "time": "07:00",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151081",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-17",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 6,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151081",
+        "to": "8490B5550501",
+        "date": "2026-10-17",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "NO_OPTIONS_LOCAL",
+      "options": 0,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151091",
+        "to": "8490B5550501",
+        "date": "2026-10-13",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-17",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 5,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B151091",
+        "to": "8490B5550501",
+        "date": "2026-10-17",
+        "time": "02:59",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "status": "PASS_LOCAL_CONTRACT",
+      "options": 4,
+      "field": "UNVERIFIED"
+    },
+    {
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490IR0076",
+        "to": "8490IR0081",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490B5557201",
+        "to": "8490B5550501",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490IR0081",
+        "to": "8490IR0076",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490B141651",
+        "to": "8490B5550501",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490IR0080",
+        "to": "8490IR0076",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490B151011",
+        "to": "8490B5550501",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "bus",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    },
+    {
+      "query": {
+        "from": "8490IR0078",
+        "to": "8490IR0076",
+        "date": "2026-10-25",
+        "time": "00:05",
+        "modes": "rail",
+        "changes": "2"
+      },
+      "status": "CLOCK_CHANGE_UNSUPPORTED_EXPECTED",
+      "field": "UNVERIFIED",
+      "options": null
+    }
+  ]
+}

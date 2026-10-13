@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "target": "https://ballina-move-live.onrender.com",
+  "observedAt": "2026-10-13T06:00:29.753205+00:00",
+  "scope": "one_read_only_http_data_sample",
+  "requestsMaximum": 3,
+  "credentialsUsed": false,
+  "browserVerified": false,
+  "coldStartState": "unknown",
+  "recurringMonitoringEnabled": false,
+  "checks": [
+    {
+      "path": "/",
+      "httpStatus": 200,
+      "sampledAt": "2026-10-13T06:00:43.509108+00:00",
+      "available": true,
+      "htmlSha256": "2f9283b1228757862ceb051f6cac2e0d5e2d8559332b1ed92e88bc6d5f11ed97",
+      "browserVerified": false,
+      "elapsedMs": 13755.95
+    },
+    {
+      "path": "/api/stops",
+      "httpStatus": 200,
+      "sampledAt": "2026-10-13T06:00:49.454375+00:00",
+      "available": true,
+      "coveredStops": 227,
+      "feedVersion": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "feedValidToday": true,
+      "elapsedMs": 5945.99
+    },
+    {
+      "path": "/api/live",
+      "httpStatus": 200,
+      "sampledAt": "2026-10-13T06:00:57.111263+00:00",
+      "available": true,
+      "sourceStatus": {
+        "bus": "ready",
+        "rail": "ready",
+        "departures": "ready"
+      },
+      "collectorHealthy": true,
+      "freshBusGpsCount": 5,
+      "railObservationTimeKnown": false,
+      "elapsedMs": 7656.27
+    }
+  ],
+  "allChecksPassed": true
+}

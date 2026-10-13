@@ -1,0 +1,51 @@
+test_atomic_budget_keeps_other_peer_available (test_peer_quota.PeerQuotas.test_atomic_budget_keeps_other_peer_available) ... ok
+test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search (test_peer_quota.PeerQuotas.test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search) ... ok
+test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation (test_peer_quota.PeerQuotas.test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation) ... 
+  test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation (test_peer_quota.PeerQuotas.test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation) (refresh=False) ... FAIL
+  test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation (test_peer_quota.PeerQuotas.test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation) (refresh=True) ... FAIL
+test_expiry_and_memory_cap_do_not_evict_live_limits (test_peer_quota.PeerQuotas.test_expiry_and_memory_cap_do_not_evict_live_limits) ... ok
+test_global_rejection_does_not_spend_or_create_peer_buckets (test_peer_quota.PeerQuotas.test_global_rejection_does_not_spend_or_create_peer_buckets) ... ok
+test_hung_caller_keeps_one_worker_and_cannot_block_a_second_peer (test_peer_quota.PeerQuotas.test_hung_caller_keeps_one_worker_and_cannot_block_a_second_peer) ... ok
+test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist (test_peer_quota.PeerQuotas.test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist) ... ok
+test_missing_private_gate_configuration_makes_no_request (test_peer_quota.PeerQuotas.test_missing_private_gate_configuration_makes_no_request) ... ok
+test_private_credential_is_isolated_to_schedule_destinations (test_peer_quota.PeerQuotas.test_private_credential_is_isolated_to_schedule_destinations) ... ok
+test_real_http_header_rotation_does_not_spend_other_peer_budget (test_peer_quota.PeerQuotas.test_real_http_header_rotation_does_not_spend_other_peer_budget) ... ok
+
+======================================================================
+FAIL: test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation (test_peer_quota.PeerQuotas.test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation) (refresh=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./web/server/tests/test_peer_quota.py", line 133, in test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation
+    self.assertEqual(service.catalog_at, expected_at)
+AssertionError: 20 != 0
+
+======================================================================
+FAIL: test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation (test_peer_quota.PeerQuotas.test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation) (refresh=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./web/server/tests/test_peer_quota.py", line 132, in test_delayed_catalog_waiter_cannot_renew_ttl_or_overwrite_new_generation
+    self.assertEqual(service.catalog_cache, expected_cache)
+AssertionError: {'ver[172 chars]tion-1', 'validFrom': '2026-10-07', 'validUnti[96 chars].1}]} != {'ver[172 chars]tion-2', 'validFrom': '2026-10-07', 'validUnti[96 chars].1}]}
+- {'feedVersion': 'offline-generation-1',
+?                                     ^
+
++ {'feedVersion': 'offline-generation-2',
+?                                     ^
+
+   'loadedAt': '2026-10-13T00:00:00Z',
+   'scope': 'stop_to_stop_same_stop_transfers',
+   'source': 'nta_gtfs',
+   'stops': [{'code': 'A',
+              'id': 'A',
+              'lat': 54.1,
+              'lon': -9.1,
+              'name': 'Offline A'}],
+   'timezone': 'Europe/Dublin',
+   'validFrom': '2026-10-07',
+   'validUntil': '2027-10-07',
+   'version': 1}
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.032s
+
+FAILED (failures=2)

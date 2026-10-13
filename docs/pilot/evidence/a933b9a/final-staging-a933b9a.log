@@ -1,0 +1,19 @@
+✔ sealed staging exposes only a harmless health response (4.610419ms)
+✔ POST /v1/journeys denied without any outbound fetch (0.446947ms)
+✔ GET /v1/nearby-stops denied without any outbound fetch (0.42873ms)
+✔ GET /unrecognized denied without any outbound fetch (0.286317ms)
+✔ OPTIONS /v1/journeys denied without any outbound fetch (0.482831ms)
+✔ staging gate contains no API secret or external client integration (0.233919ms)
+✔ A09.1: active v6 wrapper is snapshotted without credential values (2.652318ms)
+✔ A09.1: private token gate denies unauthorized users on all routes without network (33.278012ms)
+✔ A09.1: authenticated Dashboard health is sealed simulation (5.033881ms)
+✔ A09.1: DB-absent journeys and GTFS summary never fall back to paid walking (2.958294ms)
+✔ A09.1: missing configured token denies access (1.176375ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.086209

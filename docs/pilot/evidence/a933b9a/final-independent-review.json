@@ -1,0 +1,38 @@
+{
+  "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf",
+  "completedAtUtc": "2026-10-13T06:29:27.007025+00:00",
+  "scope": "read-only independent source/evidence review, not pentest/field certification",
+  "reviewers": [
+    "routing_adversarial_review",
+    "security_integration_review",
+    "independent_review",
+    "handoff_independent_review"
+  ],
+  "approvedCorrections": [
+    "query-local service memo and equal operational output",
+    "shared per-trip immutable details",
+    "cold parallel catalog/journey support",
+    "global/peer accounting and mapped IPv6",
+    "catalog generation/TTL first-publisher guard",
+    "strict UTF8/entity rejection and bounded open-map topology",
+    "conditional/directional pedestrian refusal",
+    "exact RT epoch/service-clock/conflict assessment"
+  ],
+  "evidenceVerified": {
+    "manifestFiles": 224,
+    "sourceHashMatches": true,
+    "compiledScheduleMatchesBenchmark": true,
+    "strictPerformanceGatePassed": true,
+    "earlierRssFailureRetained": true,
+    "finalCiExactHeadPassed": true,
+    "publicObservationsSeparated": true
+  },
+  "newScopedCodeBlockerFound": false,
+  "externalP1StillOpen": [
+    "host peer boundary/pilot identity and distributed abuse",
+    "hosted candidate CPU/RSS/availability/restore",
+    "actual provider normalization/connection evidence",
+    "physical hospital/accessibility and seven elapsed pilot days"
+  ],
+  "productionMutationPerformed": false
+}

@@ -1,0 +1,16 @@
+test_entities_large_bodies_and_unexpected_schemas_fail_closed (test_open_map_capture.OpenMapCapture.test_entities_large_bodies_and_unexpected_schemas_fail_closed) ... FAIL
+test_offline_capture_whitelists_geometry_not_editors_or_private_metadata (test_open_map_capture.OpenMapCapture.test_offline_capture_whitelists_geometry_not_editors_or_private_metadata) ... ok
+
+======================================================================
+FAIL: test_entities_large_bodies_and_unexpected_schemas_fail_closed (test_open_map_capture.OpenMapCapture.test_entities_large_bodies_and_unexpected_schemas_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./tests/test_open_map_capture.py", line 25, in test_entities_large_bodies_and_unexpected_schemas_fail_closed
+    with self.assertRaises(ValueError): capture.topology(encoded)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+FAILED (failures=1)

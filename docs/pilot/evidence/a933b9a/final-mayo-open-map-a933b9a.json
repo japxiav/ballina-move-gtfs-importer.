@@ -1,0 +1,33 @@
+{
+  "scope": "offline official-schedule replay and separate unverified last-mile inspection",
+  "officialSnapshotSha256": "5681a97d1aca78cc9ab0c93d287ed76344da0be5210161a033de06228e1cf912",
+  "selectedDestination": "8490B151081",
+  "alternativeDestination": "8490B151091",
+  "sameDestination": false,
+  "historicalServiceDate": "2026-10-13",
+  "selectedScheduledArrival": 33840,
+  "alternativeScheduledArrival": 31920,
+  "scheduledArrivalGapSeconds": 1920,
+  "hospitalStopGeodesicMeters": 28.495493041647652,
+  "tail": {
+    "walkingSafe": false,
+    "publicEligible": false,
+    "physicalCrossingsVerified": false,
+    "physicalEntranceVerified": false,
+    "accessibilityVerified": false,
+    "geodesicMeters": 28.495493041647652,
+    "sourceKind": "osm_open_data",
+    "sourceRetrievedAt": "2026-10-13T05:40:03.892880+00:00",
+    "licence": "ODbL-1.0",
+    "attribution": "OpenStreetMap contributors · ODbL",
+    "warnings": [
+      "Open-data topology is not a physical-access audit.",
+      "Stop-to-path connectors, crossings and hospital entrances are unverified."
+    ],
+    "status": "no_verified_connector"
+  },
+  "wholeTripWalking": "outside_last_mile_scope",
+  "scheduledItinerariesModified": false,
+  "walkingEnabledPublicly": false,
+  "paidProviderCalls": 0
+}

@@ -1,0 +1,180 @@
+{
+  "testedSource": "a933b9a1d4ea61ba547984d95249befcc9d322bf",
+  "files": [
+    {
+      "path": "FINAL_REPORT.md",
+      "bytes": 7602,
+      "sha256": "d21de713239d426212f43473760db191e096bb90cdba5b370d61e70eb44f446e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2964,
+      "sha256": "e12e0f3bc8d33c5e66993c1ba342830561501e0469fba4830347e43600b9c5f3"
+    },
+    {
+      "path": "candidate-itinerary-mobile.png",
+      "bytes": 67655,
+      "sha256": "546050ac5d0465ae6abe943b22a6caa4ce549b3b18620f8cb98e6adc89c19738"
+    },
+    {
+      "path": "candidate-mobile.png",
+      "bytes": 67426,
+      "sha256": "df8524fcacd8385b8af1c2473992d2bae2a9faf9348b8a9e00d7b9e15979e7d2"
+    },
+    {
+      "path": "draft-prs.json",
+      "bytes": 892,
+      "sha256": "b06882a631a6f6734e2920aabab16d97b0212c1e94d174d0c58383d8cfc0bbfd"
+    },
+    {
+      "path": "experimental-review-red.log",
+      "bytes": 5288,
+      "sha256": "5c3ff45059d2855ae689d82e5c2d49b5ef41b46cec482b0b3831684440cb777c"
+    },
+    {
+      "path": "final-benchmark-3852685.json",
+      "bytes": 294638,
+      "sha256": "ae771f240bd1872f93f27955ade127874b68b48bed5941ef68f3d5201458eaa4"
+    },
+    {
+      "path": "final-benchmark-a933b9a.json",
+      "bytes": 294679,
+      "sha256": "e7c554ef95d0c2453c01ef37fbdc74094d49cde704d20fad15aee50f4ca550d1"
+    },
+    {
+      "path": "final-build-3852685.log",
+      "bytes": 1005,
+      "sha256": "188fb5b6f131a66ad73020b365c726408ca5e3a1c862e4ca1cec13cda5edf306"
+    },
+    {
+      "path": "final-candidate-browser.log",
+      "bytes": 152,
+      "sha256": "7764fe990db9277e4acd3737b222c9cc6886eb7aa2c7caae372c772cc1d81de9"
+    },
+    {
+      "path": "final-ci-a933b9a.json",
+      "bytes": 1948,
+      "sha256": "bab504e7bfc30dab64d29f037707cfc866d2ac022307b2805ba11f58f2ca3c5c"
+    },
+    {
+      "path": "final-gateway-a933b9a.log",
+      "bytes": 14020,
+      "sha256": "04f5a3a51d282bfa796ee6f88b56c7cd7a6bb20e238123f8ca19cedd9cea4b7d"
+    },
+    {
+      "path": "final-host-http-a933b9a.json",
+      "bytes": 1355,
+      "sha256": "29276188022eb03bfeff28dc381efc334df04dcf7a582d999f80b4dc7fdde003"
+    },
+    {
+      "path": "final-host-provenance.json",
+      "bytes": 720,
+      "sha256": "8f9c4dcbe5673db7032df35039e003aa8da65825436ed89deea4cb7a421fe610"
+    },
+    {
+      "path": "final-independent-review.json",
+      "bytes": 1440,
+      "sha256": "6cfb58ad0effde03d1d8d3b2e4230cb78af446b908e07fbdad2a2eec72ed1674"
+    },
+    {
+      "path": "final-mayo-open-map-a933b9a.json",
+      "bytes": 1275,
+      "sha256": "df51ea2bcacbd5994b6a3f701b66ad611fb39253a2aa66f1e1bda5d3d9237a75"
+    },
+    {
+      "path": "final-parity-a933b9a.log",
+      "bytes": 196,
+      "sha256": "19ffc12bfca7b9fdf2a3d88104ba2bc862ea1bd5bf6e20861c50919d4a8459ce"
+    },
+    {
+      "path": "final-public-browser.json",
+      "bytes": 974,
+      "sha256": "bf811785fa9e97e014ed14aba71b383d4d23e25decaaa2f67e2a6907aa2704a9"
+    },
+    {
+      "path": "final-regional-matrix-a933b9a.json",
+      "bytes": 32724,
+      "sha256": "7a702f9fe17263571f7cb4e51ca1d1699bee9edb9a09722cd04bb93ff5b2ee27"
+    },
+    {
+      "path": "final-remote-refs.txt",
+      "bytes": 298,
+      "sha256": "3108e668317ed17a66c5e960ca0f7bdf43da41e9f3f454271bd20fca8f69f254"
+    },
+    {
+      "path": "final-root-3852685.log",
+      "bytes": 9323,
+      "sha256": "2e06b62eaa18c87fe0043447968b8e3b0199b3bb0dde42bb60f3e43fbbe99d56"
+    },
+    {
+      "path": "final-root-a933b9a.log",
+      "bytes": 15547,
+      "sha256": "6e90cf9b5bc2ee39471565b413d73f137470e9afb248907dd7e229e21ac86e43"
+    },
+    {
+      "path": "final-routing-3852685.log",
+      "bytes": 37608,
+      "sha256": "78d2978758c0da4f37629e298f32e61f5228d69c984c9092fc6c3ff6df2f6ee5"
+    },
+    {
+      "path": "final-source-manifest.json",
+      "bytes": 37026,
+      "sha256": "1399bede2ce0669c080442fca27480a711905c64a75f3fa9d3bdc224885018a6"
+    },
+    {
+      "path": "final-staging-a933b9a.log",
+      "bytes": 968,
+      "sha256": "c4a9675d86a0d5bb83023b364ca888241d0678626953359fe7d4de78eedf7a73"
+    },
+    {
+      "path": "final-static-a933b9a.log",
+      "bytes": 391,
+      "sha256": "5f06275f7ac5b88e467d1e69107cc79e5b80bc38d18c66d31ea4f6b24d4faaab"
+    },
+    {
+      "path": "final-web-a933b9a.log",
+      "bytes": 15985,
+      "sha256": "4f893b7c9d41507217b670ecd967e70a0325391c2650891133f01ac77987deac"
+    },
+    {
+      "path": "map-parser-review-red.log",
+      "bytes": 1123,
+      "sha256": "a22686bbe306416ca458d8dadd93358f2a048e0984e12ea40ae7866f9eea55f8"
+    },
+    {
+      "path": "official-gtfs-capture.json",
+      "bytes": 7723773,
+      "sha256": "5681a97d1aca78cc9ab0c93d287ed76344da0be5210161a033de06228e1cf912"
+    },
+    {
+      "path": "open-map-public-attempt.json",
+      "bytes": 433027,
+      "sha256": "a7cc51ac648a7eed4a7ee0743f59f98af0c617fbb9a95820f44d0ed2f4e8471c"
+    },
+    {
+      "path": "public-itinerary-mobile.png",
+      "bytes": 69610,
+      "sha256": "f783e383d231a005ff5cee79071e67db85e3abf7e1c16aac1c2d5762e8771bd7"
+    },
+    {
+      "path": "public-map-mobile.png",
+      "bytes": 180834,
+      "sha256": "5cdf66a293a1181d30d66af556b1098be1c394035eaa9dfc62ce5244daa3a323"
+    },
+    {
+      "path": "quota-generation-green.log",
+      "bytes": 14020,
+      "sha256": "62937b58c72df1311ea2ebaa6c617e283cab37bd4877cc389852681dd1cc5209"
+    },
+    {
+      "path": "quota-generation-red.log",
+      "bytes": 4062,
+      "sha256": "0e48f0ca0f487c37ebb3b110ebb6f691b046bbcae7c3ea44f7aa0d6d437e75a5"
+    },
+    {
+      "path": "quota-review-red.log",
+      "bytes": 4613,
+      "sha256": "3d09e6a5892b86dc51d7c91c339f6294cfe69a211d04f86fdc9c09328cf1fc18"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+✔ exact trip instance and repeated-stop sequence can supply evidence without changing scheduled times (2.124778ms)
+✖ equivalent timestamps, own-age boundaries and newest identical vehicle are deterministic (1.156183ms)
+✖ prediction evidence requires Dublin schedule alignment, query date and DST fail-closed behavior (0.465935ms)
+✔ source receipt, train code, GPS proximity and incomplete identities cannot renew predictions (0.282561ms)
+✔ fresh whole-trip cancellation expires by its own timestamp and conflicts never silently restore schedule (0.962646ms)
+✔ ambiguous, impossible or far-future predictions fail closed with no private-field exposure (0.419004ms)
+✔ matched fresh vehicle provides a position only, never an ETA or rail-code inference (0.258816ms)
+✔ different Hospital15108/15109 points retain geometry without claiming physical safety or safe ETA (2.546486ms)
+✔ no path or connector never substitutes a geodesic line as walkable geometry (0.418725ms)
+✖ closed gates, conditional access, stairs and unmapped crossings retain explicit uncertainty (5.336446ms)
+✖ source enums and oversized references are rejected before walking the references (0.437683ms)
+✔ malformed topology and private metadata cannot create verified or leaked routes (0.456361ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 8
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74.680915
+
+✖ failing tests:
+
+test at tests/runtime/test_pilot_realtime.cjs:12:1
+✖ equivalent timestamps, own-age boundaries and newest identical vehicle are deterministic (1.156183ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'uncertain'
+  - 'prediction_evidence'
+  
+      at TestContext.<anonymous> (/workspace/ballina-move-gtfs-importer./tests/runtime/test_pilot_realtime.cjs:13:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'uncertain',
+    expected: 'prediction_evidence',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/runtime/test_pilot_realtime.cjs:20:1
+✖ prediction evidence requires Dublin schedule alignment, query date and DST fail-closed behavior (0.465935ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'prediction_evidence'
+  - 'uncertain'
+  
+      at TestContext.<anonymous> (/workspace/ballina-move-gtfs-importer./tests/runtime/test_pilot_realtime.cjs:21:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'prediction_evidence',
+    expected: 'uncertain',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/runtime/test_pilot_walking.cjs:18:1
+✖ closed gates, conditional access, stairs and unmapped crossings retain explicit uncertainty (5.336446ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'unverified_geometry'
+  - 'no_verified_connector'
+  
+      at TestContext.<anonymous> (/workspace/ballina-move-gtfs-importer./tests/runtime/test_pilot_walking.cjs:23:82)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unverified_geometry',
+    expected: 'no_verified_connector',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/runtime/test_pilot_walking.cjs:26:1
+✖ source enums and oversized references are rejected before walking the references (0.437683ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/workspace/ballina-move-gtfs-importer./tests/runtime/test_pilot_walking.cjs:27:59)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

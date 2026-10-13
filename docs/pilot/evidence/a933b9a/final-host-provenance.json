@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-13T06:03:35.601314+00:00",
+  "scope": "readonly deployed config identity; no hosted candidate performance",
+  "render": {
+    "serviceId": "srv-db6nhvrbc2fs739pb7mg",
+    "autoDeploy": "no",
+    "plan": "free",
+    "deploys": [
+      {
+        "id": "dep-db6osr8m7kps73aothjg",
+        "status": "live",
+        "commit": "643bc525c1ab5f79c694259002258ed3af8468f6"
+      },
+      {
+        "id": "dep-db6ni0jbc2fs739pb9ag",
+        "status": "deactivated",
+        "commit": "18dbcea6092ba975b846a274affc95e5e8566b2f"
+      }
+    ]
+  },
+  "journeyApi": {
+    "name": "journey-api",
+    "version": 2,
+    "status": "ACTIVE",
+    "verify_jwt": false
+  },
+  "productionMutationPerformed": false
+}

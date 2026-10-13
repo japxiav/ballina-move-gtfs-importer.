@@ -1,0 +1,14 @@
+
+> @ballina-move/web@0.1.0 test:preview
+> node --test tests/cloud-preview.test.cjs
+
+✔ host readiness rejects stale GPS, unavailable bus channel and a static capture (192.197271ms)
+✔ cloud preview serves only reviewed static files, including forwarded hosts (102.869296ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 345.386863

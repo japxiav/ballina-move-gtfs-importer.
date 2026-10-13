@@ -1,0 +1,54 @@
+test_atomic_budget_keeps_other_peer_available (test_peer_quota.PeerQuotas.test_atomic_budget_keeps_other_peer_available) ... ok
+test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search (test_peer_quota.PeerQuotas.test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search) ... ERROR
+test_expiry_and_memory_cap_do_not_evict_live_limits (test_peer_quota.PeerQuotas.test_expiry_and_memory_cap_do_not_evict_live_limits) ... ok
+test_global_rejection_does_not_spend_or_create_peer_buckets (test_peer_quota.PeerQuotas.test_global_rejection_does_not_spend_or_create_peer_buckets) ... FAIL
+test_hung_caller_keeps_one_worker_and_cannot_block_a_second_peer (test_peer_quota.PeerQuotas.test_hung_caller_keeps_one_worker_and_cannot_block_a_second_peer) ... ok
+test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist (test_peer_quota.PeerQuotas.test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist) ... FAIL
+test_missing_private_gate_configuration_makes_no_request (test_peer_quota.PeerQuotas.test_missing_private_gate_configuration_makes_no_request) ... ok
+test_private_credential_is_isolated_to_schedule_destinations (test_peer_quota.PeerQuotas.test_private_credential_is_isolated_to_schedule_destinations) ... ok
+test_real_http_header_rotation_does_not_spend_other_peer_budget (test_peer_quota.PeerQuotas.test_real_http_header_rotation_does_not_spend_other_peer_budget) ... ok
+
+======================================================================
+ERROR: test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search (test_peer_quota.PeerQuotas.test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./web/server/tests/test_peer_quota.py", line 77, in test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search
+    self.assertEqual(journey.result(timeout=1)['journeys'], [])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ballina-move-gtfs-importer./web/server/live_gateway.py", line 363, in get
+    raise ValueError("schedule_client_busy")
+ValueError: schedule_client_busy
+
+======================================================================
+FAIL: test_global_rejection_does_not_spend_or_create_peer_buckets (test_peer_quota.PeerQuotas.test_global_rejection_does_not_spend_or_create_peer_buckets)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./web/server/tests/test_peer_quota.py", line 52, in test_global_rejection_does_not_spend_or_create_peer_buckets
+    self.assertEqual(server.client_budget.buckets, {})
+AssertionError: {('08ad203571f20790fd1f705044d692676652379[61 chars]48])} != {}
+- {('08ad203571f20790fd1f705044d692676652379adb18e2945b6ef06a972563f6', '/api/live'): deque([9428.037946748])}
++ {}
+
+======================================================================
+FAIL: test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist (test_peer_quota.PeerQuotas.test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ballina-move-gtfs-importer./web/server/tests/test_peer_quota.py", line 41, in test_ipv6_rotation_and_raw_addresses_do_not_escape_or_persist
+    self.assertEqual(budget.identity('::ffff:192.0.2.1'), budget.identity('192.0.2.1'))
+AssertionError: '118a3fec95d9c61d0dc1f5af8c98abbdb1774af70d57d4e3544c6ef908f64a4d' != '721789cd98d2765d06fc3b4007f4fcc1aa8a4ed97fdd5fc09e12657e49960b43'
+- 118a3fec95d9c61d0dc1f5af8c98abbdb1774af70d57d4e3544c6ef908f64a4d
++ 721789cd98d2765d06fc3b4007f4fcc1aa8a4ed97fdd5fc09e12657e49960b43
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 1.032s
+
+FAILED (failures=2, errors=1)
