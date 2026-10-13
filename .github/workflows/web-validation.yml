@@ -149,6 +149,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Create free target, verify deployed commit and open actual app
         env:
+          PYTHONDONTWRITEBYTECODE: "1"
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
           BALLINA_RENDER_OWNER_ID: ${{ inputs.render_owner_id }}

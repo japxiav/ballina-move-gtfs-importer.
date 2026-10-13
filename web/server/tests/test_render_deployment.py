@@ -119,6 +119,7 @@ class DeploymentSafety(unittest.TestCase):
         self.assertIn("BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}", text)
         self.assertIn("group: ballina-live-gateway-deploy", text)
         self.assertIn("cancel-in-progress: false", text)
+        self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', text)
 
     def test_browser_child_does_not_receive_render_credential(self):
         with mock.patch.dict(deploy.os.environ, {"RENDER_API_KEY": "fixture-secret", "HTTPS_PROXY": "http://proxy.invalid:8080"}, clear=True):
