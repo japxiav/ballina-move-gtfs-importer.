@@ -8,6 +8,7 @@ import unittest
 from unittest import mock
 import urllib.error
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 spec = importlib.util.spec_from_file_location("deploy_render", Path(__file__).resolve().parents[3] / "scripts/deploy_live_gateway_render.py")
 deploy = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(deploy)

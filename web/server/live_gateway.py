@@ -9,6 +9,7 @@ import hashlib
 import hmac
 import ipaddress
 import secrets
+import subprocess
 from collections import deque
 import json
 import math
@@ -180,21 +181,25 @@ class SafeScheduleError(Exception):
 
 
 def fetch_source(name, public_key, params=None):
-    if name not in {"health", "vehicles", "departures", "rail", "stops", "journeys"}:
+    if name not in {"health", "vehicles", "departures", "rail", "stops", "journeys", "admission"}:
         raise ValueError("unknown_source")
+    if name == "admission" and params is not None:
+        raise ValueError("invalid_admission_parameters")
+    schedule = name in {"stops", "journeys", "admission"}
     headers = {"User-Agent": "BallinaMove/0.1 official-source reader"}
-    query = {"action": name, **(params or {})} if name in {"stops", "journeys"} else {"action": name, "max_age": 180, "limit": 60}
-    url = RAIL_URL if name == "rail" else (JOURNEY_URL if name in {"stops", "journeys"} else TRANSPORT_URL) + "?" + urllib.parse.urlencode(query)
+    query = {"action": name, **(params or {})} if schedule else {"action": name, "max_age": 180, "limit": 60}
+    url = RAIL_URL if name == "rail" else (JOURNEY_URL if schedule else TRANSPORT_URL) + "?" + urllib.parse.urlencode(query)
     if name != "rail":
         headers["apikey"] = public_key
-    if name in {"stops", "journeys"}:
+    if schedule:
         credential = os.environ.get("BALLINA_JOURNEY_GATEWAY_SECRET", "")
         if not re.fullmatch(r"[a-f0-9]{64}", credential):
             raise ValueError("journey_gateway_configuration_missing")
         # Dedicated server-only authorization, never transport/rail/browser.
         headers["X-Ballina-Gateway"] = credential
     opener = urllib.request.build_opener(NoRedirect())
-    budget = 20 if name in {"stops", "journeys"} else 8
+    budget = 3 if name == "admission" else 20 if schedule else 8
+    maximum = 1024 if name == "admission" else MAX_BODY
     deadline = time.monotonic() + budget
     failed_status = None
     try:
@@ -211,7 +216,7 @@ def fetch_source(name, public_key, params=None):
             raise ValueError("upstream_unavailable") from None
         response = exc
     with response:
-        if int(response.headers.get("Content-Length", "0")) > MAX_BODY:
+        if int(response.headers.get("Content-Length", "0")) > maximum:
             raise ValueError("upstream_body_too_large")
         body = bytearray()
         while True:
@@ -223,13 +228,13 @@ def fetch_source(name, public_key, params=None):
             socket = getattr(getattr(getattr(response, "fp", None), "raw", None), "_sock", None)
             if socket is not None:
                 socket.settimeout(remaining)
-            chunk = response.read1(min(16384, MAX_BODY + 1 - len(body)))
+            chunk = response.read1(min(16384, maximum + 1 - len(body)))
             if time.monotonic() >= deadline:
                 raise ValueError("upstream_timeout")
             if not chunk:
                 break
             body.extend(chunk)
-            if len(body) > MAX_BODY:
+            if len(body) > maximum:
                 raise ValueError("upstream_body_too_large")
     if failed_status is not None:
         try:
@@ -254,6 +259,50 @@ def public_key():
     if not re.fullmatch(r"sb_publishable_[A-Za-z0-9_-]{12,160}", key):
         raise ValueError("public_transport_key_unavailable")
     return key
+
+
+def admission_check(fetcher=fetch_source):
+    """One private protocol probe; caller supplies process-level DNS watchdog."""
+    if not re.fullmatch(r"[a-f0-9]{64}", os.environ.get("BALLINA_JOURNEY_GATEWAY_SECRET", "")):
+        return {"check": "schedule_admission", "confirmed": False, "error": "configuration_missing", "requestsMaximum": 0}
+    try:
+        value = fetcher("admission", public_key())
+        expected = {"version": 1, "source": "journey-api", "admission": "gateway-secret-v1", "quotaConsumed": False, "snapshotRead": False}
+        if not isinstance(value, dict) or value.keys() != expected.keys() or any(type(value[k]) is not type(v) or value[k] != v for k, v in expected.items()):
+            raise ValueError("unproven_admission")
+        return {"check": "schedule_admission", "confirmed": True, "requestsMaximum": 1,
+                "scope": "private credential agreement only; not GTFS, peer identity or host performance", "quotaConsumed": False, "snapshotRead": False}
+    except Exception:
+        return {"check": "schedule_admission", "confirmed": False, "error": "admission_unavailable", "requestsMaximum": 1}
+
+
+def checked_admission_process(runner=subprocess.run):
+    # Never pass management/import/provider secrets to this one-purpose child.
+    allowed = {"PATH", "HOME", "LANG", "LC_ALL", "TZ", "TMPDIR", "HTTPS_PROXY", "HTTP_PROXY", "NO_PROXY",
+               "https_proxy", "http_proxy", "no_proxy", "SSL_CERT_FILE", "SSL_CERT_DIR",
+               "BALLINA_JOURNEY_GATEWAY_SECRET", "BALLINA_TRANSPORT_API_KEY"}
+    env = {k: v for k, v in os.environ.items() if k in allowed}
+    try:
+        result = runner([sys.executable, str(Path(__file__).resolve()), "--admission-worker"], env=env, capture_output=True, text=True, timeout=5)
+        value = json.loads(result.stdout)
+        # Child output is our diagnostic only, not raw upstream data/errors.
+        if not isinstance(value, dict) or result.returncode not in {0, 1} or type(value.get("confirmed")) is not bool or value.get("check") != "schedule_admission" or result.returncode != (0 if value["confirmed"] else 1):
+            raise ValueError("invalid_probe_output")
+        if value["confirmed"]:
+            expected = {"check": "schedule_admission", "confirmed": True, "requestsMaximum": 1,
+                        "scope": "private credential agreement only; not GTFS, peer identity or host performance", "quotaConsumed": False, "snapshotRead": False}
+            if value.keys() != expected.keys() or any(type(value[k]) is not type(v) or value[k] != v for k, v in expected.items()):
+                raise ValueError("invalid_probe_output")
+            return expected
+        error = value.get("error")
+        if error not in {"configuration_missing", "admission_unavailable"}:
+            raise ValueError("invalid_probe_output")
+        expected = {"check": "schedule_admission", "confirmed": False, "error": error, "requestsMaximum": 0 if error == "configuration_missing" else 1}
+        if value.keys() != expected.keys() or any(type(value[k]) is not type(v) or value[k] != v for k, v in expected.items()):
+            raise ValueError("invalid_probe_output")
+        return expected
+    except Exception:
+        return {"check": "schedule_admission", "confirmed": False, "error": "probe_failed_or_timed_out", "requestsMaximum": 1}
 
 
 def schedule_query(query, now=None):
@@ -621,8 +670,15 @@ class GatewayServer(http.server.ThreadingHTTPServer):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--snapshot", type=Path)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--snapshot", type=Path)
+    mode.add_argument("--check-admission", action="store_true")
+    mode.add_argument("--admission-worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.check_admission or args.admission_worker:
+        value = admission_check() if args.admission_worker else checked_admission_process()
+        print(json.dumps(value))
+        return 0 if value["confirmed"] else 1
     service = LiveService()
     if args.snapshot:
         value = service.get()
@@ -646,4 +702,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

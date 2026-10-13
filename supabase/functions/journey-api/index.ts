@@ -57,8 +57,14 @@ Deno.serve(async (req: Request) => {
   if (different !== 0) return answer({ error: 'unauthorized' }, 401);
   const p = new URL(req.url).searchParams;
   const action = p.get('action');
-  if (p.getAll('action').length !== 1 || !['stops', 'journeys'].includes(action ?? '')) return answer({ error: 'unknown_action' }, 404);
+  if (p.getAll('action').length !== 1 || !['stops', 'journeys', 'admission'].includes(action ?? '')) return answer({ error: 'unknown_action' }, 404);
   p.delete('action');
+  if (action === 'admission') {
+    if ([...p.keys()].length) return answer({ error: 'invalid_search' }, 400);
+    // Server-only protocol agreement, after BOTH credential checks. Does not
+    // consume quota, read GTFS tables or claim database/provider readiness.
+    return answer({ version: 1, source: 'journey-api', admission: 'gateway-secret-v1', quotaConsumed: false, snapshotRead: false });
+  }
   const q = action === 'journeys' ? parseStopQuery(p) : null;
   if ((action === 'stops' && [...p.keys()].length) || (action === 'journeys' && !q)) return answer({ error: 'invalid_search' }, 400);
   try {

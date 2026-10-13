@@ -47,7 +47,10 @@ def live_commit(deploys, expected):
 
 
 def browser_environment(url):
-    return {k: v for k, v in {**os.environ, "BALLINA_LIVE_URL": url}.items() if k != "RENDER_API_KEY"}
+    allowed = {'PATH', 'HOME', 'LANG', 'LC_ALL', 'TZ', 'TMPDIR', 'DISPLAY', 'XDG_RUNTIME_DIR',
+               'HTTPS_PROXY', 'HTTP_PROXY', 'NO_PROXY', 'https_proxy', 'http_proxy', 'no_proxy',
+               'NODE_EXTRA_CA_CERTS', 'PLAYWRIGHT_CHROMIUM_EXECUTABLE'}
+    return {**{k: v for k, v in os.environ.items() if k in allowed}, 'BALLINA_LIVE_URL': url}
 
 
 def main():
