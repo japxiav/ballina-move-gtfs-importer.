@@ -1,0 +1,8 @@
+{
+  "source": "3a96758b87d33908635f03d2e833cd5742609997",
+  "reviewer": "security_integration_review",
+  "outcome": "approved_after_corrections",
+  "readOnly": true,
+  "fixed": "BFF-first/Edge-second compatible rollout; preauthorized inverse recovery; DNS-inclusive watchdog and strict worker output",
+  "publicationAuthorized": false
+}

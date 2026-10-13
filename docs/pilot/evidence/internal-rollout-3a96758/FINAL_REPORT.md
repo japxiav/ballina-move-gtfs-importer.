@@ -1,0 +1,15 @@
+# Internal rollout preparation — ready for specific trial consent
+
+Frozen source3a96758b87d33908635f03d2e833cd5742609997, Draft PR43 dependent on PR42/PR41. No main merge, hosting branch movement, deployment, new key, rotation, paid query, upgrade, new host or monitor was performed. Mainf388266 and actual Render643bc52/dep-db6osr8m7kps73aothjg remain unchanged.
+
+The new checker verified the exact clean source, existing fixed free service and matching authorized named application binding between canonical Render value and Supabase digest. Journey-api configuration version3 was confirmed ACTIVE/JWTfalse. Four fixed read-only management GETs in a35s DNS-inclusive worker deadline. No app value/management credential appears in these records, logs, process environment export or browser. Configuration agreement is not private runtime protocol/host client identity/passenger acceptance.
+
+The Edge publisher can now receive the existing app binding directly in memory through the same prerequisite guard. Exact source/version and multipart file limits remain in place. Default CLI still requires its local binding; the read-only checker never invokes a publisher. The prior GitHub publisher read-only runner proof remains separate, at9f8.
+
+95 local gateway tests passed. Exact final-source offline and web CI passed, including build, browser/mobile/map, static boundary and unprivileged offline container. Independent security review approved after correcting compatibility order and adding a global worker watchdog. Initial93-test checkpoint, then an insertion indentation failure are retained outside checkout; corrected final test file executes95 tests. No assertions disabled, no new routing/A12/solver claim.
+
+Proposal: update reviewed BFF FIRST against legacy Edge; verify normal public browser; THEN update only journey-api using exact reviewed source/fresh inspected version and perform a bounded server-only admission check plus actual browser verification. The old BFF lacks the private header and cannot be left against a new private Edge. Recovery must be explicitly authorized with the trial: retained legacy Edge FIRST, then BFF643bc52, only restoring components that actually changed, keeping the app binding. No main merge/new service/plan change/transport collector or feed change. Stop on drift or failed gates, no blind retry/upgrade.
+
+A controlled technical trial with acknowledged proxy/NAT limitations is not regional launch. Actual hosted admission CLI, trusted host-client boundary/distributed abuse, CPU/RSS/availability/restore, hospital-field/accessibility, provider realtime and seven elapsed pilot days remain pending. The previous public browser observation belongs to unchanged643bc52; current CI validates the candidate locally, not a new published version.
+
+Reusable environment draft saved/read back at final source with new startup/authorization/security checkpoint; existing install/network/management bindings preserved. Draft persistence does not publish an environment snapshot or deploy the app. Approval is still needed for the specific technical trial and conditional recovery; previous consent covered secret setup only.

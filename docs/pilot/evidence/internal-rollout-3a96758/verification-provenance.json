@@ -1,0 +1,12 @@
+{
+  "finalGatewayTests": 95,
+  "passed": true,
+  "initialSource": "ca55c244a5f6f591d0c62e3ebba81f3f26ca2c8b",
+  "initialGatewayTests": 93,
+  "initialPreflightWasReadOnly": true,
+  "watchdogTestInsertionIndentationFailureRetained": true,
+  "correctedWithoutDisablingAssertions": true,
+  "newWebBuildBrowserStaticContainerCI": "passed",
+  "routingSolverA12Changed": false,
+  "realPrivateRuntimeAdmissionVerified": false
+}

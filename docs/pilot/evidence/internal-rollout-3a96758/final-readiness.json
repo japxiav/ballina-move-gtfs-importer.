@@ -1,0 +1,13 @@
+{
+  "check": "internal_rollout_configuration",
+  "confirmed": true,
+  "sourceCommit": "3a96758b87d33908635f03d2e833cd5742609997",
+  "journeyConfigurationVersion": 3,
+  "serverStoresMatch": true,
+  "requestsMaximum": 4,
+  "deploymentAttempted": false,
+  "valueExposed": false,
+  "runtimeAdmissionVerified": false,
+  "hostClientIdentityVerified": false,
+  "passengerReleaseApproved": false
+}
