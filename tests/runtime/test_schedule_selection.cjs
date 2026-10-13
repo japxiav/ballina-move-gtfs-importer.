@@ -52,3 +52,20 @@ test('source operational IDs outside public protocol bounds fail instead of alia
   assert.throws(()=>searchSchedules(bad,q),/unsupported_schedule_identifier/);
  }
 });
+test('calendar reuse is query-local and observes mutations under the same feed version', async () => {
+ const s=snapshot(),original=await searchScheduledJourneys(s,q);
+ assert(original.journeys.length>0);
+ s.tables.calendars[0].tuesday=false;
+ assert.equal((await searchScheduledJourneys(s,q)).journeys.length,0);
+ s.tables.calendars[0].tuesday=true;
+ assert.deepEqual((await searchScheduledJourneys(s,q)).journeys,original.journeys);
+ const other=snapshot();other.tables.calendars[0].tuesday=false;
+ assert.equal((await searchScheduledJourneys(other,q)).journeys.length,0);
+});
+test('calendar exceptions shared by many trips override the query-local weekday memo', () => {
+ const s=snapshot(),cal=s.tables.calendars[0];cal.tuesday=false;
+ s.tables.exceptions=[{version:s.version,service_id:cal.service_id,service_date:q.date,exception_type:1}];
+ assert(searchSchedules(s,q).journeys.length>0);
+ s.tables.exceptions[0].exception_type=2;
+ assert.equal(searchSchedules(s,q).journeys.length,0);
+});
