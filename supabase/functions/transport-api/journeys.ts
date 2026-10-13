@@ -81,17 +81,24 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const times = new Map<unknown, Row[]>();
   for (const row of snapshot.tables.times!) { const group = times.get(row.trip_id) ?? []; group.push(row); times.set(row.trip_id, group); }
   const depart = Number(q.time.slice(0, 2)) * 3600 + Number(q.time.slice(3)) * 60, horizon = depart + 36 * 3600;
-  type Event = { key: string; trip: Row; route: Row; rows: Row[]; index: number; at: number; offset: number; date: string };
+  type Event = { key: string; trip: Row; route: Row; rows: Row[]; index: number; at: number; offset: number; date: string; tripId: string; routeId: string; routeLabel: string; destination: string };
   type State = { stop: string; at: number; rides: Ride[]; used: string[] };
   const departures = new Map<string, Event[]>(), terminalDepartures = new Map<string, Event[]>(), tripIds = new Set<unknown>();
   const eligibleTrips: Row[][] = [];
   const destinationRows = new Map<unknown, number[]>();
+  // Query-local reuse only: a version string does not guarantee that two
+  // snapshots (or a mutable offline fixture) contain identical rows.
+  const days = [-2, -1, 0, 1, 2].map(offset => ({ offset, date: dayAt(q.date, offset) }));
+  const modes = new Set(q.modes.split(','));
+  const activeServices = new Map<unknown, boolean[]>();
   for (const trip of snapshot.tables.trips!) {
     if (!publicIdentifier(trip.trip_id)) throw Error('unsupported_schedule_identifier');
     if (tripIds.has(trip.trip_id)) throw Error('duplicate_trip');
     tripIds.add(trip.trip_id);
     const route = routes.get(trip.route_id), mode = route?.route_type === 2 ? 'rail' : route?.route_type === 3 ? 'bus' : null;
-    if (!route || !mode || !q.modes.split(',').includes(mode)) continue;
+    if (!route || !mode || !modes.has(mode)) continue;
+    const tripId = trip.trip_id, routeId = clean(route.route_id, 120);
+    const routeLabel = clean(route.route_short_name) || clean(route.route_long_name), destination = clean(trip.trip_headsign);
     const rows = [...(times.get(trip.trip_id) ?? [])].sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence));
     let previous = -1, sequence = -1;
     for (const r of rows) {
@@ -104,14 +111,19 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     const ends = rows.map((r, i) => r.stop_id === q.to && regular(r.drop_off_type) && seconds(r.arrival_seconds) ? i : -1).filter(i => i >= 0);
     destinationRows.set(trip.trip_id, ends);
     let eligible = false;
-    for (let offset = -2; offset <= 2; offset++) {
-      const date = dayAt(q.date, offset);
-      if (date < snapshot.start || date > snapshot.end || !operates(calendars, exceptions, trip.service_id, date)) continue;
+    let serviceDays = activeServices.get(trip.service_id);
+    if (!serviceDays) {
+      serviceDays = days.map(({ date }) => date >= snapshot.start && date <= snapshot.end && operates(calendars, exceptions, trip.service_id, date));
+      activeServices.set(trip.service_id, serviceDays);
+    }
+    for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+      const { offset, date } = days[dayIndex]!;
+      if (!serviceDays[dayIndex]) continue;
       for (let index = 0; index < rows.length - 1; index++) {
         const row = rows[index]!, at = Number(row.departure_seconds) + offset * 86400;
         if (!seconds(row.departure_seconds) || !regular(row.pickup_type) || at < depart + 60 || at > horizon) continue;
         const id = String(row.stop_id), group = departures.get(id) ?? [];
-        const event = { key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date };
+        const event = { key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date, tripId, routeId, routeLabel, destination };
         group.push(event); departures.set(id, group); eligible = true;
         if (ends.some(end => end > index)) { const final = terminalDepartures.get(id) ?? []; final.push(event); terminalDepartures.set(id, final); }
       }
@@ -135,7 +147,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     reachable.push(current);
   }
   let frontier: State[] = [{ stop: q.from, at: depart, rides: [], used: [] }], work = 0, labels = 1;
-  const found: Ride[][] = [], seen = new Set<string>();
+  const found: { rides: Ride[]; key: string }[] = [], seen = new Set<string>();
   for (let round = 0; round <= Number(q.changes); round++) {
     const next: State[] = [];
     for (const state of frontier) {
@@ -147,19 +159,22 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
         const event = events[i]!;
         if (++work > 150000) throw Error('search_capacity_reached');
         if (state.used.includes(event.key)) continue;
-        const alights = finalRound ? destinationRows.get(event.trip.trip_id)! : event.rows.map((_, k) => k).slice(event.index + 1);
-        for (const k of alights) {
+        const alights = finalRound ? destinationRows.get(event.trip.trip_id)! : null;
+        // Visit exactly the same indices in the same order, with the same work
+        // accounting, without allocating a whole index array per event/state.
+        for (let cursor = alights ? 0 : event.index + 1; cursor < (alights ? alights.length : event.rows.length); cursor++) {
+          const k = alights ? alights[cursor]! : cursor;
           if (k <= event.index) continue;
           if (++work > 150000) throw Error('search_capacity_reached');
           const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset * 86400;
           if (!seconds(row.arrival_seconds) || at > horizon || !regular(row.drop_off_type)) continue;
           if (!reachable[Number(q.changes) - round]!.has(String(row.stop_id))) continue;
-          const ride: Ride = { tripId: clean(event.trip.trip_id, 120), routeId: clean(event.route.route_id, 120), route: clean(event.route.route_short_name) || clean(event.route.route_long_name), mode: event.route.route_type === 2 ? 'rail' : 'bus', destination: clean(event.trip.trip_headsign), from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
+          const ride: Ride = { tripId: event.tripId, routeId: event.routeId, route: event.routeLabel, mode: event.route.route_type === 2 ? 'rail' : 'bus', destination: event.destination, from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
           const rides = [...state.rides, ride], identity = operationalKey(rides);
           if (seen.has(identity)) continue;
           seen.add(identity);
           if (++labels > 25000) throw Error('search_capacity_reached');
-          if (String(row.stop_id) === q.to) { found.push(rides); continue; }
+          if (String(row.stop_id) === q.to) { found.push({ rides, key: identity }); continue; }
           if (round < Number(q.changes) && String(row.stop_id) !== q.from) next.push({ stop: String(row.stop_id), at, rides, used: [...state.used, event.key] });
         }
       }
@@ -169,7 +184,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   // Completed journeys only. Never prune intermediate histories or pretend
   // unknown walking/platform risk is zero. Equal metrics with different stop
   // sequences remain distinct. Sort plus three skyline slots avoids O(N²).
-  const candidates = found.map(rides => ({ rides, key: operationalKey(rides) }));
+  const candidates = found;
   candidates.sort((a, b) => a.rides.at(-1)!.alightAt - b.rides.at(-1)!.alightAt || a.rides.length - b.rides.length || b.rides[0]!.boardAt - a.rides[0]!.boardAt || lexical(a.key, b.key));
   const best: ({ departure: number; arrival: number } | undefined)[] = [];
   const selected: Ride[][] = [];
