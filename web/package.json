@@ -10,17 +10,22 @@
     "test": "playwright test",
     "preview:cloud": "node scripts/serve-cloud-preview.cjs",
     "build:standalone": "npm run build && node scripts/build-standalone.cjs",
-    "test:preview": "node --test tests/cloud-preview.test.cjs"
+    "test:preview": "node --test tests/cloud-preview.test.cjs",
+    "preview:live": "python server/live_gateway.py",
+    "snapshot:real": "python server/live_gateway.py --snapshot dist/live-data.json",
+    "test:gateway": "python -m unittest discover -s server/tests -v"
   },
   "engines": {
     "node": ">=20.19.0"
   },
   "dependencies": {
+    "leaflet": "1.9.4",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",
+    "@types/leaflet": "1.9.21",
     "@types/react": "19.1.16",
     "@types/react-dom": "19.1.9",
     "typescript": "5.9.3",

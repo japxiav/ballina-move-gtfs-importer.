@@ -24,9 +24,9 @@ html = html
   .replace(/<link[^>]+rel="icon"[^>]*>/, "")
   .replace(
     "<head>",
-    `<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-${hash(js)}'; style-src 'sha256-${hash(css)}'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">`,
+    `<head><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-${hash(js)}'; style-src 'sha256-${hash(css)}'; style-src-attr 'unsafe-inline'; img-src data: https://tile.openstreetmap.org; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">`,
   );
 fs.writeFileSync(path.join(root, "ballina-move.html"), html);
 console.log(
-  "Standalone fixture app generated; no external assets or services.",
+  "Standalone app generated; same-origin data and attributed OSM map tiles only.",
 );

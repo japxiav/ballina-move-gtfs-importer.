@@ -7,7 +7,7 @@ const { once } = require("node:events");
 const path = require("node:path");
 const fs = require("node:fs");
 
-test("cloud preview serves only fixture build, including forwarded hosts", async () => {
+test("cloud preview serves only reviewed static files, including forwarded hosts", async () => {
   const reservation = net.createServer();
   reservation.listen(0, "127.0.0.1");
   await once(reservation, "listening");
@@ -44,7 +44,7 @@ test("cloud preview serves only fixture build, including forwarded hosts", async
     assert.equal(response.headers.get("x-content-type-options"), "nosniff");
     assert.match(
       response.headers.get("content-security-policy"),
-      /connect-src 'none'/,
+      /connect-src 'self'/,
     );
     const asset = html.match(/src="([^"]+\.js)"/)[1];
     assert.equal((await fetch(base + asset)).status, 200);
@@ -53,6 +53,8 @@ test("cloud preview serves only fixture build, including forwarded hosts", async
       "/.env",
       "/src/main.tsx",
       "/scripts/serve-cloud-preview.cjs",
+      "/server/live_gateway.py",
+      "/api/live",
       "/assets/",
       "/assets/%2e%2e%2f%2e%2e%2fpackage.json",
     ])
@@ -64,7 +66,8 @@ test("cloud preview serves only fixture build, including forwarded hosts", async
     const standalone = await fetch(base + "/ballina-move.html");
     assert.equal(standalone.status, 200);
     const portable = await standalone.text();
-    assert.match(portable, /connect-src 'none'/);
+    assert.match(portable, /connect-src 'self'/);
+    assert.match(portable, /img-src data: https:\/\/tile\.openstreetmap\.org/);
     assert.doesNotMatch(portable, /<script[^>]+src=/);
     assert.doesNotMatch(portable, /<link[^>]+href=/);
     // A symlink inside build assets must not bypass the served-root boundary.
