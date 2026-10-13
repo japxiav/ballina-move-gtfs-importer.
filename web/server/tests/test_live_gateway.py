@@ -106,6 +106,14 @@ class LiveContract(unittest.TestCase):
         self.assertIsNone(result["expectedAt"])
         self.assertIsNone(result["predictionObservedAt"])
 
+    def test_cancelled_source_observation_is_preserved_separately_from_prediction_and_retrieval(self):
+        for own_stamp in ["2026-10-12T19:59:00Z", "2026-10-12T19:00:00Z", "2026-10-12T21:00:00Z", None]:
+            row = {"scheduled_at": "2026-10-12T20:10:00Z", "service_status": "cancelled", "realtime_source_timestamp": own_stamp}
+            result = gateway.parse_departures({"departures": [row]}, NOW)[0]
+            self.assertEqual(result.get("cancellationObservedAt"), own_stamp)
+            self.assertIsNone(result["expectedAt"])
+            self.assertIsNone(result["predictionObservedAt"])
+
     def test_delayed_future_prediction_survives_old_schedule_only_while_fresh(self):
         row = {"scheduled_at": "2026-10-12T19:50:00Z", "expected_at": "2026-10-12T20:05:00Z", "realtime_source_timestamp": "2026-10-12T19:59:40Z"}
         self.assertEqual(gateway.parse_departures({"departures": [row]}, NOW)[0]["status"], "predicted")

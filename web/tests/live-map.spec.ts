@@ -119,3 +119,33 @@ test("leaving the map aborts a pending response and preserves journey navigation
   await expect(page.locator(".journey-card")).toHaveCount(3);
   await expect(page.locator(".live-map")).toHaveCount(0);
 });
+
+test('cancellation confirmation uses its own timestamp and expires despite fresh DTO retrieval',()=>{
+ const now=Date.parse(at),value=fixture();
+ value.departures=[{...value.departures[0],status:'cancelled',expectedAt:null,predictionObservedAt:null,cancellationObservedAt:at}];
+ const data=decodeLiveData(value);
+ expect(visibleDepartures(data,now)[0].status).toBe('cancelled');
+ data.generatedAt=new Date(now+181000).toISOString();data.sources.departures.retrievedAt=data.generatedAt;
+ expect(visibleDepartures(data,now+181000)[0].status).toBe('cancellation_unconfirmed');
+ expect(visibleDepartures(data,now+181000)[0].status).not.toBe('scheduled');
+});
+test('missing old or future cancellation stamps are not current cancellation confirmation',()=>{
+ const now=Date.parse(at);
+ for(const stamp of [undefined,null,'2026-10-12T19:00:00Z','2026-10-12T21:00:00Z']) {
+  const value=fixture();value.departures=[{...value.departures[0],status:'cancelled',expectedAt:null,predictionObservedAt:null,cancellationObservedAt:stamp}];
+  expect(visibleDepartures(decodeLiveData(value),now)[0].status).toBe('cancellation_unconfirmed');
+ }
+ const value=fixture();value.departures[0].status='cancelled';
+ expect(()=>decodeLiveData(value)).toThrow('Invalid departure');
+});
+
+test('a fresh cancellation becomes unconfirmed in the map instead of silently becoming scheduled',async({page})=>{
+ const value=fixture();value.departures=[{...value.departures[0],status:'cancelled',expectedAt:null,predictionObservedAt:null,cancellationObservedAt:at}];
+ await page.route('**/api/live',route=>route.fulfill({json:value}));
+ await page.goto('/#/live');await page.getByText('Next departures · Ballina',{exact:true}).click();
+ await expect(page.locator('.departure-row')).toContainText('Cancelled');
+ await page.clock.fastForward(185000);
+ await expect(page.locator('.departure-row')).toContainText('Cancellation unconfirmed · check operator');
+ await expect(page.locator('.departure-row')).not.toContainText('Scheduled');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});

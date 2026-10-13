@@ -50,7 +50,25 @@ export const encodeStopSearch = (q: StopSearch) => new URLSearchParams({ ...q })
 async function request(path: string, signal: AbortSignal): Promise<unknown> {
   // Only same-origin, credentials omitted. No fallback to illustrative data.
   const response = await fetch(new URL(path, window.location.href), { signal, credentials: 'omit', cache: 'no-store', redirect: 'error' });
-  if (!response.ok) throw Error(response.status === 429 ? 'Too many searches. Wait a minute and try again.' : 'Official schedules are unavailable. Try again later.');
+  if (!response.ok) {
+    if (response.status === 429) throw Error('Too many searches. Wait a minute and try again.');
+    let code: unknown;
+    try {
+      // Bounded parsing of an HTTP error body; this is never decoded as a
+      // successful schedule. Only fixed public error messages reach the UI.
+      const error = await boundedJson(new Response(response.body));
+      if (object(error)) code = error.error;
+    } catch { /* unexpected or oversized errors use the generic message */ }
+    const known: Record<string, string> = response.status === 400 ? {
+      unknown_stop: 'This stop is no longer covered. Choose another stop.',
+      date_outside_feed: 'Choose a date covered by the current timetable.',
+      invalid_search: 'Choose different stops and a valid date and time.',
+    } : response.status === 503 ? {
+      clock_change_unsupported: 'Searches around the Ireland clock change are not supported yet. Choose another date.',
+      search_capacity_reached: 'This search could not finish. Try Direct only or a later departure time.',
+    } : {};
+    throw Error(typeof code === 'string' && Object.hasOwn(known, code) ? known[code] : 'Official schedules are unavailable. Try again later.');
+  }
   return boundedJson(response);
 }
 export const fetchCatalog = async (signal: AbortSignal) => decodeCatalog(await request('api/stops', signal));
