@@ -25,9 +25,50 @@ const TABLES = {
 
 type Group = keyof typeof TABLES;
 
+/** Shared bounded server transport primitive; no request, key or coordinates
+ * are retained here. Kept in an existing module to preserve bundle topology.
+ */
+export async function readBoundedServerJson(response:Response,signal:AbortSignal,deadline:number):Promise<unknown> {
+  const maximum=1048576;
+  let interrupted=false;
+  const cancelled=()=>interrupted||signal.aborted||Date.now()>=deadline;
+  if(cancelled()){void response.body?.cancel().catch(()=>{});throw new Error('server_response_aborted');}
+  const declared=response.headers.get('content-length');
+  if(declared!==null&&(!/^\d+$/.test(declared)||Number(declared)>maximum)){
+    void response.body?.cancel().catch(()=>{});throw new Error('server_response_too_large');
+  }
+  const reader=response.body?.getReader();
+  if(!reader)throw new Error('invalid_server_json');
+  // Cancelling a standard ReadableStream settles its pending read even if the
+  // underlying cancellation hook never resolves. Avoid Promise.race per chunk:
+  // a shared pending abort promise would retain one reaction per tiny fragment.
+  const interrupt=()=>{interrupted=true;void reader.cancel().catch(()=>{});};
+  signal.addEventListener('abort',interrupt,{once:true});
+  const timer=setTimeout(interrupt,Math.max(0,deadline-Date.now()));
+  const buffer=new Uint8Array(maximum);let size=0;
+  try{
+    while(true){
+      if(cancelled())throw new Error('server_response_aborted');
+      const chunk=await reader.read();
+      if(cancelled())throw new Error('server_response_aborted');
+      if(chunk.done)break;
+      if(size+chunk.value.byteLength>maximum)throw new Error('server_response_too_large');
+      buffer.set(chunk.value,size);size+=chunk.value.byteLength;
+    }
+  }catch(error){
+    void reader.cancel().catch(()=>{});
+    if(error instanceof Error&&['server_response_aborted','server_response_too_large'].includes(error.message))throw error;
+    throw new Error('invalid_server_json');
+  }finally{
+    clearTimeout(timer);signal.removeEventListener('abort',interrupt);reader.releaseLock();
+  }
+  try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,size)));}
+  catch{throw new Error('invalid_server_json');}
+}
+
 export async function loadActiveGtfsSnapshot(options:SnapshotOptions):Promise<Timetable> {
   const {supabaseUrl,privateKey}=options;
-  if(!/^https:\/\//.test(supabaseUrl)||!privateKey || /\s/.test(privateKey))throw new Error('invalid_server_configuration');
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(supabaseUrl)||!privateKey || /\s/.test(privateKey))throw new Error('invalid_server_configuration');
   const pageSize=options.pageSize??1000;
   const maxRows=options.maxRowsPerTable??100_000;
   const timeoutMs=options.timeoutMs??20_000;
@@ -42,9 +83,10 @@ export async function loadActiveGtfsSnapshot(options:SnapshotOptions):Promise<Ti
     // Count only first page; if no reliable count header, fall back to serial pagination.
     const url=root+path;
     const pageHeaders=withCount?{...headers,Prefer:'count=exact'}:headers;
-    const response=await fetcher(url,{method:'GET',headers:pageHeaders,signal:AbortSignal.timeout(timeoutMs)});
-    if(!response.ok)throw new Error(`snapshot_http_${response.status}`);
-    const rows:unknown=await response.json();
+    const deadline=Date.now()+timeoutMs,signal=AbortSignal.timeout(timeoutMs);
+    const response=await fetcher(url,{method:'GET',headers:pageHeaders,signal,redirect:'error'});
+    if(!response.ok){void response.body?.cancel().catch(()=>{});throw new Error(`snapshot_http_${response.status}`);}
+    const rows:unknown=await readBoundedServerJson(response,signal,deadline);
     if(!Array.isArray(rows)||!rows.every(x=>x!==null&&typeof x==='object'&&!Array.isArray(x)))throw new Error('invalid_snapshot_response');
     const header=withCount?response.headers.get('content-range'):null;
     const match=header?.match(/^(?:\d+-\d+|\*)\/(\d+)$/);

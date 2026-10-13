@@ -64,7 +64,7 @@ test('A06: complete snapshot loader excludes declared unsupported routes without
     const start=Number(url.searchParams.get('offset')||0),limit=Number(url.searchParams.get('limit')||100);
     return Response.json((rows[name]||[]).slice(start,start+limit));
   };
-  const run=()=>loadActiveGtfsSnapshot({supabaseUrl:'https://local.invalid',privateKey:'test-key',pageSize:100,fetcher});
+  const run=()=>loadActiveGtfsSnapshot({supabaseUrl:'https://local.supabase.co',privateKey:'test-key',pageSize:100,fetcher});
   const t=await run();
   assert.deepEqual(t.routes.map(x=>x.mode),['bus','rail']);
   assert.equal(t.trips.length,2);

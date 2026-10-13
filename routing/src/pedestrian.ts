@@ -1,4 +1,5 @@
 import type {LatLon,PedestrianPaths,Stop,WalkPath,AccessWalk,TransferWalk} from './types';
+import {readBoundedServerJson} from './gtfsSnapshot';
 import {proximityMeters,routableStopCoordinate,MAX_WALK_ENDPOINT_DRIFT_METERS,MAX_USER_ENDPOINT_DRIFT_METERS,USER_SNAP_CONFIRMATION_METERS} from './boarding';
 
 export type EndpointRole='stop'|'user';
@@ -45,14 +46,17 @@ export class StadiaWalkingRouter implements WalkingRouter {
   async walk(from:LatLon,to:LatLon,roles:WalkingEndpointRoles={fromRole:'stop',toRole:'stop'},signal?:AbortSignal):Promise<WalkPath|null> {
     if(!validCoordinate(from)||!validCoordinate(to))throw new Error('invalid_coordinates');
     const url=`${this.baseUrl}/route/v1`;
+    const deadline=Date.now()+12000;
+    const operationSignal=signal?AbortSignal.any([signal,AbortSignal.timeout(12000)]):AbortSignal.timeout(12000);
+    if(operationSignal.aborted)throw new Error('server_response_aborted');
     const response=await this.http(url,{
       method:'POST',headers:{'Content-Type':'application/json','Authorization':`Stadia-Auth ${this.apiKey}`},
       body:JSON.stringify({locations:[from,to],costing:'pedestrian',units:'kilometers',shape_format:'polyline6'}),
-      signal:signal?AbortSignal.any([signal,AbortSignal.timeout(12000)]):AbortSignal.timeout(12000),
+      signal:operationSignal,redirect:'error',
     });
-    if(response.status===400||response.status===404)return null; // no routable path or invalid request, reject.
-    if(!response.ok)throw new Error(`walking_api_failed_${response.status}`);
-    const result=await response.json() as ValhallaResponse;
+    if(response.status===400||response.status===404){void response.body?.cancel().catch(()=>{});return null;} // no routable path or invalid request, reject.
+    if(!response.ok){void response.body?.cancel().catch(()=>{});throw new Error(`walking_api_failed_${response.status}`);}
+    const result=await readBoundedServerJson(response,operationSignal,deadline) as ValhallaResponse;
     const time=result.trip?.summary?.time;
     const distanceKm=result.trip?.summary?.length;
     const shape=result.trip?.legs?.[0]?.shape;
