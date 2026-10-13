@@ -1,7 +1,6 @@
 "use strict";
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
-const { chromium } = require("playwright");
 function verifyLiveData(data, now = Date.now()) {
   assert.equal(data.mode, "live"); assert.equal(data.version, 1); assert.equal(data.collectorHealthy, true);
   for (const channel of ["bus", "rail"]) assert(["ready", "empty"].includes(data.sources[channel].status));
@@ -18,6 +17,7 @@ function verifyLiveData(data, now = Date.now()) {
 }
 module.exports = { verifyLiveData };
 async function run() {
+  const { chromium } = require("playwright");
   const url = new URL(process.env.BALLINA_LIVE_URL);
   assert(url.protocol === "https:" && url.hostname.endsWith(".onrender.com") && !url.username && !url.password && !url.port && !url.search && !url.hash);
   const launch = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : {};
