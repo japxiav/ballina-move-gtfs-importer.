@@ -1,3 +1,5 @@
+> Authoritative13October2026 product-mission checkpoint: unpublished code `06b72b428fa623e7daf4d244b4851683506b78d0`; published preview `3a96758b87d33908635f03d2e833cd5742609997`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. See [PROGRESS](PROGRESS.md) and [current evidence](evidence/product-mission-20261013/validation.json). Existing sections below are historical phase evidence, not current production/source pointers. Regional NO-GO remains. Do not execute historical publication/rollback instructions without checking current source, available provider rollback and specific authorization.
+
 # Hosting and costs
 
 Read-only Render config verified: existing service srv-db6nhvrbc2fs739pb7mg, free Docker plan, one Frankfurt instance, port10000, auto-deploy disabled. No new service or upgrade purchased. Free host can suspend; observed latency does not establish warm/cold state or a production SLO.

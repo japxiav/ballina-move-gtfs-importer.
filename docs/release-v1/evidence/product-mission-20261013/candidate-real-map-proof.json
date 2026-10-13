@@ -1,0 +1,44 @@
+{
+  "scope": "Local unpublished candidate using one actual official source capture frozen at13Oct20:11UTC(21:11London). Historical replay, not continuing live updates. Actual OSM tile PNGs downloaded through native TLS and replayed into the local browser; direct proxy-browser localhost access returned403. Bounded32 unique tiles/two requests at once.",
+  "historicalReplay": true,
+  "publishedCandidate": false,
+  "nativeTileTlsVerification": true,
+  "pageErrors": [],
+  "realTilesLoaded": 5,
+  "tileStatuses": [
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "tileFailures": [
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED",
+    "net::ERR_ABORTED"
+  ],
+  "nativeTileDownloads": 16,
+  "stage": "tiles",
+  "localNavigationStatus": 200,
+  "localDom": {
+    "ballinaTitle": true,
+    "root": true,
+    "scripts": 1,
+    "headings": 1,
+    "buttons": 6
+  },
+  "overviewScreenshot": "candidate-real-map-mobile.png",
+  "mapCount": "43 locations in this view \u00b7 43 available with this filter",
+  "sourcePositions": 43,
+  "vehicleScreenshot": "candidate-real-vehicle-mobile.png",
+  "browserVerified": true,
+  "sourceCommitAtCapture": "06b72b428fa623e7daf4d244b4851683506b78d0"
+}

@@ -1,3 +1,5 @@
+> Authoritative13October2026 product-mission checkpoint: unpublished code `06b72b428fa623e7daf4d244b4851683506b78d0`; published preview `3a96758b87d33908635f03d2e833cd5742609997`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. See [PROGRESS](PROGRESS.md) and [current evidence](evidence/product-mission-20261013/validation.json). Existing sections below are historical phase evidence, not current production/source pointers. Regional NO-GO remains. Do not execute historical publication/rollback instructions without checking current source, available provider rollback and specific authorization.
+
 # Evidence index and reproducibility
 
 Evidence root: /workspace/.ballina-execution/release-v1 (preserved cloud workspace). SHA256 hashes of retained files and source/run provenance are recorded in evidence-manifest.json there. Logs remain separate from source; earlier RED/error/exploratory logs are retained and are not described as passing.

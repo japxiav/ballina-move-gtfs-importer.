@@ -1,3 +1,5 @@
+> Authoritative13October2026 product-mission checkpoint: unpublished code `06b72b428fa623e7daf4d244b4851683506b78d0`; published preview `3a96758b87d33908635f03d2e833cd5742609997`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. See [PROGRESS](PROGRESS.md) and [current evidence](evidence/product-mission-20261013/validation.json). Existing sections below are historical phase evidence, not current production/source pointers. Regional NO-GO remains. Do not execute historical publication/rollback instructions without checking current source, available provider rollback and specific authorization.
+
 # Security review — bounded scope
 
 Independent read-only reviews approved S1 operational identities, S2 response hardening and S4/S6 sanitized DTO/error paths, with no demonstrated new P0/P1 blocker. This is source/contract review, not a penetration-test certification.

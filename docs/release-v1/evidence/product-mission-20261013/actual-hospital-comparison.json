@@ -1,0 +1,130 @@
+{
+  "observedAtUtc": "2026-10-13T19:11:07.466026+00:00",
+  "date": "2026-10-14",
+  "results": [
+    {
+      "stop": {
+        "id": "8490B151081",
+        "name": "Mayo Hospital",
+        "code": "15108",
+        "lat": 53.85194,
+        "lon": -9.30559
+      },
+      "options": [
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        },
+        {
+          "departure": 28800,
+          "arrival": 33840,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        },
+        {
+          "departure": 38700,
+          "arrival": 44100,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        },
+        {
+          "departure": 60300,
+          "arrival": 69210,
+          "lines": [
+            "420",
+            "440"
+          ],
+          "changes": 1
+        }
+      ]
+    },
+    {
+      "stop": {
+        "id": "8490B151091",
+        "name": "Mayo Hospital",
+        "code": "15109",
+        "lat": 53.85184,
+        "lon": -9.30599
+      },
+      "options": [
+        {
+          "departure": 28800,
+          "arrival": 31920,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        },
+        {
+          "departure": 38700,
+          "arrival": 41580,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        },
+        {
+          "departure": 60300,
+          "arrival": 63360,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        },
+        {
+          "departure": 115200,
+          "arrival": 118320,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        },
+        {
+          "departure": 125100,
+          "arrival": 127980,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        },
+        {
+          "departure": 146700,
+          "arrival": 149760,
+          "lines": [
+            "420"
+          ],
+          "changes": 0
+        }
+      ]
+    }
+  ]
+}

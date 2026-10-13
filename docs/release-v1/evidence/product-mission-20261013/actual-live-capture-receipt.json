@@ -1,0 +1,25 @@
+{
+  "scope": "Single bounded follow-up to investigate the first20s timeout; read-only public API, no credential/deployment/paid call. No recurring monitor.",
+  "initialReadOutcome": "TimeoutError after20s",
+  "observedAt": "2026-10-13T20:11:23.995992+00:00",
+  "status": 200,
+  "bytes": 19208,
+  "generatedAt": "2026-10-13T20:11:28.968911Z",
+  "positions": 43,
+  "buses": 6,
+  "sources": {
+    "bus": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T20:11:28.968911Z"
+    },
+    "rail": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T20:11:28.968911Z"
+    },
+    "departures": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T20:11:28.968911Z"
+    }
+  },
+  "elapsedSeconds": 5.2
+}

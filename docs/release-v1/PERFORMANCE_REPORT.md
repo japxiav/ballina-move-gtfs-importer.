@@ -1,3 +1,5 @@
+> Authoritative13October2026 product-mission checkpoint: unpublished code `06b72b428fa623e7daf4d244b4851683506b78d0`; published preview `3a96758b87d33908635f03d2e833cd5742609997`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. See [PROGRESS](PROGRESS.md) and [current evidence](evidence/product-mission-20261013/validation.json). Existing sections below are historical phase evidence, not current production/source pointers. Regional NO-GO remains. Do not execute historical publication/rollback instructions without checking current source, available provider rollback and specific authorization.
+
 # Performance evidence / no target-host certification
 
 S1 full captured official snapshot1518trips/30115stopTimes, same Node24.19 machine and queryBallina→Hospital15108/time02:59/max2changes. Nine fresh processes per version, alternating serial order, no warmup/HTTP/providers. CPU measured around solve (candidate includes six nativeSHA256 digests); wall likewise; OSmaxRSS is whole process peak including parsing.
