@@ -1,0 +1,21 @@
+# Authorized coordinated technical publication — 13 October 2026
+
+The owner explicitly approved publication of the reviewed PR43 source, including PR41/42, gateway first and journey-api second, with conditional reversal. Actual source is3a96758b87d33908635f03d2e833cd5742609997. Main remainsf388266; no PR merge occurred.
+
+Preflight reconfirmed source/CI, the existing fixed free service, journey-api configuration version3 and matching authorized named server binding. Legacy Edge files were downloaded and checked against retained published source hashes before mutation. Legacy gateway643bc52 is retained at ops/live-gateway-before-pr43-20261013. Hosting branch advanced by fast-forward to the reviewed source; autoDeploy remainedOFF. No force push, new key, rotation, new service or plan upgrade.
+
+Gateway deployed first through exact-source manual GitHub run38440629917. Offline/browser/build/static/unprivileged container gates passed; existing-app update and actual hosted browser search/details/map verification passed before any Edge publication. Render live deploymentdep-db76rdc9v7es73alv28g confirmed exact3a96758 source, free/autoDeployOFF.
+
+Then journey-api was published once from the reviewed two-file package, pinning old configuration version3. Active new version4 and both actual multipart source hashes were verified against3a96758. transport-api remained version11. No collector/feed/migration/cron changes or paid requests.
+
+One genuine operator-process private admission request returned the exact authenticated protocol, quotaConsumedfalse/snapshotReadfalse. The canonical app binding entered the isolated probe through an anonymous stdin pipe, never a tool argument/file/log/browser/environment export. The probe worker had no management credential. It used a fixed HTTPS destination, redirects refused, at most1KiB body,3s socket budget and5s whole-process watchdog. This is an operator-process probe, NOT CLI execution in the actual Render runtime. The5s watchdog and minimal environment were enforced by the session launcher, not by admission_worker.py alone; probe-launcher-receipt.json preserves these external controls without repeating the request.
+
+Final actual public Chromium at17:50UTC verified HTTP200, six real scheduled options for a new verification query (14October07:01), itinerary details, loaded map tiles and72 location markers. Strict live-data validation found nine fresh NTA bus GPS observations (≤180s), collectorHealthytrue and ready sources. Rail positions remain reported locations with unknown observation precision; marker counts do not mean all GPS or realtime itinerary ETA. Widths320/360/390/601/801/1440 had no horizontal overflow; zero page errors/app credential headers/foreign app requests. HTTPS certificate validation remained enabled. Both actual Edge and Render source were confirmed separately.
+
+95 local gateway tests and exact-source offline/web CI were already green; the manual publication workflow repeated required checks and passed. Independent prepublication review approved compatible BFF→Edge order, preauthorized Edge→BFF recovery, strict no-value handling and watchdog. Original preparatory failure/old browser records remain separately retained; they are not acceptance of this publication.
+
+All publication and final checks passed; no rollback was required or rehearsed. If a trial failure had required recovery, retained legacy Edge would be restored before legacy BFF, only restoring changed components and preserving the binding under fresh source/version guards. Successful publication does not prove a restore rehearsal.
+
+Technical trial complete; regional/passenger release remains unaccepted. Trusted Render proxy/client identity/distributed-abuse fairness, actual hosted admission CLI/resources/availability/restore, hospital physical/accessibility evidence, provider realtime integration, real-device manual review and seven elapsed pilot days remain open. No future broad deployment/merge/monitoring authority inferred. A12 remains isolated. No user command, installation or credential copying was needed.
+
+Final independent evidence review found no new blocker; the requested launcher receipt was preserved. Review was read-only and did not execute requests/tests or certify regional/host acceptance.

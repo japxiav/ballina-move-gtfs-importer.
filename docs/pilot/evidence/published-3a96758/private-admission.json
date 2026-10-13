@@ -1,0 +1,9 @@
+{
+  "check": "operator_private_admission",
+  "confirmed": true,
+  "requestsMaximum": 1,
+  "quotaConsumed": false,
+  "snapshotRead": false,
+  "secretExported": false,
+  "hostedGatewayCliExecuted": false
+}

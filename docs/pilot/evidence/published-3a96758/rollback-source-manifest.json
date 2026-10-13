@@ -1,0 +1,11 @@
+{
+  "publishedGateway": "643bc525c1ab5f79c694259002258ed3af8468f6",
+  "retainedEdgeSourceHashes": {
+    "functions/journey-api/index.ts": "2b5b9d16ac9a51e511530021c761ba75ef32f643c64019651d43d68c086ba07a",
+    "functions/transport-api/journeys.ts": "15dc49a81a7738341b1e9da4b3e310cc98f687ca3b54870dc5e52aad4c1b2c01"
+  },
+  "sourceRetainedBeforeMutation": true,
+  "mainUnchanged": true,
+  "approvedSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "approvedTrialAndConditionalRecovery": true
+}

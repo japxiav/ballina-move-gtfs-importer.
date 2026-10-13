@@ -1,0 +1,10 @@
+{
+  "reviewer": "security_integration_review",
+  "outcome": "approved_scoped_evidence",
+  "readOnly": true,
+  "noExternalCallsTestsOrMutation": true,
+  "source": "3a96758b87d33908635f03d2e833cd5742609997",
+  "finding": "Preserve separate receipt for watchdog/environment controls implemented in executed session launcher, not worker.",
+  "findingAddressed": "probe-launcher-receipt.json records executed controls without repeating private request",
+  "regionalReleaseAccepted": false
+}

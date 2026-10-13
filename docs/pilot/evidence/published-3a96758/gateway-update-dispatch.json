@@ -1,0 +1,11 @@
+{
+  "authorizedSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "hostingBranch": "ops/live-gateway-hosting",
+  "previousGateway": "643bc525c1ab5f79c694259002258ed3af8468f6",
+  "retainedGatewayBackupBranch": "ops/live-gateway-before-pr43-20261013",
+  "manualUpdateDispatched": true,
+  "dispatchedAt": "2026-10-13T17:41:01.733390+00:00",
+  "edgePublished": false,
+  "mainMerged": false,
+  "newServiceOrPlanChange": false
+}

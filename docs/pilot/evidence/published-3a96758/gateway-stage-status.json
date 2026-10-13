@@ -1,0 +1,177 @@
+{
+  "runId": 38440629917,
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 115445962116,
+      "name": "web-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned dependencies",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test read-only gateway without external queries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build browser application",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install test browser",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test navigation and map contracts on desktop and mobile",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify static preview boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build and verify unprivileged container without provider access",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 115445963882,
+      "name": "publisher-binding-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 115445964072,
+      "name": "render-connection-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 115446756876,
+      "name": "deploy-live-gateway",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Attach verified immutable source to local hosting branch",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare pinned browser smoke dependencies",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Create free target, verify deployed commit and open actual app",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Update existing free app and verify exact deployed source and actual browser",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "latestRender": {
+    "id": "dep-db76rdc9v7es73alv28g",
+    "status": "live",
+    "source": "3a96758b87d33908635f03d2e833cd5742609997"
+  }
+}

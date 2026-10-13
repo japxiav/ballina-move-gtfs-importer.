@@ -1,0 +1,35 @@
+{
+  "controlsRecordedFromExecutedSession": true,
+  "worker": "admission_worker.py",
+  "transport": "anonymous stdin pipe;64hex app binding in memory",
+  "watchdogSeconds": 5,
+  "wholeProcessIncludingDns": true,
+  "requestSocketTimeoutSeconds": 3,
+  "responseBytesMaximum": 1024,
+  "stdoutLengthMaximumChecked": 1024,
+  "parentChecks": "returncode0, expected JSON equality, output length",
+  "managementCredentialNamesExcluded": [
+    "RENDER_API_KEY",
+    "SUPABASE_ACCESS_TOKEN"
+  ],
+  "appBindingEnvironmentExcluded": true,
+  "environmentAllowedNames": [
+    "PATH",
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "TZ",
+    "TMPDIR",
+    "HTTPS_PROXY",
+    "HTTP_PROXY",
+    "NO_PROXY",
+    "https_proxy",
+    "http_proxy",
+    "no_proxy",
+    "SSL_CERT_FILE",
+    "SSL_CERT_DIR"
+  ],
+  "secretValuePersisted": false,
+  "probeRepeatedForReceipt": false,
+  "scope": "External launcher controls; worker alone does not enforce process watchdog or environment allowlist"
+}

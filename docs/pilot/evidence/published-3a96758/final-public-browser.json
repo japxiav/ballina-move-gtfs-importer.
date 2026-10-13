@@ -1,0 +1,66 @@
+{
+  "observedAt": "2026-10-13T17:50:34.116Z",
+  "target": "https://ballina-move-live.onrender.com",
+  "publishedSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "candidateDeployed": true,
+  "phase": "after-gateway-and-edge",
+  "journeyVersion": 4,
+  "tlsVerification": true,
+  "browserVerified": true,
+  "stage": "live-data",
+  "coldStartState": "unknown",
+  "hostCpuMeasured": false,
+  "hostRssMeasured": false,
+  "httpStatus": 200,
+  "scheduledOptions": 6,
+  "planRenderedMs": 8929,
+  "itineraryRendered": true,
+  "freshBusGpsPositions": 9,
+  "collectorHealthy": true,
+  "liveSources": {
+    "bus": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T17:50:51.428898Z"
+    },
+    "rail": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T17:50:51.428898Z"
+    },
+    "departures": {
+      "status": "ready",
+      "retrievedAt": "2026-10-13T17:50:51.428898Z"
+    }
+  },
+  "mapMarkers": 72,
+  "mapTilesLoaded": true,
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "width": 601,
+      "overflow": false
+    },
+    {
+      "width": 801,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "pageErrors": 0,
+  "credentialsInBrowser": false,
+  "foreignRequests": 0,
+  "mapScope": "separate reported locations; no itinerary realtime claim"
+}

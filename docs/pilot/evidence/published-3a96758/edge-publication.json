@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "3a96758b87d33908635f03d2e833cd5742609997",
+  "journeyVersion": 4,
+  "status": "ACTIVE",
+  "verifyJwt": false,
+  "sourceHashesVerified": {
+    "functions/journey-api/index.ts": "872d5272414d7cb603caa47f8f365c6b3ff0137a3f8cac59396d29973ef159bc",
+    "functions/transport-api/journeys.ts": "73e82219a751206400626efe6d1f0e44dafe6d31b2e7da6f1eeb078a31906f6e"
+  },
+  "privateBindingRotated": false,
+  "transportVersion": 11,
+  "publicationConfirmed": true
+}

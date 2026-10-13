@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "3a96758b87d33908635f03d2e833cd5742609997",
+  "renderDeploymentId": "dep-db76rdc9v7es73alv28g",
+  "renderStatus": "live",
+  "plan": "free",
+  "autoDeploy": "no",
+  "journeyVersion": 4,
+  "transportVersion": 11,
+  "mainUnchanged": true,
+  "rollbackPerformed": false,
+  "secretRotated": false,
+  "newServiceOrUpgrade": false,
+  "paidQueries": false,
+  "recurringMonitoringConfigured": false,
+  "technicalTrialPassed": true,
+  "regionalPassengerReleaseAccepted": false,
+  "hostedGatewayCliAdmissionExecuted": false,
+  "trustedClientIdentityAccepted": false,
+  "hostCpuRssAccepted": false
+}

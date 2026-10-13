@@ -1,0 +1,7 @@
+{
+  "authorizedSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "expectedPriorVersion": 3,
+  "attemptedOnce": true,
+  "gatewayBrowserPassedBeforePublication": true,
+  "secretExported": false
+}
