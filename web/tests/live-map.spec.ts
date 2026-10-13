@@ -43,6 +43,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("https://tile.openstreetmap.org/**", route => route.fulfill({ contentType: "image/png", body: png }));
 });
 test("map shows source-specific details, filters, departures and accessible mobile controls", async ({ page }) => {
+  await page.clock.pauseAt(new Date(now + 1000));
   await page.route("**/api/live", route => route.fulfill({ json: fixture() }));
   const errors: string[] = []; page.on("pageerror", e => errors.push(e.message));
   await page.goto("/#/demo");
@@ -61,6 +62,7 @@ test("map shows source-specific details, filters, departures and accessible mobi
   await page.getByText("Next departures · Ballina", { exact: true }).click();
   await expect(page.locator(".departure-row")).toContainText("Prediction");
   await page.clock.fastForward(185000);
+  expect(await page.evaluate(() => Date.now())).toBe(now + 186000);
   await expect(page.locator(".departure-row")).toContainText("Scheduled");
   await expect(page.locator(".vehicle-marker")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
