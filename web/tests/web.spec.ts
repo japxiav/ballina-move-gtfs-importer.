@@ -43,7 +43,7 @@ test.beforeEach(async ({ page }) => {
 test("home → results → itinerary → back and deep-link reload", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/#/demo");
   await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
   await page.getByLabel("Travel date").fill(query.serviceDate);
   await page.getByRole("button", { name: "Find journeys" }).click();
@@ -90,7 +90,7 @@ test("priority and walking limit alter order and count", async ({ page }) => {
   );
 });
 test("swap and equal-place validation", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/#/demo");
   await page.getByRole("button", { name: "Swap start and destination" }).click();
   await expect(page.getByLabel("From — Origin", { exact: true })).toHaveValue(
     "foxford",
@@ -105,7 +105,7 @@ test("swap and equal-place validation", async ({ page }) => {
   );
 });
 test("empty, simulated failure, retry and recovery", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/#/demo");
   await page.locator(".search-options > summary").click();
   await page.getByText("Demo states").click();
   await page.getByLabel("Demo response").selectOption("empty");
@@ -146,7 +146,8 @@ test("bad links and missing itinerary have recovery paths", async ({
     page.getByRole("heading", { name: "Invalid search." }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Start a new search" }).click();
-  await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Find your journey." })).toBeVisible();
+  await expect(page).toHaveURL(/#\/$/);
   await page.goto(`/#/journey/missing?${encodeQuery(query)}`);
   await expect(
     page.getByRole("heading", { name: "Journey not found." }),
@@ -174,7 +175,7 @@ test("midnight offsets and transfer itinerary", async ({ page }) => {
 });
 test("360px pages fit and keyboard skip link works", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 780 });
-  await page.goto("/");
+  await page.goto("/#/demo");
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
@@ -211,6 +212,8 @@ test("navigation cancels stale searches", async ({ page }) => {
     .getByRole("navigation")
     .getByRole("link", { name: "Home" })
     .click();
+  await expect(page.getByRole("heading", { name: "Find your journey." })).toBeVisible();
+  await page.evaluate(() => { window.location.hash = '/demo'; });
   await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
   await page.waitForTimeout(800);
   await expect(page.getByRole("alert")).toHaveCount(0);

@@ -45,7 +45,7 @@ test.beforeEach(async ({ page }) => {
 test("map shows source-specific details, filters, departures and accessible mobile controls", async ({ page }) => {
   await page.route("**/api/live", route => route.fulfill({ json: fixture() }));
   const errors: string[] = []; page.on("pageerror", e => errors.push(e.message));
-  await page.goto("/");
+  await page.goto("/#/demo");
   await page.getByRole("navigation").getByRole("link", { name: "Live map" }).click();
   await expect(page.getByRole("heading", { name: "Buses & trains." })).toBeVisible();
   await expect(page.locator(".vehicle-marker")).toHaveCount(2);
@@ -111,6 +111,9 @@ test("leaving the map aborts a pending response and preserves journey navigation
   await page.goto("/#/live");
   await expect.poll(() => started).toBe(true);
   await page.getByRole("navigation").getByRole("link", { name: "Home", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Find your journey." })).toBeVisible();
+  await expect(page.locator(".live-map")).toHaveCount(0);
+  await page.evaluate(() => { window.location.hash = '/demo'; });
   await expect(page.getByRole("heading", { name: "Your next journey." })).toBeVisible();
   await page.getByRole("button", { name: "Find journeys" }).click();
   await expect(page.locator(".journey-card")).toHaveCount(3);

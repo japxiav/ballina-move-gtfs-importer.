@@ -33,7 +33,7 @@ test("bus and rail filter supports empty state, validation, reload and recovery"
   });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
+  await page.goto("/#/demo");
   await page.locator(".search-options > summary").click();
   await expect(page.getByRole("group", { name: "Transport" })).toBeVisible();
   const bus = page.getByRole("checkbox", { name: "Bus", exact: true });

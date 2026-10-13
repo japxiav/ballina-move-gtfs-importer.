@@ -17,6 +17,7 @@ import {
   type SearchQuery,
 } from "./fixtures";
 import { LiveMap } from "./LiveMap";
+import { RealJourneys } from "./RealJourneys";
 import "./styles.css";
 
 type IconName =
@@ -378,6 +379,7 @@ function Home({ query }: { query: SearchQuery }) {
           </div>
           <h1>Your next <em>journey.</em></h1>
           <a className="live-entry" href="#/live">Track buses &amp; trains <Icon name="arrow" size={16} /></a>
+          <a className="schedule-entry" href="#/plan">Search official timetables →</a>
           <p className="hero-description">
             Explore journeys around Ballina and County Mayo.
           </p>
@@ -898,7 +900,7 @@ function About() {
           <span>02</span>
           <h2>Know your data</h2>
           <p>
-            Journey search results are synthetic. The Live map uses official vehicle observations and reported train locations, with timestamps and availability shown separately.
+            Official schedules use the NTA timetable between covered stops. Delays, cancellations and walking directions are not applied to these itineraries. Demo routes remain explicitly synthetic. The Live map shows official observations separately.
           </p>
         </section>
         <section>
@@ -909,7 +911,7 @@ function About() {
           </p>
         </section>
       </div>
-      <a className="button primary" href="#/">
+      <a className="button primary" href="#/demo">
         Explore the demo <Icon name="arrow" />
       </a>
     </article>
@@ -937,10 +939,11 @@ function App() {
     isJourney = journeyMatch !== null;
   const query = React.useMemo(() => decodeQuery(search), [search]),
     defaults = React.useMemo(defaultQuery, []);
-  const isHome = !path || path === "/", isLive = path === "/live";
+  const scheduledMatch = /^\/scheduled\/([1-6])$/.exec(path);
+  const isHome = !path || path === "/", isLive = path === "/live", isDemo = path === "/demo", isPlan = isHome || path === "/plan" || !!scheduledMatch;
   useEffect(() => {
-    document.title = `${isLive ? "Live map" : isHome ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
-  }, [isHome, isJourney, isSearch, isLive]);
+    document.title = `${isLive ? "Live map" : isPlan ? "Official journeys" : isDemo ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
+  }, [isHome, isJourney, isSearch, isLive, isPlan, isDemo]);
   return (
     <>
       <a
@@ -972,9 +975,9 @@ function App() {
             Home
           </a>
           <a
-            className={isSearch || isJourney ? "active" : ""}
-            href={`#/search?${encodeQuery(defaults)}`}
-            aria-current={isSearch || isJourney ? "page" : undefined}
+            className={isSearch || isJourney || isPlan ? "active" : ""}
+            href="#/plan"
+            aria-current={isSearch || isJourney || isPlan ? "page" : undefined}
           >
             Journeys
           </a>
@@ -988,14 +991,18 @@ function App() {
           </a>
         </nav>
         <span className="header-demo">
-          <span className="status-dot" /> {isLive ? "MAP" : "DEMO"}
+          <span className="status-dot" /> {isLive ? "MAP" : isPlan ? "SCHEDULE" : "DEMO"}
         </span>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
         {isHome ? (
+          <RealJourneys search="" />
+        ) : isDemo ? (
           <Home query={defaults} />
         ) : isLive ? (
           <LiveMap />
+        ) : isPlan ? (
+          <RealJourneys search={search} detailId={scheduledMatch?.[1]} />
         ) : isSearch || isJourney ? (
           query ? (
             <SearchPage
@@ -1030,12 +1037,12 @@ function App() {
           ballina move<span>Your next journey in Mayo.</span>
         </span>
         <span>
-          {isLive ? "Official transport sources" : "Demo prototype · Fixtures v1"}
+          {isLive || isPlan ? "Official transport sources" : "Demo prototype · Fixtures v1"}
           <br />
-          {isLive ? "Source timestamps shown. No paid requests." : "No live data. No paid requests."}
+          {isLive || isPlan ? "Source timestamps shown. No paid requests." : "No live data. No paid requests."}
         </span>
         <a href="#/about">
-          About this demo <Icon name="arrow" size={16} />
+          {isLive || isPlan ? "About Ballina Move" : "About this demo"} <Icon name="arrow" size={16} />
         </a>
       </footer>
     </>

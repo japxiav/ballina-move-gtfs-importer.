@@ -26,7 +26,7 @@ for (const [name, change] of [
 }
 
 test("form accessible names contain the visible labels", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/#/demo");
   await expect(page.getByRole("combobox", { name: /From/ })).toBeVisible();
   await expect(page.getByRole("combobox", { name: /To/ })).toBeVisible();
   await expect(page.getByLabel(/Leave after/)).toBeVisible();
@@ -41,7 +41,8 @@ for (const path of ["/journey/", "/journey/direct/extra"]) {
     await expect(page.getByRole("heading", { name: "Page not found." })).toBeVisible();
     await expect(page.locator(".journey-card")).toHaveCount(0);
     await page.getByRole("link", { name: "Back to home" }).click();
-    await expect(page.getByRole("heading", { name: /Your next journey/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Find your journey." })).toBeVisible();
+    await expect(page).toHaveURL(/#\/$/);
   });
 }
 
