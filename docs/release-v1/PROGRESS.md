@@ -1,6 +1,6 @@
 # Regional v1 progress / checkpoint
 
-**Current code candidate: `06b72b428fa623e7daf4d244b4851683506b78d0`, unpublished. Regional release remains NO-GO.** This13October checkpoint supersedes historical “current” pointers below/in earlier documents. Existing public technical preview remains Render source `3a96758b87d33908635f03d2e833cd5742609997`, journey-api source/configuration version4. Main/origin main remains `f38826625e08fe6bcd92073df45685fa36bbf7cf`. No new deploy, main merge, credentials, paid call, feed activation or recurring monitor.
+**Current published technical preview: `06b72b428fa623e7daf4d244b4851683506b78d0`. Regional release remains NO-GO.** The owner-approved update completed13Oct23:36–23:49London on the existing free Render service, deployment `dep-db7b4uad0e5s73fv1i4g`. Main/origin main remains `f38826625e08fe6bcd92073df45685fa36bbf7cf`; journey-api source/configuration remains version4 and transport-api11. No main merge, Edge/DB/credential/feed/collector/cron/plan mutation, paid query or recurring monitor. The publication grant is completed and does not cover future changes. See [published browser proof](evidence/technical-preview-20261013/public-browser-proof.json) and [publication evidence](evidence/technical-preview-20261013/README.md).
 
 The user adopted the product-evolution PDF as the implementation roadmap. Four separate Draft PRs contain working code:
 
@@ -23,11 +23,11 @@ The user adopted the product-evolution PDF as the implementation roadmap. Four s
 | S7 | PARTIAL | Timeout/late response/partial/quota/tile recovery implemented; native public read recovered after20s timeout; no SLO/resource/restore/7day observation claim |
 | S8 | BLOCKED field evidence | Captured official and synthetic offline/emulated tests are labelled; no physical passenger pilot |
 | S9 | UPDATED | Code/CI/evidence/risks/proposal/checkpoint saved; audit files retain historical evidence explicitly |
-| S10 | BLOCKED APPROVAL + regional gates | Current technical preview could be updated only after specific approval; regional GO remains unavailable |
+| S10 | TECHNICAL PREVIEW PASS; regional gates blocked | Approved update06 is live and publicly browser-verified. Future update/main merge still needs approval; regional GO remains unavailable |
 
 | Gate | Status | Evidence / owner |
 |---|---|---|
-| G0 provenance | PASS scoped | Code06b72b4 / published3a96758 / mainf388266 / Edgev4 / feed768b4b… / Codex |
+| G0 provenance | PASS scoped | Code/published06b72b4 / mainf388266 / Edgev4 / feed768b4b… / Codex |
 | G1 journeys | PARTIAL | Exact hospital alternatives and transfer identities preserved; thirteen retained-feed scenarios; physical completeness/access unknown / Codex + field testers |
 | G2 walking | UNVERIFIED | Walking excluded, no entrance/access/geometry proof / field testers + owner |
 | G3 quality | PASS local technical scope |182browser,95gateway,70root Python,414routing,11staging, strict simulated API suites,1642oracle comparisons,16module parity/rebuild; all four PR web checks green; no physical-device claim / Codex |
@@ -37,10 +37,12 @@ The user adopted the product-evolution PDF as the implementation roadmap. Four s
 | G7 operations | PARTIAL | Stable source and rollback receipts from prior authorized rollout exist; no new restore rehearsal, SLO or recurring monitor / owner + Codex |
 | G8 UX/legal | PARTIAL | English compact browser/keyboard tests and explicit privacy/attribution; manual device/accessibility/legal review pending / owner + reviewers |
 | G9 external proof | UNVERIFIED | No field/elapsed7day pilot / regional testers |
-| G10 release | BLOCKED | No new publication/main authorization; previous3a publication grant was completed / owner |
+| G10 release | PARTIAL technical only | Owner-approved06 preview update completed; regional launch/main merge unaccepted / owner |
 
-[Evidence packet](evidence/product-mission-20261013/validation.json), [CI checks](evidence/product-mission-20261013/github-checks.json) and [technical-update proposal](PRODUCT_MISSION_RELEASE_PROPOSAL.md). Screenshots are unpublished candidate replays: hospital official capture for14Oct, and an actual43-position official capture retrieved13Oct21:11London. Map PNGs were downloaded with native TLS and relayed into the local browser, max32/two concurrent; some tiles were pending/aborted. These images prove local rendering, not a deployed candidate or continuous live GPS.
+[Prepublication evidence packet](evidence/product-mission-20261013/validation.json), [CI checks](evidence/product-mission-20261013/github-checks.json) and [technical-update proposal](PRODUCT_MISSION_RELEASE_PROPOSAL.md). Screenshots are unpublished candidate replays: hospital official capture for14Oct, and an actual43-position official capture retrieved13Oct21:11London. Map PNGs were downloaded with native TLS and relayed into the local browser, max32/two concurrent; some tiles were pending/aborted. These images prove local rendering, not a deployed candidate or continuous live GPS.
 
 Latest additional check13Oct21:54London: the final06 frontend was opened against actual current responses from the existing public3a gateway through an internal-only, bounded/no-credential/no-redirect relay. Two real journey reads returned the twelve hospital options; exact itinerary/back succeeded; one live read returned38 positions and a selected-vehicle card opened. Four stop-catalog reads and18 unique native-TLS tiles at at most two concurrent jobs stayed within limits. No fixtures or frozen clock were used; public frontend was not changed. See [actual-backend browser proof](evidence/product-mission-20261013/candidate-live-backend-proof.json). This does not replace device, walking, availability or regional field evidence.
 
 Next safe work: continue from the frozen source and retained official datasets; require a securely identified service descriptor before adding vehicle stops/path/ETA. Arrive-by is deferred until departure-only/max-six semantics have a correct arrival-search implementation and evidence. Route454 is absent from retained coverage, not proof of no service. Walking/A12 stay isolated. Publication, main merge, hosting/resource/recovery experiments, any spend and recurring monitoring require the specific adopted-roadmap authorization; do not rerun completed publication instructions from historical checkpoints.
+
+Latest actual published check13Oct23:48London: public Chromium opened source06 with current real responses, two hospital journey reads returned6+6options and exact itinerary/back; one live read returned18locations, loaded map tiles, group and selected NTA GPS card. Widths320/360/390/430/768/1440 showed no horizontal overflow; no JS errors or app credential headers. Twelve native-TLS tile URLs/max2 tasks stayed within32/two ceilings, and all jobs closed. Public HTML/JS/CSS bytes matched the frozen local build; ordinary pushCI38478920214 also passed. Initial zero-API Chromium failures and the local NSS read-only/trust fix are preserved separately, never with HTTPS validation disabled. No recovery was needed or rehearsed. These are public technical-preview/emulated browser proofs; field/device/walking/host/resource/elapsed-pilot gates remain.

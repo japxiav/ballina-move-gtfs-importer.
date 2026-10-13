@@ -1,0 +1,6 @@
+{
+  "securityController": "Approved after explicit guards, pending-deploy rejection and exclusive durable intent; official rollback schema preserved",
+  "securitySmoke": "Approved after stdout-drain close, bounded dispatcher shutdown and final flags recheck",
+  "handoff": "Approved: artifact hashes, public build equality, unchanged protected source/main/Edge, bounded real browser evidence and technical-only scope",
+  "execution": "Independent reviews were read-only; no production mutations or additional provider/data requests by reviewers"
+}

@@ -1,0 +1,8 @@
+{
+  "observedAtUtc": "2026-10-13T22:38:20.473213+00:00",
+  "serviceVerified": true,
+  "deploymentId": "dep-db7b4uad0e5s73fv1i4g",
+  "status": "live",
+  "sourceCommit": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "plan": "free"
+}

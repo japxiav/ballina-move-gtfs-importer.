@@ -1,0 +1,32 @@
+{
+  "observedAtUtc": "2026-10-13T22:48:52.982768+00:00",
+  "sourceCommit": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "renderDeploymentId": "dep-db7b4uad0e5s73fv1i4g",
+  "renderStatus": "live",
+  "plan": "free",
+  "autoDeploy": false,
+  "edgeUnchanged": {
+    "functions": {
+      "journey-api": {
+        "version": 4,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      },
+      "transport-api": {
+        "version": 11,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      }
+    },
+    "actualJourneySourceHashes": {
+      "functions/journey-api/index.ts": "872d5272414d7cb603caa47f8f365c6b3ff0137a3f8cac59396d29973ef159bc",
+      "functions/transport-api/journeys.ts": "73e82219a751206400626efe6d1f0e44dafe6d31b2e7da6f1eeb078a31906f6e"
+    }
+  },
+  "mainUnchanged": true,
+  "rollbackPerformed": false,
+  "newServices": false,
+  "credentialsRotated": false,
+  "paidCalls": 0,
+  "recurringMonitorEnabled": false
+}

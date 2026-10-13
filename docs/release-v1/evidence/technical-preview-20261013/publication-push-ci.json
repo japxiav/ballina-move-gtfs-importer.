@@ -1,0 +1,108 @@
+{
+  "headSha": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38478920214",
+  "jobs": [
+    {
+      "name": "web-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned dependencies",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test read-only gateway without external queries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build browser application",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install test browser",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test navigation and map contracts on desktop and mobile",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify static preview boundary",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build and verify unprivileged container without provider access",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "publisher-binding-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "name": "render-connection-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "name": "deploy-live-gateway",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    }
+  ]
+}

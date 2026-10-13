@@ -1,0 +1,33 @@
+{
+  "sourceCommit": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "published": true,
+  "regionalReleaseAccepted": false,
+  "ownerGrant": "Limited technical preview update and conditionalrollback explicitly approved; completed",
+  "sha256": {
+    "README.md": "e6d686846a6ed3782fe6ad4c958394f35fe9793174798468c664faaf275b08f2",
+    "approved-preview-publisher.py": "e584a29c7c66c1f064a3294fb3e4fb714aa66e9f7f0fb929b3ca95052f9fc209",
+    "browser-tls-trust.json": "ff521b51c605108a0f03296257fde99eb74e9527e2af2f1d620af779cfc2b2a6",
+    "deployment-status.json": "b409e007a56483e3b2e1b468c9582fd972126f5a336e5c4fbd434f00ce997248",
+    "independent-review.json": "bd0f9c8b4c9ea1193a3ce2e8ab422d36a080a51b33ce5ed7bc15ec1e49d0ab60",
+    "postpublication-state.json": "ef649d3114eee2929b230375258ef163872d1acb567f051fdcd9a459d28887d8",
+    "preflight.json": "7932fdb0c109b4c13705f5b0680ac6ba3a9b82a47d7ac3bed3b20450afe5fa13",
+    "public-browser-failed-tls-02.json": "de5b16531ff0b5d9a6ba3270b0907e7b366ae7eb1a74d087f6933cb6995ccb92",
+    "public-browser-failed-tls-03.json": "df962ca4ba31181ede4b8c1a60e088730680b61059dc40e2835a3e69a2a9ff17",
+    "public-browser-failed-tls.json": "a8993138463f14aed7b52cfab82d7aa2f6983b9ccb960af1b98f0c0494244261",
+    "public-browser-proof.json": "4da00fe761da717d21169fb9d7f03760c16a89dfbf216c49c524f29c7348c7d9",
+    "public-home-desktop.png": "3d23c4501ce73c670bf2496778a04bec23ee8079b663ca1fd77297c70fa87429",
+    "public-home-mobile.png": "e61e14345730f687985ce7f2694bc9dc4c84ddb9cb90cf1ff86ed877bd8846da",
+    "public-hospital-mobile.png": "6bc037bdac384a4112e84bcb869530ba19c95358d94bd6437483ba103d2d23a5",
+    "public-html-receipt.json": "1d0db1c60f50f985b2ce3305099d90c5f28e68cff8afc3a43691348443be5ea1",
+    "public-itinerary-mobile.png": "ab727fd8f3e6516a4718d2fc8631d9febe2ca353bff05cf7d12c4575e3919721",
+    "public-map-mobile.png": "8db9b9a78bdd1beb037c92da9269e71d94b883b31e8e8ceb8f4f65b37387d24a",
+    "public-vehicle-mobile.png": "0cbe40a07b18e18f02b407cfe74bdefc3aa273b16e0f26e53989753c8cf201c6",
+    "publication-push-ci.json": "774f80fa432ed5339cc8064ecf3f7008d12719ee5886da9bc2039e2caf43afa5",
+    "publish-intent.json": "4685254ab09f6199632a45b502aa466f30857b54cff19c27e4477c49720a64ef",
+    "repository-discovery.json": "6782b9c96a65ba5223189aaf9a65e6f0ae0cebe6380f18ab100e1e723e54c20f",
+    "requested.json": "59658b8386c0c34234575c764612b605e0766aad70c264c879eaf42304024ac5",
+    "rollback-reference.json": "a9502c00c9eda47799e901cf5138df5433b3b64d55eff6897030e6094f4c1689",
+    "smoke-tile-budget.cjs": "64d858d45446e9afb10eba860c6e5f1994edd6feede01c3dc3ab9c36e357e972",
+    "verify-public.cjs": "86027dbee6820dc230a085c4ddf159c198853b9f753f2642464eee1a83270828"
+  }
+}

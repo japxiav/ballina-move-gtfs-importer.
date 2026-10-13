@@ -1,0 +1,33 @@
+{
+  "scope": "Actual published HTTPS frontend and actual public API responses; no fixtures or clock override. Map PNGs fetched with native verified TLS through bounded image dispatcher.",
+  "sourceCommit": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "observedAt": "2026-10-13T22:46:13.086Z",
+  "target": "https://ballina-move-live.onrender.com",
+  "browserVerified": false,
+  "tlsVerification": true,
+  "pageErrors": [],
+  "credentialHeaderCount": 0,
+  "foreignRequestCount": 0,
+  "caps": {
+    "journeys": 4,
+    "live": 8,
+    "uniqueTiles": 32,
+    "tileConcurrency": 2
+  },
+  "calls": {
+    "journeys": 0,
+    "live": 0,
+    "stops": 0
+  },
+  "stage": "mobile-home",
+  "errorType": "Error",
+  "browserNetworkError": "net::ERR_CERT_AUTHORITY_INVALID",
+  "error": "published_browser_verification_failed",
+  "uniqueTiles": 0,
+  "maximumTileConcurrency": 0,
+  "tileFailures": 0,
+  "tileCancelledAtShutdown": 0,
+  "tileJobsRemaining": 0,
+  "tileBudgetExceeded": false,
+  "apiBudgetExceeded": false
+}
