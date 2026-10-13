@@ -1,5 +1,6 @@
 {
   "testedSource": "a933b9a1d4ea61ba547984d95249befcc9d322bf",
+  "mergedMain": "f38826625e08fe6bcd92073df45685fa36bbf7cf",
   "files": [
     {
       "path": "FINAL_REPORT.md",
@@ -140,6 +141,41 @@
       "path": "map-parser-review-red.log",
       "bytes": 1123,
       "sha256": "a22686bbe306416ca458d8dadd93358f2a048e0984e12ea40ae7866f9eea55f8"
+    },
+    {
+      "path": "merge-pr40/MERGE_CHECKPOINT.md",
+      "bytes": 2018,
+      "sha256": "e947ae4996aa895718c1957cf9bb4802da27322a3f375ee1fce2c774f59ec981"
+    },
+    {
+      "path": "merge-pr40/merge-result.json",
+      "bytes": 122,
+      "sha256": "1f9a672f970af378d062f0eb4764b118b1104b9dfed45c783c15ff74c8d6935e"
+    },
+    {
+      "path": "merge-pr40/post-merge-ci.json",
+      "bytes": 906,
+      "sha256": "3ea0ba8f146c9769eb1b5c8a73a941ebd51d14df5ab5036b4b47b20eeb71421c"
+    },
+    {
+      "path": "merge-pr40/post-merge-proof.json",
+      "bytes": 1182,
+      "sha256": "89dc364ea1fd8bb335b78b80de287071fc39d4bc827d55ff08860235537b4424"
+    },
+    {
+      "path": "merge-pr40/pre-merge-checks.json",
+      "bytes": 1188,
+      "sha256": "148fd11728c1b46cfe64d3e00694cae7cff15c6ec9f4e8cad3f89d3015d955d1"
+    },
+    {
+      "path": "merge-pr40/repository-discovery.json",
+      "bytes": 424,
+      "sha256": "d44a93ce88118e3e405dc7f991b9414f8ed3c445245711d831bb8057ca35c24a"
+    },
+    {
+      "path": "merge-pr40/superseded-drafts.json",
+      "bytes": 494,
+      "sha256": "e3676e4bd189ed344c189f122fae0bd8296e601eebb4b750a7938dbe5fbd3638"
     },
     {
       "path": "official-gtfs-capture.json",

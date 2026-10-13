@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-13T07:06:26.657477+00:00",
+  "pr": 40,
+  "merged": true,
+  "mergedAt": "2026-10-13T07:05:12Z",
+  "main": "f38826625e08fe6bcd92073df45685fa36bbf7cf",
+  "validatedCandidate": "a933b9a1d4ea61ba547984d95249befcc9d322bf",
+  "identicalTree": true,
+  "tree": "a0f5b7234c98c8e5a493d7caedd421d9ef46f9b7",
+  "checks": [
+    {
+      "name": "render-connection-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "web-validation",
+      "status": "in_progress",
+      "conclusion": null,
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "offline-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "routing-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    }
+  ],
+  "render": {
+    "autoDeploy": "no",
+    "source": "643bc525c1ab5f79c694259002258ed3af8468f6",
+    "status": "live"
+  },
+  "journeyApiVersion": 2,
+  "deploymentPerformed": false
+}

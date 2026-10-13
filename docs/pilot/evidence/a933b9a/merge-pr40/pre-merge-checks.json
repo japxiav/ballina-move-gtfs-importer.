@@ -1,0 +1,45 @@
+{
+  "pr": 40,
+  "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf",
+  "base": "22bf89cbbe5eb81ca40dee52410a4d11c99382d5",
+  "mergeable": true,
+  "mergeableState": "clean",
+  "checks": [
+    {
+      "name": "deploy-live-gateway",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    },
+    {
+      "name": "render-connection-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    },
+    {
+      "name": "offline-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    },
+    {
+      "name": "web-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    },
+    {
+      "name": "routing-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    },
+    {
+      "name": "offline-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "a933b9a1d4ea61ba547984d95249befcc9d322bf"
+    }
+  ]
+}

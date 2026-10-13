@@ -1,0 +1,18 @@
+{
+  "repositories": [
+    {
+      "name": "japxiav/ballina-move-gtfs-importer.",
+      "host": "github.com",
+      "commit": "f38826625e08fe6bcd92073df45685fa36bbf7cf",
+      "mount_path": "ballina-move-gtfs-importer."
+    }
+  ],
+  "completeTraversal": true,
+  "directoriesInspected": 1375,
+  "excluded": [
+    {
+      "path": "/workspace",
+      "reason": "platform .git placeholder is not a project repository"
+    }
+  ]
+}

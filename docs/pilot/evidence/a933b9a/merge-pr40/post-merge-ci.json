@@ -1,0 +1,35 @@
+{
+  "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf",
+  "checks": [
+    {
+      "name": "deploy-live-gateway",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "render-connection-probe",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "web-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "offline-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    },
+    {
+      "name": "routing-validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head": "f38826625e08fe6bcd92073df45685fa36bbf7cf"
+    }
+  ]
+}
