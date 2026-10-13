@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ballina-move-live
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: ops/live-gateway-hosting
+    dockerfilePath: ./web/Dockerfile
+    dockerContext: .
+    autoDeploy: false
+    healthCheckPath: /
+    envVars:
+      - key: BALLINA_PREVIEW_PORT
+        value: "10000"

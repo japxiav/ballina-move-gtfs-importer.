@@ -3,18 +3,46 @@ on:
   push:
     paths:
       - "web/**"
+      - "render.yaml"
+      - ".dockerignore"
+      - "scripts/deploy_live_gateway_render.py"
+      - "scripts/run_live_gateway_deployment.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
     paths:
       - "web/**"
+      - "render.yaml"
+      - ".dockerignore"
+      - "scripts/deploy_live_gateway_render.py"
+      - "scripts/run_live_gateway_deployment.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
+    inputs:
+      render_connection_probe:
+        description: "Read-only Render connectivity diagnostic; no credentials or deployment"
+        type: boolean
+        required: false
+        default: false
+      deploy_live_gateway:
+        description: "Create the already-authorized FREE read-only service and verify browser"
+        type: boolean
+        required: false
+        default: false
+      reviewed_source_commit:
+        description: "Full reviewed commit required for deployment"
+        type: string
+        required: false
+      render_owner_id:
+        description: "Optional workspace ID when multiple workspaces are connected"
+        type: string
+        required: false
 permissions:
   contents: read
 jobs:
   web-validation:
+    if: ${{ inputs.render_connection_probe != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -44,3 +72,85 @@ jobs:
         run: npm test
       - name: Verify static preview boundary
         run: npm run test:preview
+      - name: Build and verify unprivileged container without provider access
+        working-directory: .
+        run: |
+          set -euo pipefail
+          docker build -f web/Dockerfile -t ballina-live:ci .
+          trap 'docker rm -f ballina-live-ci >/dev/null 2>&1 || true' EXIT
+          docker run -d --name ballina-live-ci --network none --read-only --cap-drop ALL --security-opt no-new-privileges ballina-live:ci
+          docker exec -i ballina-live-ci python - <<'PY'
+          import os, time, urllib.request
+          assert os.getuid() == 10001
+          assert not os.access('/app/web', os.W_OK)
+          deadline = time.monotonic() + 10
+          while True:
+              try:
+                  response = urllib.request.urlopen('http://127.0.0.1:10000/', timeout=1)
+                  break
+              except OSError:
+                  if time.monotonic() > deadline:
+                      raise
+                  time.sleep(.1)
+          assert response.status == 200
+          assert "connect-src 'self'" in response.headers['Content-Security-Policy']
+          assert b'Ballina Move' in response.read()
+          PY
+  render-connection-probe:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.render_connection_probe == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check Render API transport without credentials
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          request = urllib.request.Request('https://api.render.com/v1/owners', headers={'Accept': 'application/json', 'User-Agent': 'BallinaMoveDeployment/0.1'})
+          try:
+              response = urllib.request.urlopen(request, timeout=15)
+          except urllib.error.HTTPError as error:
+              response = error
+          with response:
+              body = response.read(16384).decode('utf-8', 'replace').lower()
+              result = {'status': response.status, 'jsonResponse': response.headers.get('Content-Type', '').startswith('application/json'), 'cloudflareBlock': 'sorry, you have been blocked' in body, 'credentialsUsed': False, 'deploymentAttempted': False}
+          result['runnerBindingPresent'] = bool(os.environ.get('RENDER_API_KEY'))
+          print(json.dumps(result))
+          print('::notice title=Render API transport::' + json.dumps(result))
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('Render transport diagnostic: ' + json.dumps(result) + '\n')
+          PY
+  deploy-live-gateway:
+    needs: web-validation
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_live_gateway == true && inputs.render_connection_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: ballina-live-gateway-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Prepare pinned browser smoke dependencies
+        run: |
+          npm --prefix web ci --ignore-scripts
+          cd web
+          npx playwright install --with-deps chromium
+      - name: Create free target, verify deployed commit and open actual app
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
+          BALLINA_RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
+        run: python scripts/run_live_gateway_deployment.py
