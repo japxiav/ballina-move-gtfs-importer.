@@ -27,9 +27,22 @@ test('abort interrupts a stalled mock body and releases the reader',async()=>{
  try{await assert.rejects(readBoundedServerJson(response,abort.signal,Date.now()+1000),/server_response_aborted/);assert.equal(cancelled,true);}
  finally{clearTimeout(timer);clearTimeout(later);}
 });
-test('absolute deadline rejects late EOF even before an abort timer dispatches',async()=>{
+test('already expired absolute deadline rejects before reading',async()=>{
  const response=new Response('[1]');
  await assert.rejects(readBoundedServerJson(response,new AbortController().signal,Date.now()-1),/server_response_aborted/);
+});
+test('late EOF cannot succeed before a starved deadline timer dispatches',async()=>{
+ const deadline=Date.now()+10;
+ const response=new Response(new ReadableStream({pull(c){while(Date.now()<=deadline){}c.close();}},{highWaterMark:0}));
+ await assert.rejects(readBoundedServerJson(response,new AbortController().signal,deadline),/server_response_aborted/);
+ assert.equal(response.body.locked,false);
+});
+test('abort releases the body even when the underlying cancellation promise never resolves',async()=>{
+ const abort=new AbortController();let cancelled=0;
+ const response=new Response(new ReadableStream({cancel(){cancelled++;return new Promise(()=>{});}}));
+ const timer=setTimeout(()=>abort.abort(),10);
+ try{await assert.rejects(readBoundedServerJson(response,abort.signal,Date.now()+1000),/server_response_aborted/);assert.equal(cancelled,1);assert.equal(response.body.locked,false);}
+ finally{clearTimeout(timer);}
 });
 test('bounded decoder validates UTF8/JSON without exposing private body text',async()=>{
  await assert.rejects(readBoundedServerJson(new Response(new Uint8Array([0xff])),new AbortController().signal,Date.now()+1000),/invalid_server_json/);
