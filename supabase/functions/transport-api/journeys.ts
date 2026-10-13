@@ -14,6 +14,9 @@ const GROUPS = {
   exceptions: ['gtfs_calendar_dates', 'version,service_id,service_date,exception_type'],
 } as const;
 const clean = (v: unknown, limit = 160) => String(v ?? '').replace(/[\x00-\x1f\x7f]/g, '').slice(0, limit);
+// A published identifier must be the exact source reference, never a truncated
+// alias. These are public-protocol bounds, not a claim about all GTFS feeds.
+const publicIdentifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9_ .:-]{1,120}$/.test(v);
 const dateValid = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s) && Number.isFinite(Date.parse(s + 'T00:00:00Z')) && new Date(s + 'T00:00:00Z').toISOString().slice(0, 10) === s;
 const dayAt = (day: string, offset: number) => new Date(Date.parse(day + 'T00:00:00Z') + offset * 86400000).toISOString().slice(0, 10);
 export function localToday(now = new Date()): string {
@@ -34,7 +37,9 @@ export function catalog(snapshot: ScheduleSnapshot) {
   const supported = new Set(snapshot.tables.routes!.filter(r => r.route_type === 2 || r.route_type === 3).map(r => r.route_id));
   const trips = new Set(snapshot.tables.trips!.filter(r => supported.has(r.route_id)).map(r => r.trip_id));
   const used = new Set(snapshot.tables.times!.filter(r => trips.has(r.trip_id)).map(r => r.stop_id));
-  const stops = snapshot.tables.stops!.filter(r => used.has(r.stop_id)).map(r => ({ id: clean(r.stop_id, 120), name: clean(r.stop_name), code: clean(r.stop_code, 50) || null, lat: r.stop_lat, lon: r.stop_lon }));
+  const covered = snapshot.tables.stops!.filter(r => used.has(r.stop_id));
+  if (covered.some(r => !publicIdentifier(r.stop_id))) throw Error('unsupported_schedule_identifier');
+  const stops = covered.map(r => ({ id: r.stop_id as string, name: clean(r.stop_name), code: clean(r.stop_code, 50) || null, lat: r.stop_lat, lon: r.stop_lon }));
   if (!stops.length || stops.length > 1000 || new Set(stops.map(s => s.id)).size !== stops.length || stops.some(s => !s.id || !s.name || typeof s.lat !== 'number' || typeof s.lon !== 'number' || !Number.isFinite(s.lat) || !Number.isFinite(s.lon) || s.lat < 51 || s.lat > 55.7 || s.lon < -11 || s.lon > -5)) throw Error('invalid_stop_catalog');
   return { version: 1, source: 'nta_gtfs', feedVersion: snapshot.version, loadedAt: snapshot.loadedAt, validFrom: snapshot.start, validUntil: snapshot.end, timezone: 'Europe/Dublin', scope: 'stop_to_stop_same_stop_transfers', stops: stops.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)) };
 }
@@ -46,6 +51,11 @@ function operates(calendars: Map<unknown, Row>, exceptions: Map<string, Row>, id
 }
 const regular = (v: unknown) => v === 0 || v === null || v === undefined;
 const seconds = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 72 * 3600;
+type Ride = { tripId: string; routeId: string; route: string; mode: 'bus' | 'rail'; destination: string; from: ReturnType<typeof catalog>['stops'][number]; to: ReturnType<typeof catalog>['stops'][number]; boardAt: number; alightAt: number; boardSequence: number; alightSequence: number; serviceDate: string };
+// Names and presentation text do not identify a service. JSON tuples preserve
+// boundaries even when an official ID contains ':' or other separators.
+const operationalKey = (rides: Ride[]) => JSON.stringify(rides.map(r => [r.serviceDate, r.tripId, r.routeId, r.mode, r.from.id, r.to.id, r.boardSequence, r.alightSequence, r.boardAt, r.alightAt]));
+const lexical = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const data = catalog(snapshot), stops = new Map(data.stops.map(s => [s.id, s]));
   if (!stops.has(q.from) || !stops.has(q.to)) throw Error('unknown_stop');
@@ -56,6 +66,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     if ((m === 2 || m === 9) && d.getUTCDay() === 0 && day + 7 > new Date(Date.UTC(d.getUTCFullYear(), m + 1, 0)).getUTCDate()) throw Error('clock_change_unsupported');
   }
   const routes = new Map(snapshot.tables.routes!.map(r => [r.route_id, r]));
+  if (snapshot.tables.routes!.some(r => !publicIdentifier(r.route_id))) throw Error('unsupported_schedule_identifier');
   if (routes.size !== snapshot.tables.routes!.length) throw Error('duplicate_route');
   const calendars = new Map<unknown, Row>(), exceptions = new Map<string, Row>();
   for (const r of snapshot.tables.calendars!) {
@@ -70,17 +81,28 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const times = new Map<unknown, Row[]>();
   for (const row of snapshot.tables.times!) { const group = times.get(row.trip_id) ?? []; group.push(row); times.set(row.trip_id, group); }
   const depart = Number(q.time.slice(0, 2)) * 3600 + Number(q.time.slice(3)) * 60, horizon = depart + 36 * 3600;
-  type Event = { key: string; trip: Row; route: Row; rows: Row[]; index: number; at: number; offset: number; date: string };
-  type Ride = { tripId: string; route: string; mode: 'bus' | 'rail'; destination: string; from: typeof data.stops[number]; to: typeof data.stops[number]; boardAt: number; alightAt: number; serviceDate: string };
+  type TripDetails = { tripId: string; routeId: string; routeLabel: string; destination: string; mode: 'bus' | 'rail' };
+  type Event = { key: string; details: TripDetails; rows: Row[]; index: number; at: number; offset: number; date: string };
   type State = { stop: string; at: number; rides: Ride[]; used: string[] };
   const departures = new Map<string, Event[]>(), terminalDepartures = new Map<string, Event[]>(), tripIds = new Set<unknown>();
   const eligibleTrips: Row[][] = [];
   const destinationRows = new Map<unknown, number[]>();
+  // Query-local reuse only: a version string does not guarantee that two
+  // snapshots (or a mutable offline fixture) contain identical rows.
+  const days = [-2, -1, 0, 1, 2].map(offset => ({ offset, date: dayAt(q.date, offset) }));
+  const modes = new Set(q.modes.split(','));
+  const activeServices = new Map<unknown, boolean[]>();
   for (const trip of snapshot.tables.trips!) {
+    if (!publicIdentifier(trip.trip_id)) throw Error('unsupported_schedule_identifier');
     if (tripIds.has(trip.trip_id)) throw Error('duplicate_trip');
     tripIds.add(trip.trip_id);
     const route = routes.get(trip.route_id), mode = route?.route_type === 2 ? 'rail' : route?.route_type === 3 ? 'bus' : null;
-    if (!route || !mode || !q.modes.split(',').includes(mode)) continue;
+    if (!route || !mode || !modes.has(mode)) continue;
+    const tripId = trip.trip_id, routeId = clean(route.route_id, 120);
+    const routeLabel = clean(route.route_short_name) || clean(route.route_long_name), destination = clean(trip.trip_headsign);
+    // These immutable presentation/identity fields belong to one trip, not
+    // every boarding event. Share their reference within this query only.
+    const details: TripDetails = { tripId, routeId, routeLabel, destination, mode };
     const rows = [...(times.get(trip.trip_id) ?? [])].sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence));
     let previous = -1, sequence = -1;
     for (const r of rows) {
@@ -93,14 +115,19 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     const ends = rows.map((r, i) => r.stop_id === q.to && regular(r.drop_off_type) && seconds(r.arrival_seconds) ? i : -1).filter(i => i >= 0);
     destinationRows.set(trip.trip_id, ends);
     let eligible = false;
-    for (let offset = -2; offset <= 2; offset++) {
-      const date = dayAt(q.date, offset);
-      if (date < snapshot.start || date > snapshot.end || !operates(calendars, exceptions, trip.service_id, date)) continue;
+    let serviceDays = activeServices.get(trip.service_id);
+    if (!serviceDays) {
+      serviceDays = days.map(({ date }) => date >= snapshot.start && date <= snapshot.end && operates(calendars, exceptions, trip.service_id, date));
+      activeServices.set(trip.service_id, serviceDays);
+    }
+    for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+      const { offset, date } = days[dayIndex]!;
+      if (!serviceDays[dayIndex]) continue;
       for (let index = 0; index < rows.length - 1; index++) {
         const row = rows[index]!, at = Number(row.departure_seconds) + offset * 86400;
         if (!seconds(row.departure_seconds) || !regular(row.pickup_type) || at < depart + 60 || at > horizon) continue;
         const id = String(row.stop_id), group = departures.get(id) ?? [];
-        const event = { key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date };
+        const event = { key: `${date}:${trip.trip_id}`, details, rows, index, at, offset, date };
         group.push(event); departures.set(id, group); eligible = true;
         if (ends.some(end => end > index)) { const final = terminalDepartures.get(id) ?? []; final.push(event); terminalDepartures.set(id, final); }
       }
@@ -124,7 +151,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     reachable.push(current);
   }
   let frontier: State[] = [{ stop: q.from, at: depart, rides: [], used: [] }], work = 0, labels = 1;
-  const found: Ride[][] = [], seen = new Set<string>();
+  const found: { rides: Ride[]; key: string }[] = [], seen = new Set<string>();
   for (let round = 0; round <= Number(q.changes); round++) {
     const next: State[] = [];
     for (const state of frontier) {
@@ -136,29 +163,64 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
         const event = events[i]!;
         if (++work > 150000) throw Error('search_capacity_reached');
         if (state.used.includes(event.key)) continue;
-        const alights = finalRound ? destinationRows.get(event.trip.trip_id)! : event.rows.map((_, k) => k).slice(event.index + 1);
-        for (const k of alights) {
+        const alights = finalRound ? destinationRows.get(event.details.tripId)! : null;
+        // Visit exactly the same indices in the same order, with the same work
+        // accounting, without allocating a whole index array per event/state.
+        for (let cursor = alights ? 0 : event.index + 1; cursor < (alights ? alights.length : event.rows.length); cursor++) {
+          const k = alights ? alights[cursor]! : cursor;
           if (k <= event.index) continue;
           if (++work > 150000) throw Error('search_capacity_reached');
           const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset * 86400;
           if (!seconds(row.arrival_seconds) || at > horizon || !regular(row.drop_off_type)) continue;
           if (!reachable[Number(q.changes) - round]!.has(String(row.stop_id))) continue;
-          const ride: Ride = { tripId: clean(event.trip.trip_id, 120), route: clean(event.route.route_short_name) || clean(event.route.route_long_name), mode: event.route.route_type === 2 ? 'rail' : 'bus', destination: clean(event.trip.trip_headsign), from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, serviceDate: event.date };
-          const rides = [...state.rides, ride], identity = rides.map(r => `${r.serviceDate}:${r.tripId}:${r.from.id}:${r.to.id}`).join('|');
+          const ride: Ride = { tripId: event.details.tripId, routeId: event.details.routeId, route: event.details.routeLabel, mode: event.details.mode, destination: event.details.destination, from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
+          const rides = [...state.rides, ride], identity = operationalKey(rides);
           if (seen.has(identity)) continue;
           seen.add(identity);
           if (++labels > 25000) throw Error('search_capacity_reached');
-          if (String(row.stop_id) === q.to) { found.push(rides); continue; }
+          if (String(row.stop_id) === q.to) { found.push({ rides, key: identity }); continue; }
           if (round < Number(q.changes) && String(row.stop_id) !== q.from) next.push({ stop: String(row.stop_id), at, rides, used: [...state.used, event.key] });
         }
       }
     }
     frontier = next;
   }
-  found.sort((a, b) => a[a.length - 1]!.alightAt - b[b.length - 1]!.alightAt || a.length - b.length || a[0]!.boardAt - b[0]!.boardAt);
+  // Completed journeys only. Never prune intermediate histories or pretend
+  // unknown walking/platform risk is zero. Equal metrics with different stop
+  // sequences remain distinct. Sort plus three skyline slots avoids O(N²).
+  const candidates = found;
+  candidates.sort((a, b) => a.rides.at(-1)!.alightAt - b.rides.at(-1)!.alightAt || a.rides.length - b.rides.length || b.rides[0]!.boardAt - a.rides[0]!.boardAt || lexical(a.key, b.key));
+  const best: ({ departure: number; arrival: number } | undefined)[] = [];
+  const selected: Ride[][] = [];
+  for (const { rides } of candidates) {
+    const changes = rides.length - 1, departure = rides[0]!.boardAt, arrival = rides.at(-1)!.alightAt;
+    let dominated = false;
+    for (let k = 0; k <= changes; k++) {
+      const earlier = best[k];
+      if (earlier && earlier.departure >= departure && (earlier.arrival < arrival || earlier.departure > departure || k < changes)) { dominated = true; break; }
+    }
+    if (dominated) continue;
+    if (!best[changes] || departure > best[changes]!.departure) best[changes] = { departure, arrival };
+    if (selected.length < 6) selected.push(rides);
+  }
   return { version: 1, source: 'nta_gtfs', feedVersion: snapshot.version, loadedAt: snapshot.loadedAt, serviceDate: q.date, timezone: 'Europe/Dublin', scope: data.scope,
     predictionType: 'scheduled', walkingIncluded: false, realTimeApplied: false, minBoardingSeconds: 60, minTransferSeconds: 120,
-    journeys: found.slice(0, 6).map((rides, index) => ({ id: String(index + 1), departureAt: rides[0]!.boardAt, arrivalAt: rides[rides.length - 1]!.alightAt, changes: rides.length - 1, rides })) };
+    journeys: selected.map((rides, index) => ({ id: String(index + 1), departureAt: rides[0]!.boardAt, arrivalAt: rides[rides.length - 1]!.alightAt, changes: rides.length - 1, rides })) };
+}
+/** Public IDs hash operational identity, not list position. Native WebCrypto is
+ * already supplied by the Edge runtime; six bounded digests require no network.
+ * The synchronous solver remains usable by offline correctness/CPU oracles.
+ */
+export async function searchScheduledJourneys(snapshot: ScheduleSnapshot, q: StopQuery) {
+  const result = searchSchedules(snapshot, q);
+  const journeys = await Promise.all(result.journeys.map(async journey => {
+    const identity = JSON.stringify(['ballina-scheduled-v1', snapshot.version, q.date, operationalKey(journey.rides)]);
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(identity));
+    const id = 'j-' + Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+    return { ...journey, id };
+  }));
+  if (new Set(journeys.map(j => j.id)).size !== journeys.length) throw Error('ambiguous_journey_identity');
+  return { ...result, journeys };
 }
 /** Uses only the hosting runtime's existing service key; never return raw tables. */
 export function createScheduleReader(root: string, headers: Record<string, string>, fetcher: typeof fetch = fetch) {

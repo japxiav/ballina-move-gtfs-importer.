@@ -1,0 +1,17 @@
+# Pilot readiness candidate — 13 October 2026
+
+This candidate extends immutable PR36 checkpoint138951b in integration/pilot-readiness. Public Render source643bc52 and journey-apiv2, main22bf89c, active feed and collectors remain unchanged. The CPU, gateway quota/cache and offline walking/realtime preparations remain separate branches and Draft PRs; A12/PR26 stays isolated. Historical docs/release-v1 records describe the older checkpoint, not completion of these new gates.
+
+| Gate | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| Correct scheduled journeys | Exact native operational identities, completed Pareto filtering before unchanged six-result cap, independent oracle, hospital15108/15109 distinction retained | Field/operator completeness; no cross-stop walking replacement |
+| CPU/memory/latency | Fresh-process rotated main/PR36/candidate benchmark, all samples/hashes/full-result comparison; no tolerance/cap relaxation | Candidate Deno/host CPU/RSS/p95/cold/availability not measured; Node evidence is local only |
+| Gateway security | Private server-only schedule admission, bounded quota body/deadline, atomic peer/global counters, two-worker bound, shared catalog generation guard, safe failures and privacy tests | P1: trusted host peer boundary/pilot access policy; NAT/proxy shared identity and distributed abuse remain unresolved |
+| Pedestrian geography | Actual bounded OSM capture2840nodes/350ways/13unresolved relations; explicit unverified/no_verified_connector15109→15108; licensed attribution | Physical crossing, hospital entrance association, accessible boarding/path audit; walking remains excluded publicly |
+| Realtime | Exact normalized identity/sequence/date/source timestamp contracts, stale/missing/conflicting evidence uncertain; scheduled times untouched | Actual trusted provider normalizer, full source namespace and affected-transfer feasibility; no public itinerary projection activated |
+| Regional matrix | 112 offline official-snapshot cases:86with options,18empty,8expected DST refusals; weekdays/weekend/midnight and four towns/hospital | Empty cases are not proof of no service; DST refusals are not supported journeys; real devices/field/day-long operation not verified |
+| Operations/cost/legal | Existing free service, no upgrade/new service/paid walking calls; scoped observer and rollback proposal | Hosted margin, invoice/quota headroom, approved observation window, restore rehearsal, retention/terms/accessibility and seven actual pilot days |
+
+Decision: **PARTIAL / NO-GO for passenger-ready regional release or production promotion.** Local code/build/tests do not replace the remaining acceptance. No P0 shown by scoped reviews; the external P1 gates remain open. This is not a security certification, hosted SLO or physical-access audit.
+
+Safe next step: review exact frozen integration evidence and host/access-policy proposal. A coordinated new private schedule-secret binding, hosted candidate trial, production update/rollback or recurring observer requires specific authorization. No such action, spending, credential value, infrastructure mutation or main merge was performed. The existing public preview remains separately accessible at https://ballina-move-live.onrender.com/ and #/live, subject to free-host/source limitations.

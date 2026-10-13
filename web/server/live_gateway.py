@@ -5,12 +5,18 @@ import argparse
 import concurrent.futures
 import datetime as dt
 import http.server
+import hashlib
+import hmac
+import ipaddress
+import secrets
+from collections import deque
 import json
 import math
 import mimetypes
 import os
 from pathlib import Path
 import re
+import sys
 import threading
 import time
 import urllib.error
@@ -148,6 +154,9 @@ def parse_departures(value, now):
                      "destination": text(row.get("trip_headsign")), "scheduledAt": iso(scheduled),
                      "expectedAt": iso(prediction) if prediction and fresh else None,
                      "predictionObservedAt": iso(source_stamp) if prediction and fresh else None,
+                     # This is a reported cancellation, not a current confirmation
+                     # unless the browser can validate this observation's own age.
+                     "cancellationObservedAt": iso(source_stamp) if cancelled and source_stamp else None,
                      "status": "cancelled" if cancelled else "predicted" if prediction and fresh else "scheduled"})
     return rows[:30]
 
@@ -155,6 +164,19 @@ def parse_departures(value, now):
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         raise ValueError("upstream_redirect_forbidden")
+
+
+class SafeScheduleError(Exception):
+    ALLOWED = {400: {"unknown_stop", "date_outside_feed", "invalid_search"},
+               429: {"rate_limited"},
+               503: {"clock_change_unsupported", "search_capacity_reached", "schedules_unavailable"}}
+
+    def __init__(self, status, code, retry_after=None):
+        if type(status) is not int or code not in self.ALLOWED.get(status, set()):
+            raise ValueError("invalid_safe_schedule_error")
+        self.status, self.code = status, code
+        self.retry_after = max(1, min(60, retry_after)) if type(retry_after) is int else (60 if status == 429 else None)
+        super().__init__(code)
 
 
 def fetch_source(name, public_key, params=None):
@@ -165,13 +187,27 @@ def fetch_source(name, public_key, params=None):
     url = RAIL_URL if name == "rail" else (JOURNEY_URL if name in {"stops", "journeys"} else TRANSPORT_URL) + "?" + urllib.parse.urlencode(query)
     if name != "rail":
         headers["apikey"] = public_key
+    if name in {"stops", "journeys"}:
+        credential = os.environ.get("BALLINA_JOURNEY_GATEWAY_SECRET", "")
+        if not re.fullmatch(r"[a-f0-9]{64}", credential):
+            raise ValueError("journey_gateway_configuration_missing")
+        # Dedicated server-only authorization, never transport/rail/browser.
+        headers["X-Ballina-Gateway"] = credential
     opener = urllib.request.build_opener(NoRedirect())
     budget = 20 if name in {"stops", "journeys"} else 8
     deadline = time.monotonic() + budget
+    failed_status = None
     try:
         response = opener.open(urllib.request.Request(url, headers=headers), timeout=budget)
     except urllib.error.HTTPError as exc:
-        if name != "health" or exc.code != 503:
+        if name in {"stops", "journeys"} and exc.code == 429:
+            retry = exc.headers.get("Retry-After", "")
+            exc.close()  # No upstream error body or private diagnostics needed.
+            raise SafeScheduleError(429, "rate_limited", int(retry) if re.fullmatch(r"[1-9]\d{0,2}", retry) else 60) from None
+        if name in {"stops", "journeys"} and exc.code in {400, 503}:
+            failed_status = exc.code
+        elif name != "health" or exc.code != 503:
+            exc.close()
             raise ValueError("upstream_unavailable") from None
         response = exc
     with response:
@@ -195,6 +231,15 @@ def fetch_source(name, public_key, params=None):
             body.extend(chunk)
             if len(body) > MAX_BODY:
                 raise ValueError("upstream_body_too_large")
+    if failed_status is not None:
+        try:
+            data = json.loads(body.decode("utf-8", errors="strict"))
+            code = data.get("error") if isinstance(data, dict) else None
+        except (ValueError, UnicodeError):
+            code = None
+        if isinstance(code, str) and code in SafeScheduleError.ALLOWED[failed_status]:
+            raise SafeScheduleError(failed_status, code)
+        raise SafeScheduleError(503, "schedules_unavailable")
     return bytes(body) if name == "rail" else json.loads(body.decode("utf-8", errors="strict"))
 
 
@@ -262,11 +307,15 @@ def public_schedule(value, params=None):
     journeys = value.get("journeys")
     if not isinstance(journeys, list) or len(journeys) > 6:
         raise ValueError("invalid_journeys")
-    cleaned = []
+    cleaned, journey_ids = [], set()
     depart = int(params["time"][:2]) * 3600 + int(params["time"][3:]) * 60
     for j in journeys:
         if not isinstance(j, dict) or not isinstance(j.get("rides"), list) or not 1 <= len(j["rides"]) <= int(params["changes"]) + 1:
             raise ValueError("invalid_journey")
+        identity = j.get("id")
+        if not isinstance(identity, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", identity) or identity in journey_ids:
+            raise ValueError("invalid_journey_identity")
+        journey_ids.add(identity)
         rides, trip_keys = [], set()
         for r in j["rides"]:
             if not isinstance(r, dict) or r.get("mode") not in params["modes"].split(",") or not isinstance(r.get("tripId"), str) or not r["tripId"] or len(r["tripId"]) > 120:
@@ -281,10 +330,16 @@ def public_schedule(value, params=None):
             if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or abs((dt.date.fromisoformat(date) - dt.date.fromisoformat(params["date"])).days) > 2 or (date, r["tripId"]) in trip_keys:
                 raise ValueError("invalid_service_day")
             trip_keys.add((date, r["tripId"]))
-            rides.append({"tripId": text(r["tripId"], 120), "route": text(r.get("route")), "mode": r["mode"], "destination": text(r.get("destination")), "from": start, "to": end, "boardAt": board, "alightAt": alight, "serviceDate": date})
+            operational = {}
+            if any(k in r for k in ["routeId", "boardSequence", "alightSequence"]):
+                route_id, board_seq, alight_seq = r.get("routeId"), r.get("boardSequence"), r.get("alightSequence")
+                if not isinstance(route_id, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", route_id) or type(board_seq) is not int or type(alight_seq) is not int or not 0 <= board_seq < alight_seq:
+                    raise ValueError("invalid_operational_sequence")
+                operational = {"routeId": route_id, "boardSequence": board_seq, "alightSequence": alight_seq}
+            rides.append({"tripId": text(r["tripId"], 120), "route": text(r.get("route")), "mode": r["mode"], "destination": text(r.get("destination")), "from": start, "to": end, "boardAt": board, "alightAt": alight, "serviceDate": date, **operational})
         if rides[-1]["to"]["id"] != params["to"] or j.get("departureAt") != rides[0]["boardAt"] or j.get("arrivalAt") != rides[-1]["alightAt"] or j.get("changes") != len(rides) - 1:
             raise ValueError("invalid_journey_summary")
-        cleaned.append({"id": str(len(cleaned) + 1), "departureAt": rides[0]["boardAt"], "arrivalAt": rides[-1]["alightAt"], "changes": len(rides) - 1, "rides": rides})
+        cleaned.append({"id": identity, "departureAt": rides[0]["boardAt"], "arrivalAt": rides[-1]["alightAt"], "changes": len(rides) - 1, "rides": rides})
     return {**base, "serviceDate": params["date"], "predictionType": "scheduled", "walkingIncluded": False, "realTimeApplied": False, "minBoardingSeconds": 60, "minTransferSeconds": 120, "journeys": cleaned}
 
 
@@ -294,22 +349,48 @@ class ScheduleService:
         self.pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
         self.lock = threading.Lock()
         self.futures = set()
+        self.client_work = {}
         self.catalog_cache = None
         self.catalog_at = 0
+        self.catalog_work = None
+        self.catalog_ready = False
 
-    def get(self, params=None):
+    def get(self, params=None, client=None):
         with self.lock:
             if params is None and self.catalog_cache is not None and time.monotonic() - self.catalog_at < 45:
                 return self.catalog_cache
             self.futures = {f for f in self.futures if not f.done()}
-            if len(self.futures) >= 2:
-                raise ValueError("schedule_capacity")
-            future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
-            self.futures.add(future)
-        value = public_schedule(future.result(timeout=21), params)
+            self.client_work = {k: f for k, f in self.client_work.items() if not f.done()}
+            if params is not None and client is not None and client in self.client_work:
+                raise ValueError("schedule_client_busy")
+            if params is None and self.catalog_work is not None and not self.catalog_ready:
+                future = self.catalog_work  # Bounded callers share the cold read.
+            else:
+                if len(self.futures) >= 2:
+                    raise ValueError("schedule_capacity")
+                future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
+                self.futures.add(future)
+                if params is None:
+                    self.catalog_work = future
+                    self.catalog_ready = False
+                elif client is not None:
+                    self.client_work[client] = future
+        try:
+            value = public_schedule(future.result(timeout=21), params)
+        except Exception:
+            if params is None and future.done():
+                with self.lock:
+                    if self.catalog_work is future:
+                        self.catalog_work = None
+            raise
         if params is None:
             with self.lock:
-                self.catalog_cache, self.catalog_at = value, time.monotonic()
+                # Only the first publisher of the current flight can install
+                # its result. A delayed waiter must not renew its TTL or
+                # overwrite a newer feed generation after a refresh.
+                if self.catalog_work is future and not self.catalog_ready:
+                    self.catalog_cache, self.catalog_at = value, time.monotonic()
+                    self.catalog_ready = True
         return value
 
 
@@ -382,6 +463,51 @@ class LiveService:
                 self.condition.notify_all()
 
 
+class PeerBudget:
+    """Short-lived network-peer shaping, not authenticated passenger identity.
+
+    Ignores all forwarded headers/cookies. Behind a proxy peers can be shared;
+    deployment must validate that boundary. No IPs/logs/persistent identifiers.
+    """
+    LIMITS = {"/api/journeys": 6, "/api/stops": 10, "/api/live": 8}
+
+    def __init__(self, clock=time.monotonic, maximum=512):
+        self.clock, self.maximum = clock, maximum
+        self.salt = secrets.token_bytes(32)
+        self.lock, self.buckets = threading.Lock(), {}
+
+    def identity(self, address):
+        ip = ipaddress.ip_address(address)
+        if ip.version == 6 and ip.ipv4_mapped is not None:
+            ip = ip.ipv4_mapped
+        network = ipaddress.ip_network(f"{ip}/64", strict=False) if ip.version == 6 else ip
+        return hmac.new(self.salt, str(network).encode("ascii"), hashlib.sha256).hexdigest()
+
+    def allow(self, identity, path):
+        if path not in self.LIMITS:
+            return False
+        with self.lock:
+            now = self.clock()
+            expired = []
+            for key, times in self.buckets.items():
+                while times and now - times[0] >= 60:
+                    times.popleft()
+                if not times:
+                    expired.append(key)
+            for key in expired:
+                del self.buckets[key]
+            key = (identity, path)
+            times = self.buckets.get(key)
+            if times is None:
+                if len(self.buckets) >= self.maximum:
+                    return False  # Never evict live budgets to reset a caller.
+                times = self.buckets[key] = deque()
+            if len(times) >= self.LIMITS[path]:
+                return False
+            times.append(now)
+            return True
+
+
 class GatewayHandler(http.server.BaseHTTPRequestHandler):
     service: LiveService
     rate_lock = threading.Lock()
@@ -394,13 +520,15 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass  # No client locations, headers, keys or URLs in logs.
 
-    def respond(self, body, status=200, content_type="application/json; charset=utf-8", standalone=False):
+    def respond(self, body, status=200, content_type="application/json; charset=utf-8", standalone=False, retry_after=None):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("Cache-Control", "no-store")
+        if type(retry_after) is int:
+            self.send_header("Retry-After", str(max(1, min(60, retry_after))))
         if not standalone:
             self.send_header("Content-Security-Policy", CSP)
         self.end_headers()
@@ -425,21 +553,29 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             if (url.query and path != "/api/journeys") or self.command != "GET":
                 self.respond(b'{"error":"invalid_request"}', 400)
                 return
-            with self.rate_lock:
-                now = time.monotonic()
-                self.request_times[:] = [t for t in self.request_times if now - t < 60]
-                if len(self.request_times) >= 60:
-                    self.respond(b'{"error":"rate_limited"}', 429)
-                    return
-                self.request_times.append(now)
             try:
                 params = schedule_query(url.query) if path == "/api/journeys" else None
             except ValueError:
                 self.respond(b'{"error":"invalid_search"}', 400)
                 return
+            # Only the actual TCP peer defines this soft budget. Client-supplied
+            # IP, cookie, authorization and forwarding headers cannot rotate it.
+            client = self.server.client_budget.identity(self.client_address[0])
+            with self.rate_lock:
+                now = time.monotonic()
+                self.request_times[:] = [t for t in self.request_times if now - t < 60]
+                admitted = len(self.request_times) < 60 and self.server.client_budget.allow(client, path)
+                if admitted:
+                    self.request_times.append(now)
+            if not admitted:
+                # Socket writes never hold the shared accounting lock.
+                self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
+                return
             try:
-                value = self.service.get() if path == "/api/live" else self.schedules.get(params)
+                value = self.service.get() if path == "/api/live" else self.schedules.get(params, client=client)
                 self.respond(json.dumps(value, ensure_ascii=False).encode("utf-8"))
+            except SafeScheduleError as error:
+                self.respond(json.dumps({"error": error.code}).encode("utf-8"), error.status, retry_after=error.retry_after)
             except Exception:
                 self.respond(b'{"error":"live_service_unavailable"}' if path == "/api/live" else b'{"error":"schedules_unavailable"}', 503)
             return
@@ -455,6 +591,14 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 class GatewayServer(http.server.ThreadingHTTPServer):
+    def __init__(self, *args, **kwargs):
+        self.client_budget = PeerBudget()
+        super().__init__(*args, **kwargs)
+
+    def handle_error(self, request, client_address):
+        # Base socketserver handler otherwise prints client address/traceback.
+        print('{"event":"gateway_request_failed"}', file=sys.stderr)
+
     daemon_threads = True
     slots = threading.BoundedSemaphore(16)
 

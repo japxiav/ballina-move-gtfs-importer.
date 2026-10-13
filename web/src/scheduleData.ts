@@ -3,7 +3,7 @@ import { validDate, validTime } from './fixtures';
 export interface OfficialStop { id: string; name: string; code: string | null; lat: number; lon: number }
 export interface StopCatalog { version: 1; source: 'nta_gtfs'; feedVersion: string; loadedAt: string; validFrom: string; validUntil: string; timezone: 'Europe/Dublin'; scope: 'stop_to_stop_same_stop_transfers'; stops: OfficialStop[] }
 export interface StopSearch { from: string; to: string; date: string; time: string; modes: string; changes: string }
-export interface ScheduledRide { tripId: string; route: string; mode: 'bus' | 'rail'; destination: string; from: OfficialStop; to: OfficialStop; boardAt: number; alightAt: number; serviceDate: string }
+export interface ScheduledRide { tripId: string; routeId?: string; boardSequence?: number; alightSequence?: number; route: string; mode: 'bus' | 'rail'; destination: string; from: OfficialStop; to: OfficialStop; boardAt: number; alightAt: number; serviceDate: string }
 export interface ScheduledJourney { id: string; departureAt: number; arrivalAt: number; changes: number; rides: ScheduledRide[] }
 export interface ScheduleResult { version: 1; source: 'nta_gtfs'; feedVersion: string; loadedAt: string; serviceDate: string; timezone: 'Europe/Dublin'; scope: 'stop_to_stop_same_stop_transfers'; predictionType: 'scheduled'; walkingIncluded: false; realTimeApplied: false; minBoardingSeconds: 60; minTransferSeconds: 120; journeys: ScheduledJourney[] }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -33,6 +33,9 @@ export function decodeSchedules(value: unknown, query: StopSearch): ScheduleResu
     for (const r of j.rides) {
       if (!object(r) || !text(r.tripId) || !r.tripId || !text(r.route) || !text(r.destination) || !['bus', 'rail'].includes(String(r.mode)) || !query.modes.split(',').includes(String(r.mode)) || !stop(r.from) || !stop(r.to) || !text(r.serviceDate) || !validDate(r.serviceDate) || typeof r.boardAt !== 'number' || typeof r.alightAt !== 'number' || !Number.isInteger(r.boardAt) || !Number.isInteger(r.alightAt) || r.boardAt < depart + 60 || r.alightAt < r.boardAt || r.alightAt > depart + 36 * 3600) throw Error('Invalid ride.');
       if (previous ? r.from.id !== previous.to.id || r.boardAt < previous.alightAt + 120 : r.from.id !== query.from) throw Error('Invalid connection.');
+      // Backwards-compatible with the inspected v2 API; partial/invalid new
+      // operational metadata is rejected rather than silently discarded.
+      if (['routeId', 'boardSequence', 'alightSequence'].some(k => k in r) && (!identifier(r.routeId) || typeof r.boardSequence !== 'number' || typeof r.alightSequence !== 'number' || !Number.isInteger(r.boardSequence) || !Number.isInteger(r.alightSequence) || r.boardSequence < 0 || r.alightSequence <= r.boardSequence)) throw Error('Invalid service sequence.');
       const key = `${r.serviceDate}:${r.tripId}`; if (used.has(key)) throw Error('Repeated trip.'); used.add(key);
       previous = r as unknown as ScheduledRide;
     }
@@ -50,7 +53,25 @@ export const encodeStopSearch = (q: StopSearch) => new URLSearchParams({ ...q })
 async function request(path: string, signal: AbortSignal): Promise<unknown> {
   // Only same-origin, credentials omitted. No fallback to illustrative data.
   const response = await fetch(new URL(path, window.location.href), { signal, credentials: 'omit', cache: 'no-store', redirect: 'error' });
-  if (!response.ok) throw Error(response.status === 429 ? 'Too many searches. Wait a minute and try again.' : 'Official schedules are unavailable. Try again later.');
+  if (!response.ok) {
+    if (response.status === 429) throw Error('Too many searches. Wait a minute and try again.');
+    let code: unknown;
+    try {
+      // Bounded parsing of an HTTP error body; this is never decoded as a
+      // successful schedule. Only fixed public error messages reach the UI.
+      const error = await boundedJson(new Response(response.body));
+      if (object(error)) code = error.error;
+    } catch { /* unexpected or oversized errors use the generic message */ }
+    const known: Record<string, string> = response.status === 400 ? {
+      unknown_stop: 'This stop is no longer covered. Choose another stop.',
+      date_outside_feed: 'Choose a date covered by the current timetable.',
+      invalid_search: 'Choose different stops and a valid date and time.',
+    } : response.status === 503 ? {
+      clock_change_unsupported: 'Searches around the Ireland clock change are not supported yet. Choose another date.',
+      search_capacity_reached: 'This search could not finish. Try Direct only or a later departure time.',
+    } : {};
+    throw Error(typeof code === 'string' && Object.hasOwn(known, code) ? known[code] : 'Official schedules are unavailable. Try again later.');
+  }
   return boundedJson(response);
 }
 export const fetchCatalog = async (signal: AbortSignal) => decodeCatalog(await request('api/stops', signal));

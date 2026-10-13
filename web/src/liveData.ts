@@ -18,7 +18,8 @@ export interface Departure {
   scheduledAt: string;
   expectedAt: string | null;
   predictionObservedAt: string | null;
-  status: "scheduled" | "predicted" | "cancelled";
+  cancellationObservedAt?: string | null;
+  status: "scheduled" | "predicted" | "cancelled" | "cancellation_unconfirmed";
 }
 export interface LiveData {
   version: 1;
@@ -50,6 +51,7 @@ export function decodeLiveData(value: unknown): LiveData {
   }
   for (const d of value.departures) {
     if (!object(d) || !string(d.id) || !string(d.stop) || !string(d.route) || !string(d.destination) || !date(d.scheduledAt) || !nullableDate(d.expectedAt) || !nullableDate(d.predictionObservedAt) || !includes(["scheduled", "predicted", "cancelled"], d.status) || d.status === "predicted" && (!date(d.expectedAt) || !date(d.predictionObservedAt))) throw Error("Invalid departure.");
+    if (d.cancellationObservedAt !== undefined && !nullableDate(d.cancellationObservedAt) || d.status === "cancelled" && (d.expectedAt !== null || d.predictionObservedAt !== null) || d.status !== "cancelled" && d.cancellationObservedAt != null) throw Error("Invalid departure.");
   }
   return value as unknown as LiveData;
 }
@@ -99,6 +101,10 @@ export function visibleVehicles(data: LiveData, now: number): VehiclePosition[] 
 export function visibleDepartures(data: LiveData, now: number): Departure[] {
   if (data.sources.departures.status !== "ready") return [];
   return data.departures.map(d => {
+    if (d.status === "cancelled") {
+      const age = d.cancellationObservedAt ? (now - Date.parse(d.cancellationObservedAt)) / 1000 : Infinity;
+      if (age < -15 || age > 180) return { ...d, status: "cancellation_unconfirmed" as const, expectedAt: null, predictionObservedAt: null };
+    }
     const age = d.predictionObservedAt ? (now - Date.parse(d.predictionObservedAt)) / 1000 : Infinity;
     // A captured prediction must expire even when a static snapshot is unchanged.
     if (d.status === "predicted" && (age < -15 || age > 180))

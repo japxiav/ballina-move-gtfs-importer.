@@ -19,6 +19,24 @@ def result():
     return {**BASE, 'serviceDate': Q['date'], 'walkingIncluded': False, 'realTimeApplied': False, 'predictionType': 'scheduled', 'minBoardingSeconds': 60, 'minTransferSeconds': 120, 'journeys': [{'id': 'x', 'departureAt': 29000, 'arrivalAt': 31920, 'changes': 0, 'rides': [ride]}], 'secret': 'never-forward'}
 
 class ScheduleGateway(unittest.TestCase):
+    def test_itinerary_identity_is_preserved_and_duplicates_or_invalid_ids_fail_closed(self):
+        body = result(); body['journeys'][0]['id'] = 'j-' + 'a' * 64
+        self.assertEqual(g.public_schedule(body, Q)['journeys'][0]['id'], body['journeys'][0]['id'])
+        for identity in ['', 'a' * 121, '<script>', 1]:
+            bad = result(); bad['journeys'][0]['id'] = identity
+            with self.assertRaises(ValueError): g.public_schedule(bad, Q)
+        body['journeys'].append(body['journeys'][0])
+        with self.assertRaises(ValueError): g.public_schedule(body, Q)
+
+    def test_operational_sequences_are_preserved_only_when_complete_and_ordered(self):
+        body = result(); ride = body['journeys'][0]['rides'][0]
+        ride.update(routeId='official-route', boardSequence=1, alightSequence=5)
+        clean = g.public_schedule(body, Q)['journeys'][0]['rides'][0]
+        self.assertEqual((clean['routeId'], clean['boardSequence'], clean['alightSequence']), ('official-route', 1, 5))
+        for bad in [{'boardSequence': True}, {'alightSequence': 1}, {'routeId': '<private>'}]:
+            b = result(); b['journeys'][0]['rides'][0].update({**ride, **bad})
+            with self.assertRaises(ValueError): g.public_schedule(b, Q)
+
     def test_duplicate_parameters_past_date_remote_url_and_invalid_modes_are_rejected(self):
         query = g.urllib.parse.urlencode(Q)
         self.assertEqual(g.schedule_query(query, NOW), Q)

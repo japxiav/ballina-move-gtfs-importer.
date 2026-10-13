@@ -685,6 +685,7 @@ function planJourneys(data, paths, request) {
   './gtfsSnapshot': function(module, exports, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.readBoundedServerJson = readBoundedServerJson;
 exports.loadActiveGtfsSnapshot = loadActiveGtfsSnapshot;
 const supabaseAdapter_1 = require("./supabaseAdapter");
 const TABLES = {
@@ -695,9 +696,69 @@ const TABLES = {
     calendars: ['gtfs_calendars', 'version,service_id,start_date,end_date,sunday,monday,tuesday,wednesday,thursday,friday,saturday', 'service_id.asc'],
     calendarDates: ['gtfs_calendar_dates', 'version,service_id,service_date,exception_type', 'service_id.asc,service_date.asc'],
 };
+/** Shared bounded server transport primitive; no request, key or coordinates
+ * are retained here. Kept in an existing module to preserve bundle topology.
+ */
+async function readBoundedServerJson(response, signal, deadline) {
+    const maximum = 1048576;
+    let interrupted = false;
+    const cancelled = () => interrupted || signal.aborted || Date.now() >= deadline;
+    if (cancelled()) {
+        void response.body?.cancel().catch(() => { });
+        throw new Error('server_response_aborted');
+    }
+    const declared = response.headers.get('content-length');
+    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > maximum)) {
+        void response.body?.cancel().catch(() => { });
+        throw new Error('server_response_too_large');
+    }
+    const reader = response.body?.getReader();
+    if (!reader)
+        throw new Error('invalid_server_json');
+    // Cancelling a standard ReadableStream settles its pending read even if the
+    // underlying cancellation hook never resolves. Avoid Promise.race per chunk:
+    // a shared pending abort promise would retain one reaction per tiny fragment.
+    const interrupt = () => { interrupted = true; void reader.cancel().catch(() => { }); };
+    signal.addEventListener('abort', interrupt, { once: true });
+    const timer = setTimeout(interrupt, Math.max(0, deadline - Date.now()));
+    const buffer = new Uint8Array(maximum);
+    let size = 0;
+    try {
+        while (true) {
+            if (cancelled())
+                throw new Error('server_response_aborted');
+            const chunk = await reader.read();
+            if (cancelled())
+                throw new Error('server_response_aborted');
+            if (chunk.done)
+                break;
+            if (size + chunk.value.byteLength > maximum)
+                throw new Error('server_response_too_large');
+            buffer.set(chunk.value, size);
+            size += chunk.value.byteLength;
+        }
+    }
+    catch (error) {
+        void reader.cancel().catch(() => { });
+        if (error instanceof Error && ['server_response_aborted', 'server_response_too_large'].includes(error.message))
+            throw error;
+        throw new Error('invalid_server_json');
+    }
+    finally {
+        clearTimeout(timer);
+        signal.removeEventListener('abort', interrupt);
+        reader.releaseLock();
+    }
+    try {
+        return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, size)));
+    }
+    catch {
+        throw new Error('invalid_server_json');
+    }
+}
 async function loadActiveGtfsSnapshot(options) {
     const { supabaseUrl, privateKey } = options;
-    if (!/^https:\/\//.test(supabaseUrl) || !privateKey || /\s/.test(privateKey))
+    if (!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(supabaseUrl) || !privateKey || /\s/.test(privateKey))
         throw new Error('invalid_server_configuration');
     const pageSize = options.pageSize ?? 1000;
     const maxRows = options.maxRowsPerTable ?? 100_000;
@@ -714,10 +775,13 @@ async function loadActiveGtfsSnapshot(options) {
         // Count only first page; if no reliable count header, fall back to serial pagination.
         const url = root + path;
         const pageHeaders = withCount ? { ...headers, Prefer: 'count=exact' } : headers;
-        const response = await fetcher(url, { method: 'GET', headers: pageHeaders, signal: AbortSignal.timeout(timeoutMs) });
-        if (!response.ok)
+        const deadline = Date.now() + timeoutMs, signal = AbortSignal.timeout(timeoutMs);
+        const response = await fetcher(url, { method: 'GET', headers: pageHeaders, signal, redirect: 'error' });
+        if (!response.ok) {
+            void response.body?.cancel().catch(() => { });
             throw new Error(`snapshot_http_${response.status}`);
-        const rows = await response.json();
+        }
+        const rows = await readBoundedServerJson(response, signal, deadline);
         if (!Array.isArray(rows) || !rows.every(x => x !== null && typeof x === 'object' && !Array.isArray(x)))
             throw new Error('invalid_snapshot_response');
         const header = withCount ? response.headers.get('content-range') : null;
@@ -1318,6 +1382,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StadiaWalkingRouter = void 0;
 exports.decodePolyline6 = decodePolyline6;
 exports.buildPedestrianPaths = buildPedestrianPaths;
+const gtfsSnapshot_1 = require("./gtfsSnapshot");
 const boarding_1 = require("./boarding");
 /** No raw coordinates or exact household offsets are logged. */
 function driftBucket(m) { return m <= 5 ? '0-5' : m <= 12 ? '5-12' : m <= 25 ? '12-25' : m <= 50 ? '25-50' : m <= 80 ? '50-80' : '>80'; }
@@ -1374,16 +1439,24 @@ class StadiaWalkingRouter {
         if (!validCoordinate(from) || !validCoordinate(to))
             throw new Error('invalid_coordinates');
         const url = `${this.baseUrl}/route/v1`;
+        const deadline = Date.now() + 12000;
+        const operationSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(12000)]) : AbortSignal.timeout(12000);
+        if (operationSignal.aborted)
+            throw new Error('server_response_aborted');
         const response = await this.http(url, {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Stadia-Auth ${this.apiKey}` },
             body: JSON.stringify({ locations: [from, to], costing: 'pedestrian', units: 'kilometers', shape_format: 'polyline6' }),
-            signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(12000)]) : AbortSignal.timeout(12000),
+            signal: operationSignal, redirect: 'error',
         });
-        if (response.status === 400 || response.status === 404)
-            return null; // no routable path or invalid request, reject.
-        if (!response.ok)
+        if (response.status === 400 || response.status === 404) {
+            void response.body?.cancel().catch(() => { });
+            return null;
+        } // no routable path or invalid request, reject.
+        if (!response.ok) {
+            void response.body?.cancel().catch(() => { });
             throw new Error(`walking_api_failed_${response.status}`);
-        const result = await response.json();
+        }
+        const result = await (0, gtfsSnapshot_1.readBoundedServerJson)(response, operationSignal, deadline);
         const time = result.trip?.summary?.time;
         const distanceKm = result.trip?.summary?.length;
         const shape = result.trip?.legs?.[0]?.shape;

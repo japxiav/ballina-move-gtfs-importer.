@@ -62,3 +62,89 @@ test('official mobile home keeps the search button visible without scrolling and
   await expect(page.getByLabel('Schedule date')).toHaveAttribute('max', lastDay);
   await expect(page.locator('.demo-note')).toHaveCount(0);
 });
+
+test('known official errors explain clock changes and capacity without exposing private diagnostics',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ let code='clock_change_unsupported';
+ await page.route('**/api/journeys?*',route=>route.fulfill({status:503,json:{error:code,private_diagnostic:'NEVER_FORWARD_PRIVATE'}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));
+ await expect(page.getByRole('alert')).toContainText('Ireland clock change');
+ await expect(page.locator('body')).not.toContainText('NEVER_FORWARD_PRIVATE');
+ code='search_capacity_reached';await page.reload();await expect(page.getByRole('alert')).toContainText('Try Direct only');
+ code='private SQL text';await page.reload();await expect(page.getByRole('alert')).toContainText('Official schedules are unavailable');
+ await expect(page.locator('body')).not.toContainText('private SQL text');
+ await expect(page.locator('.journey-card')).toHaveCount(0);
+});
+test('upstream quota exhaustion remains a wait state without synthetic results',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ await page.route('**/api/journeys?*',route=>route.fulfill({status:429,headers:{'Retry-After':'60'},json:{error:'rate_limited'}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.getByRole('alert')).toContainText('Wait a minute');
+ await expect(page.locator('.journey-card')).toHaveCount(0);
+});
+
+test('about page states limited technical preview and real request/privacy boundaries',async({page})=>{
+ await page.goto('/#/about');const about=page.locator('.about-page');
+ await expect(about).toContainText('Independent technical preview');
+ await expect(about).toContainText('not all of Mayo or Ireland');
+ await expect(about).not.toContainText('Compare arrival, walking');
+ await expect(about).toContainText('browser history');await expect(about).toContainText('OpenStreetMap receives your IP');
+ await expect(about.getByRole('link',{name:'CC BY 4.0'})).toHaveAttribute('href','https://creativecommons.org/licenses/by/4.0/');
+ await expect(about.getByRole('link',{name:'Report a timetable issue'})).toHaveAttribute('href','https://github.com/japxiav/ballina-move-gtfs-importer./issues/new');
+});
+
+test('a failed parallel catalog request cancels its stalled schedule sibling',async({page})=>{
+ await page.addInitScript(()=>{
+  const original=window.fetch.bind(window);(window as unknown as {scheduleAborted:boolean}).scheduleAborted=false;
+  window.fetch=(input,init)=>{const url=String(input);
+   if(url.includes('/api/stops')) return Promise.reject(new Error('offline catalog failure'));
+   if(url.includes('/api/journeys')) return new Promise((_resolve,reject)=>{init?.signal?.addEventListener('abort',()=>{(window as unknown as {scheduleAborted:boolean}).scheduleAborted=true;reject(new DOMException('Aborted','AbortError'));},{once:true});});
+   return original(input,init);
+  };
+ });
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.getByRole('alert')).toContainText('offline catalog failure');
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {scheduleAborted:boolean}).scheduleAborted)).toBe(true);
+});
+
+test('results show journeys before the editable form and keep editing accessible',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ await page.route('**/api/journeys?*',route=>route.fulfill({json:result()}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.locator('.journey-card')).toHaveCount(1);
+ await expect(page.getByLabel('From stop')).toBeHidden();
+ const edit=page.getByText('Edit search',{exact:false});await expect(edit).toBeVisible();await edit.click();
+ await expect(page.getByLabel('From stop')).toBeVisible();await expect(page.getByRole('button',{name:'Find scheduled journeys'})).toBeVisible();
+});
+
+const identityA = 'j-' + 'a'.repeat(64), identityB = 'j-' + 'b'.repeat(64);
+test('stable official deep links never become a different itinerary after result order changes', async ({page}) => {
+ await page.route('**/api/stops', route=>route.fulfill({json:catalog}));
+ const a={...result().journeys[0],id:identityA};
+ const b={...structuredClone(a),id:identityB,departureAt:30000,arrivalAt:33120};
+ b.rides[0]={...b.rides[0],tripId:'other-offline-trip',boardAt:30000,alightAt:33120};
+ let journeys=[a,b];
+ await page.route('**/api/journeys?*', route=>route.fulfill({json:{...result(),journeys}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));
+ await page.getByRole('link',{name:'View itinerary'}).first().click();
+ await expect(page).toHaveURL(new RegExp('/scheduled/'+identityA));
+ await expect(page.locator('.scheduled-itinerary')).toBeVisible();
+ journeys=[b,a];await page.reload();
+ await page.getByText('Service reference').click();
+ await expect(page.locator('.scheduled-itinerary')).toContainText('offline-fixture-420');
+ journeys=[b];await page.reload();
+ await expect(page.getByRole('heading',{name:'Itinerary unavailable.'})).toBeVisible();
+ await expect(page.locator('.scheduled-itinerary')).toHaveCount(0);
+});
+test('equal-time official cards distinguish actual transfer stops and wait durations', async ({page})=>{
+ const castlebar={...to,id:'8490B5557201',name:'Castlebar',code:'555721'};
+ const otherHospital={...to,id:'8490B151081',code:'15108'};
+ await page.route('**/api/stops',route=>route.fulfill({json:{...catalog,stops:[from,to,castlebar,otherHospital]}}));
+ const make=(transfer:typeof to,id:string,firstArrival:number,secondBoard:number)=>({id,departureAt:28800,arrivalAt:33840,changes:1,rides:[
+ {...result().journeys[0].rides[0],to:transfer,alightAt:firstArrival},
+ {...result().journeys[0].rides[0],tripId:'offline-440',route:'440',from:transfer,to:otherHospital,boardAt:secondBoard,alightAt:33840}
+ ]});
+ const journeys=[make(castlebar,identityA,31680,33780),make(to,identityB,31920,33720)];
+ await page.route('**/api/journeys?*',route=>route.fulfill({json:{...result(),journeys}}));
+ await page.goto('/#/plan?'+encodeStopSearch({...q,to:otherHospital.id}));
+ const cards=page.locator('.journey-card');await expect(cards).toHaveCount(2);
+ await expect(cards.nth(0)).toContainText('Castlebar · 555721');await expect(cards.nth(0)).toContainText('35 min wait');
+ await expect(cards.nth(1)).toContainText('Mayo Hospital · 15109');await expect(cards.nth(1)).toContainText('30 min wait');
+});
