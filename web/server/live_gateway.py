@@ -352,6 +352,8 @@ class ScheduleService:
         self.client_work = {}
         self.catalog_cache = None
         self.catalog_at = 0
+        self.catalog_work = None
+        self.catalog_ready = False
 
     def get(self, params=None, client=None):
         with self.lock:
@@ -359,18 +361,32 @@ class ScheduleService:
                 return self.catalog_cache
             self.futures = {f for f in self.futures if not f.done()}
             self.client_work = {k: f for k, f in self.client_work.items() if not f.done()}
-            if client is not None and client in self.client_work:
+            if params is not None and client is not None and client in self.client_work:
                 raise ValueError("schedule_client_busy")
-            if len(self.futures) >= 2:
-                raise ValueError("schedule_capacity")
-            future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
-            self.futures.add(future)
-            if client is not None:
-                self.client_work[client] = future
-        value = public_schedule(future.result(timeout=21), params)
+            if params is None and self.catalog_work is not None and not self.catalog_ready:
+                future = self.catalog_work  # Bounded callers share the cold read.
+            else:
+                if len(self.futures) >= 2:
+                    raise ValueError("schedule_capacity")
+                future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
+                self.futures.add(future)
+                if params is None:
+                    self.catalog_work = future
+                    self.catalog_ready = False
+                elif client is not None:
+                    self.client_work[client] = future
+        try:
+            value = public_schedule(future.result(timeout=21), params)
+        except Exception:
+            if params is None and future.done():
+                with self.lock:
+                    if self.catalog_work is future:
+                        self.catalog_work = None
+            raise
         if params is None:
             with self.lock:
                 self.catalog_cache, self.catalog_at = value, time.monotonic()
+                self.catalog_ready = True
         return value
 
 
@@ -458,6 +474,8 @@ class PeerBudget:
 
     def identity(self, address):
         ip = ipaddress.ip_address(address)
+        if ip.version == 6 and ip.ipv4_mapped is not None:
+            ip = ip.ipv4_mapped
         network = ipaddress.ip_network(f"{ip}/64", strict=False) if ip.version == 6 else ip
         return hmac.new(self.salt, str(network).encode("ascii"), hashlib.sha256).hexdigest()
 
@@ -539,16 +557,16 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             # Only the actual TCP peer defines this soft budget. Client-supplied
             # IP, cookie, authorization and forwarding headers cannot rotate it.
             client = self.server.client_budget.identity(self.client_address[0])
-            if not self.server.client_budget.allow(client, path):
-                self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
-                return
             with self.rate_lock:
                 now = time.monotonic()
                 self.request_times[:] = [t for t in self.request_times if now - t < 60]
-                if len(self.request_times) >= 60:
-                    self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
-                    return
-                self.request_times.append(now)
+                admitted = len(self.request_times) < 60 and self.server.client_budget.allow(client, path)
+                if admitted:
+                    self.request_times.append(now)
+            if not admitted:
+                # Socket writes never hold the shared accounting lock.
+                self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
+                return
             try:
                 value = self.service.get() if path == "/api/live" else self.schedules.get(params, client=client)
                 self.respond(json.dumps(value, ensure_ascii=False).encode("utf-8"))

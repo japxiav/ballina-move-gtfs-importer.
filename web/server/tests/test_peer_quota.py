@@ -38,6 +38,47 @@ class PeerQuotas(unittest.TestCase):
         budget.allow(a, '/api/journeys')
         self.assertNotIn('2001:db8', repr(budget.buckets))
         self.assertNotEqual(a, g.PeerBudget().identity('2001:db8:1234:1::1'))
+        self.assertEqual(budget.identity('::ffff:192.0.2.1'), budget.identity('192.0.2.1'))
+        self.assertNotEqual(budget.identity('::ffff:192.0.2.1'), budget.identity('::ffff:192.0.2.2'))
+
+    def test_global_rejection_does_not_spend_or_create_peer_buckets(self):
+        handler = type('FullHandler', (g.GatewayHandler,), {'request_times': [time.monotonic()] * 60, 'service': mock.Mock(), 'rate_lock': threading.Lock()})
+        server = g.GatewayServer(('127.0.0.1', 0), handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+        try:
+            connection = http.client.HTTPConnection(*server.server_address, timeout=2)
+            connection.request('GET', '/api/live'); response = connection.getresponse()
+            self.assertEqual(response.status, 429); response.read(); connection.close()
+            self.assertEqual(server.client_budget.buckets, {})
+            handler.service.get.assert_not_called()
+        finally: server.shutdown(); server.server_close(); thread.join()
+
+    def test_cold_parallel_catalog_and_journey_share_catalog_without_rejecting_normal_search(self):
+        release, both = threading.Event(), threading.Event(); calls = []; lock = threading.Lock()
+        base = {'version': 1, 'source': 'nta_gtfs', 'feedVersion': 'offline', 'loadedAt': '2026-10-13T00:00:00Z', 'timezone': 'Europe/Dublin', 'scope': 'stop_to_stop_same_stop_transfers'}
+        query = {'from': 'A', 'to': 'B', 'date': '2026-10-13', 'time': '08:00', 'modes': 'bus', 'changes': '0'}
+        def loader(name, key, params):
+            with lock:
+                calls.append(name)
+                if len(calls) == 2: both.set()
+            release.wait(2)
+            if name == 'stops': return {**base, 'validFrom': '2026-10-07', 'validUntil': '2027-10-07', 'stops': [{'id': x, 'name': 'Offline ' + x, 'code': x, 'lat': 54.1, 'lon': -9.1} for x in ['A', 'B']]}
+            return {**base, 'serviceDate': query['date'], 'walkingIncluded': False, 'realTimeApplied': False, 'predictionType': 'scheduled', 'minBoardingSeconds': 60, 'minTransferSeconds': 120, 'journeys': []}
+        service = g.ScheduleService(loader, key='offline')
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as callers:
+            catalog = callers.submit(service.get, None, client='a' * 64)
+            while not calls: time.sleep(.001)
+            journey = callers.submit(service.get, query, client='a' * 64)
+            shared = callers.submit(service.get, None, client='b' * 64)
+            try:
+                self.assertTrue(both.wait(.5))
+                release.set()
+                self.assertEqual(len(catalog.result(timeout=1)['stops']), 2)
+                self.assertEqual(journey.result(timeout=1)['journeys'], [])
+                self.assertEqual(shared.result(timeout=1), catalog.result())
+                self.assertEqual(sorted(calls), ['journeys', 'stops'])
+                self.assertLessEqual(len(service.futures), 2)
+            finally: release.set(); service.pool.shutdown(wait=True)
 
     def test_real_http_header_rotation_does_not_spend_other_peer_budget(self):
         schedules = mock.Mock(); schedules.get.return_value = {'scope': 'offline-quota-contract'}
