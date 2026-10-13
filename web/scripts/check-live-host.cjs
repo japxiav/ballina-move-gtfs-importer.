@@ -31,13 +31,24 @@ async function run() {
   const browser = await chromium.launch(launch);
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    const errors = [], csp = [], requests = [];
+    const errors = [], csp = [], requests = [], scheduleResponses = [];
     page.on("pageerror", error => errors.push(error.message));
     page.on("console", message => { if (message.type() === "error" && /Content Security|Refused/.test(message.text())) csp.push(message.text()); });
     page.on("request", request => {
       const headers = request.headers();
-      assert(!headers.apikey && !headers.authorization);
+      assert(!headers.apikey && !headers.authorization && !headers['x-ballina-gateway']);
       requests.push(new URL(request.url()));
+    });
+    page.on('response', response => {
+      const requestUrl = new URL(response.url());
+      if (requestUrl.origin !== url.origin || requestUrl.pathname !== '/api/journeys') return;
+      scheduleResponses.push((async () => {
+        assert.equal(response.status(), 200);
+        assert(!requestUrl.searchParams.get('from')?.startsWith('place:') && !requestUrl.searchParams.get('to')?.startsWith('place:'));
+        const body = await response.text();
+        assert(body.length <= 1048576);
+        return JSON.parse(body);
+      })().then(value => ({ value }), () => ({ failed: true })));
     });
     assert.equal((await page.goto(new URL("#/live", url).href, { waitUntil: "domcontentloaded", timeout: 60000 })).status(), 200);
     await page.getByRole("heading", { name: "Buses & trains." }).waitFor();
@@ -64,15 +75,17 @@ async function run() {
     await page.getByLabel('Schedule time').fill('07:00');
     await page.getByRole('button', { name: 'Find scheduled journeys' }).click();
     await page.locator('.scheduled-results').waitFor({ timeout: 30000 });
-    const scheduled = await page.evaluate(async () => {
-      const query = location.hash.split('?')[1];
-      const response = await fetch('api/journeys?' + query, { credentials: 'omit', cache: 'no-store', redirect: 'error' });
-      if (!response.ok) throw Error('Actual official search failed.');
-      return response.json();
-    });
-    assert.equal(scheduled.source, 'nta_gtfs'); assert.equal(scheduled.predictionType, 'scheduled');
-    assert.equal(scheduled.walkingIncluded, false); assert.equal(scheduled.realTimeApplied, false);
-    assert(scheduled.journeys.length > 0 && scheduled.journeys.every(j => j.rides.length > 0));
+    assert.equal(await page.locator('.scheduled-results .source-warning').count(), 0);
+    const observed = await Promise.all(scheduleResponses);
+    assert(observed.length > 0 && observed.every(r => !r.failed));
+    const schedules = observed.map(r => r.value);
+    for (const scheduled of schedules) {
+      assert.equal(scheduled.source, 'nta_gtfs'); assert.equal(scheduled.predictionType, 'scheduled');
+      assert.equal(scheduled.walkingIncluded, false); assert.equal(scheduled.realTimeApplied, false);
+      assert(Array.isArray(scheduled.journeys) && scheduled.journeys.length <= 6 && scheduled.journeys.every(j => j.rides.length > 0));
+    }
+    const scheduledOptions = schedules.reduce((count, r) => count + r.journeys.length, 0);
+    assert(scheduledOptions > 0 && schedules.every(r => r.feedVersion === schedules[0].feedVersion));
     await page.getByRole('link', { name: 'View itinerary' }).first().click();
     await page.locator('.scheduled-itinerary').waitFor({ timeout: 30000 });
     assert.deepEqual(errors, []); assert.deepEqual(csp, []);
@@ -81,7 +94,7 @@ async function run() {
       vehiclesAtVerification: data.vehicles.length, generatedAt: data.generatedAt, responsiveWidths: widths,
       busGpsPositionsAtVerification: buses.length, railPositionsAreReported: true,
       realMapTiles: true, browserCredentials: false, journeySearchRemainsDemo: false,
-      officialScheduledSearch: true, officialItineraryDetails: true, feedVersion: scheduled.feedVersion, scheduledOptions: scheduled.journeys.length,
+      officialScheduledSearch: true, officialItineraryDetails: true, feedVersion: schedules[0].feedVersion, scheduledOptions,
       walkingDirectionsVerified: false, realTimeAppliedToItineraries: false };
     fs.writeFileSync("live-browser-proof.json", JSON.stringify(proof, null, 2));
     console.log("::notice title=Live gateway browser verified::" + JSON.stringify(proof));
