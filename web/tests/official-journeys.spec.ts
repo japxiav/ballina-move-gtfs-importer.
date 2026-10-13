@@ -63,6 +63,57 @@ test('official mobile home keeps the search button visible without scrolling and
   await expect(page.locator('.demo-note')).toHaveCount(0);
 });
 
+test('known official errors explain clock changes and capacity without exposing private diagnostics',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ let code='clock_change_unsupported';
+ await page.route('**/api/journeys?*',route=>route.fulfill({status:503,json:{error:code,private_diagnostic:'NEVER_FORWARD_PRIVATE'}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));
+ await expect(page.getByRole('alert')).toContainText('Ireland clock change');
+ await expect(page.locator('body')).not.toContainText('NEVER_FORWARD_PRIVATE');
+ code='search_capacity_reached';await page.reload();await expect(page.getByRole('alert')).toContainText('Try Direct only');
+ code='private SQL text';await page.reload();await expect(page.getByRole('alert')).toContainText('Official schedules are unavailable');
+ await expect(page.locator('body')).not.toContainText('private SQL text');
+ await expect(page.locator('.journey-card')).toHaveCount(0);
+});
+test('upstream quota exhaustion remains a wait state without synthetic results',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ await page.route('**/api/journeys?*',route=>route.fulfill({status:429,headers:{'Retry-After':'60'},json:{error:'rate_limited'}}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.getByRole('alert')).toContainText('Wait a minute');
+ await expect(page.locator('.journey-card')).toHaveCount(0);
+});
+
+test('about page states limited technical preview and real request/privacy boundaries',async({page})=>{
+ await page.goto('/#/about');const about=page.locator('.about-page');
+ await expect(about).toContainText('Independent technical preview');
+ await expect(about).toContainText('not all of Mayo or Ireland');
+ await expect(about).not.toContainText('Compare arrival, walking');
+ await expect(about).toContainText('browser history');await expect(about).toContainText('OpenStreetMap receives your IP');
+ await expect(about.getByRole('link',{name:'CC BY 4.0'})).toHaveAttribute('href','https://creativecommons.org/licenses/by/4.0/');
+ await expect(about.getByRole('link',{name:'Report a timetable issue'})).toHaveAttribute('href','https://github.com/japxiav/ballina-move-gtfs-importer./issues/new');
+});
+
+test('a failed parallel catalog request cancels its stalled schedule sibling',async({page})=>{
+ await page.addInitScript(()=>{
+  const original=window.fetch.bind(window);(window as unknown as {scheduleAborted:boolean}).scheduleAborted=false;
+  window.fetch=(input,init)=>{const url=String(input);
+   if(url.includes('/api/stops')) return Promise.reject(new Error('offline catalog failure'));
+   if(url.includes('/api/journeys')) return new Promise((_resolve,reject)=>{init?.signal?.addEventListener('abort',()=>{(window as unknown as {scheduleAborted:boolean}).scheduleAborted=true;reject(new DOMException('Aborted','AbortError'));},{once:true});});
+   return original(input,init);
+  };
+ });
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.getByRole('alert')).toContainText('offline catalog failure');
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {scheduleAborted:boolean}).scheduleAborted)).toBe(true);
+});
+
+test('results show journeys before the editable form and keep editing accessible',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ await page.route('**/api/journeys?*',route=>route.fulfill({json:result()}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.locator('.journey-card')).toHaveCount(1);
+ await expect(page.getByLabel('From stop')).toBeHidden();
+ const edit=page.getByText('Edit search',{exact:false});await expect(edit).toBeVisible();await edit.click();
+ await expect(page.getByLabel('From stop')).toBeVisible();await expect(page.getByRole('button',{name:'Find scheduled journeys'})).toBeVisible();
+});
+
 const identityA = 'j-' + 'a'.repeat(64), identityB = 'j-' + 'b'.repeat(64);
 test('stable official deep links never become a different itinerary after result order changes', async ({page}) => {
  await page.route('**/api/stops', route=>route.fulfill({json:catalog}));

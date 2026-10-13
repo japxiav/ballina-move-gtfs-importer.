@@ -887,13 +887,13 @@ function About() {
       <p className="about-lead">
         Plan local journeys with clear, useful information.
       </p>
-      <DemoNotice />
+      <p className="schedule-note">Independent technical preview, not an official NTA or Irish Rail service. Walking, physical boarding access and accessibility are unverified. The free preview host may sleep when idle.</p>
       <div className="about-grid">
         <section>
           <span>01</span>
           <h2>Plan a journey</h2>
           <p>
-            Choose places, a date and time. Compare arrival, walking and changes, then view each step.
+            Choose covered stops, a date and time. Compare scheduled arrival and changes, then view each step. Coverage is limited to selected routes, not all of Mayo or Ireland.
           </p>
         </section>
         <section>
@@ -909,6 +909,13 @@ function About() {
           <p>
             Bus locations include observation times. Irish Rail reports locations without their observation age or precision. A published snapshot is clearly labelled; continuous updates require the server gateway.
           </p>
+        </section>
+        <section>
+          <span>04</span>
+          <h2>Sources &amp; privacy</h2>
+          <p>NTA timetable data is attributed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noreferrer">CC BY 4.0</a>. Irish Rail reported positions and OpenStreetMap tiles have separate source policies.</p>
+          <p>Your chosen stop IDs, date, time and transport filters are sent to the server and remain in the search URL and browser history. We do not offer accounts or request device geolocation. Hosting and data providers may process IP addresses and requests; OpenStreetMap receives your IP and the map area requested.</p>
+          <p><a href="https://github.com/japxiav/ballina-move-gtfs-importer./issues/new" rel="noreferrer">Report a timetable issue</a>. Reports are public: include stop codes and the timetable date, without personal details or private locations.</p>
         </section>
       </div>
       <a className="button primary" href="#/demo">

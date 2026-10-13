@@ -37,7 +37,7 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
         setResult(r);
       } else setForm(defaults);
       setLoading(false);
-    })().catch(e => { if (!controller.signal.aborted && !timedOut) { setLoading(false); setError(e instanceof Error ? e.message : 'Schedules are unavailable.'); } }).finally(() => clearTimeout(timer));
+    })().catch(e => { if (!controller.signal.aborted && !timedOut) { setLoading(false); setError(e instanceof Error ? e.message : 'Schedules are unavailable.'); } }).finally(() => { clearTimeout(timer); controller.abort(); });
     return () => { clearTimeout(timer); controller.abort(); };
     // The URL owns searches; editing the form never starts an upstream request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,10 +49,14 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
     if (query && encodeStopSearch(query) === encodeStopSearch(form)) setAttempt(n => n + 1);
   }
   const detail = detailId ? result?.journeys.find(j => j.id === detailId) : null;
+  const shownSearch = query ?? form;
+  const shownFrom = catalog?.stops.find(s => s.id === shownSearch.from), shownTo = catalog?.stops.find(s => s.id === shownSearch.to);
   return <section className="official-planner" aria-label="Official journey planner">
     <div className="page-heading"><div><div className="eyebrow">OFFICIAL TIMETABLES</div><h1>Find your journey.</h1><p>Between stops · Ireland time</p></div><a className="button secondary" href="#/live">Live map</a></div>
     <ScheduleNotice />
-    {!detailId && catalog && <form className="search-form official-form" onSubmit={submit}>
+    {!detailId && catalog && <details className="search-editor" key={search || 'home'} open={!result}>
+      <summary hidden={!result}>Edit search · {shownFrom?.name} · {shownFrom?.code || shownSearch.from} → {shownTo?.name} · {shownTo?.code || shownSearch.to}<br />{shownSearch.date} · after {shownSearch.time}</summary>
+      <form className="search-form official-form" onSubmit={submit}>
       <div className="places-grid">
         <label className="field"><span>From stop</span><select aria-label="From stop" value={form.from} onChange={e => setForm(q => ({ ...q, from: e.target.value }))}>{catalog.stops.map(s => <option key={s.id} value={s.id}>{s.name}{s.code ? ` · ${s.code}` : ''}</option>)}</select></label>
         <button className="swap-button" type="button" aria-label="Swap stops" onClick={() => setForm(q => ({ ...q, from: q.to, to: q.from }))}>⇄</button>
@@ -61,7 +65,7 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
       <div className="date-grid"><label className="field"><span>Date</span><input aria-label="Schedule date" type="date" required min={dublinToday()} max={catalog.validUntil < lastSearchDate() ? catalog.validUntil : lastSearchDate()} value={form.date} onChange={e => setForm(q => ({ ...q, date: e.target.value }))} /></label><label className="field"><span>After</span><input aria-label="Schedule time" type="time" required value={form.time} onChange={e => setForm(q => ({ ...q, time: e.target.value }))} /></label></div>
       <details className="search-options"><summary>Transport &amp; changes</summary><div className="options-grid"><label className="field"><span>Transport</span><select aria-label="Scheduled transport" value={form.modes} onChange={e => setForm(q => ({ ...q, modes: e.target.value }))}><option value="bus,rail">Bus &amp; train</option><option value="bus">Bus</option><option value="rail">Train</option></select></label><label className="field"><span>Maximum changes</span><select aria-label="Maximum changes" value={form.changes} onChange={e => setForm(q => ({ ...q, changes: e.target.value }))}><option value="0">Direct only</option><option value="1">One</option><option value="2">Two</option></select></label></div><p>Connections use the same official stop ID and at least two minutes. Check platforms and boarding bays.</p></details>
       <button className="button primary search-submit" disabled={loading} type="submit">Find scheduled journeys →</button>
-    </form>}
+    </form></details>}
     {loading && <p className="loading-heading" role="status"><span className="spinner" /> Loading official schedules…</p>}
     {error && <div className="empty-state" role="alert"><h2>Schedules unavailable.</h2><p>{error}</p><button className="button primary" onClick={() => setAttempt(n => n + 1)}>Try again</button><a className="text-link" href="#/plan">New search</a></div>}
     {!loading && !error && result && !detailId && <div className="scheduled-results" aria-label="Scheduled results">

@@ -11,6 +11,7 @@ import mimetypes
 import os
 from pathlib import Path
 import re
+import sys
 import threading
 import time
 import urllib.error
@@ -148,6 +149,9 @@ def parse_departures(value, now):
                      "destination": text(row.get("trip_headsign")), "scheduledAt": iso(scheduled),
                      "expectedAt": iso(prediction) if prediction and fresh else None,
                      "predictionObservedAt": iso(source_stamp) if prediction and fresh else None,
+                     # This is a reported cancellation, not a current confirmation
+                     # unless the browser can validate this observation's own age.
+                     "cancellationObservedAt": iso(source_stamp) if cancelled and source_stamp else None,
                      "status": "cancelled" if cancelled else "predicted" if prediction and fresh else "scheduled"})
     return rows[:30]
 
@@ -155,6 +159,19 @@ def parse_departures(value, now):
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         raise ValueError("upstream_redirect_forbidden")
+
+
+class SafeScheduleError(Exception):
+    ALLOWED = {400: {"unknown_stop", "date_outside_feed", "invalid_search"},
+               429: {"rate_limited"},
+               503: {"clock_change_unsupported", "search_capacity_reached", "schedules_unavailable"}}
+
+    def __init__(self, status, code, retry_after=None):
+        if type(status) is not int or code not in self.ALLOWED.get(status, set()):
+            raise ValueError("invalid_safe_schedule_error")
+        self.status, self.code = status, code
+        self.retry_after = max(1, min(60, retry_after)) if type(retry_after) is int else (60 if status == 429 else None)
+        super().__init__(code)
 
 
 def fetch_source(name, public_key, params=None):
@@ -168,10 +185,18 @@ def fetch_source(name, public_key, params=None):
     opener = urllib.request.build_opener(NoRedirect())
     budget = 20 if name in {"stops", "journeys"} else 8
     deadline = time.monotonic() + budget
+    failed_status = None
     try:
         response = opener.open(urllib.request.Request(url, headers=headers), timeout=budget)
     except urllib.error.HTTPError as exc:
-        if name != "health" or exc.code != 503:
+        if name in {"stops", "journeys"} and exc.code == 429:
+            retry = exc.headers.get("Retry-After", "")
+            exc.close()  # No upstream error body or private diagnostics needed.
+            raise SafeScheduleError(429, "rate_limited", int(retry) if re.fullmatch(r"[1-9]\d{0,2}", retry) else 60) from None
+        if name in {"stops", "journeys"} and exc.code in {400, 503}:
+            failed_status = exc.code
+        elif name != "health" or exc.code != 503:
+            exc.close()
             raise ValueError("upstream_unavailable") from None
         response = exc
     with response:
@@ -195,6 +220,15 @@ def fetch_source(name, public_key, params=None):
             body.extend(chunk)
             if len(body) > MAX_BODY:
                 raise ValueError("upstream_body_too_large")
+    if failed_status is not None:
+        try:
+            data = json.loads(body.decode("utf-8", errors="strict"))
+            code = data.get("error") if isinstance(data, dict) else None
+        except (ValueError, UnicodeError):
+            code = None
+        if isinstance(code, str) and code in SafeScheduleError.ALLOWED[failed_status]:
+            raise SafeScheduleError(failed_status, code)
+        raise SafeScheduleError(503, "schedules_unavailable")
     return bytes(body) if name == "rail" else json.loads(body.decode("utf-8", errors="strict"))
 
 
@@ -404,13 +438,15 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass  # No client locations, headers, keys or URLs in logs.
 
-    def respond(self, body, status=200, content_type="application/json; charset=utf-8", standalone=False):
+    def respond(self, body, status=200, content_type="application/json; charset=utf-8", standalone=False, retry_after=None):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("Cache-Control", "no-store")
+        if type(retry_after) is int:
+            self.send_header("Retry-After", str(max(1, min(60, retry_after))))
         if not standalone:
             self.send_header("Content-Security-Policy", CSP)
         self.end_headers()
@@ -435,21 +471,23 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             if (url.query and path != "/api/journeys") or self.command != "GET":
                 self.respond(b'{"error":"invalid_request"}', 400)
                 return
-            with self.rate_lock:
-                now = time.monotonic()
-                self.request_times[:] = [t for t in self.request_times if now - t < 60]
-                if len(self.request_times) >= 60:
-                    self.respond(b'{"error":"rate_limited"}', 429)
-                    return
-                self.request_times.append(now)
             try:
                 params = schedule_query(url.query) if path == "/api/journeys" else None
             except ValueError:
                 self.respond(b'{"error":"invalid_search"}', 400)
                 return
+            with self.rate_lock:
+                now = time.monotonic()
+                self.request_times[:] = [t for t in self.request_times if now - t < 60]
+                if len(self.request_times) >= 60:
+                    self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
+                    return
+                self.request_times.append(now)
             try:
                 value = self.service.get() if path == "/api/live" else self.schedules.get(params)
                 self.respond(json.dumps(value, ensure_ascii=False).encode("utf-8"))
+            except SafeScheduleError as error:
+                self.respond(json.dumps({"error": error.code}).encode("utf-8"), error.status, retry_after=error.retry_after)
             except Exception:
                 self.respond(b'{"error":"live_service_unavailable"}' if path == "/api/live" else b'{"error":"schedules_unavailable"}', 503)
             return
@@ -465,6 +503,10 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 class GatewayServer(http.server.ThreadingHTTPServer):
+    def handle_error(self, request, client_address):
+        # Base socketserver handler otherwise prints client address/traceback.
+        print('{"event":"gateway_request_failed"}', file=sys.stderr)
+
     daemon_threads = True
     slots = threading.BoundedSemaphore(16)
 
