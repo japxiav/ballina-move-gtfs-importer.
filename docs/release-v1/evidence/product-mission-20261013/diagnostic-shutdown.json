@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-10-13T21:18:11.716107+00:00",
+  "scope": "Shutdown of own temporary internal diagnostic previews only; no public service affected.",
+  "portsChecked": [
+    5180,
+    5181
+  ],
+  "listenersRemaining": [],
+  "verification": "Passive /proc/net/tcp and tcp6 read after verified-own-process SIGTERM. Exit130 alone was not treated as shutdown proof.",
+  "publicPreviewUnchanged": true,
+  "applicationSource": "06b72b428fa623e7daf4d244b4851683506b78d0"
+}
