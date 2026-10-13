@@ -17,7 +17,7 @@ class SafeScheduleFailures(unittest.TestCase):
     def fetch_error(self, status, body, retry=None):
         headers = {} if retry is None else {'Retry-After': retry}
         error = urllib.error.HTTPError('https://fixed-source.invalid', status, 'offline', headers, io.BytesIO(body))
-        with mock.patch.object(g.urllib.request, 'build_opener') as builder:
+        with mock.patch.dict(g.os.environ, {'BALLINA_JOURNEY_GATEWAY_SECRET': 'a' * 64}), mock.patch.object(g.urllib.request, 'build_opener') as builder:
             builder.return_value.open.side_effect = error
             with self.assertRaises(g.SafeScheduleError) as raised:
                 g.fetch_source('journeys', 'offline-publishable')

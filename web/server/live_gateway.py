@@ -5,6 +5,11 @@ import argparse
 import concurrent.futures
 import datetime as dt
 import http.server
+import hashlib
+import hmac
+import ipaddress
+import secrets
+from collections import deque
 import json
 import math
 import mimetypes
@@ -182,6 +187,12 @@ def fetch_source(name, public_key, params=None):
     url = RAIL_URL if name == "rail" else (JOURNEY_URL if name in {"stops", "journeys"} else TRANSPORT_URL) + "?" + urllib.parse.urlencode(query)
     if name != "rail":
         headers["apikey"] = public_key
+    if name in {"stops", "journeys"}:
+        credential = os.environ.get("BALLINA_JOURNEY_GATEWAY_SECRET", "")
+        if not re.fullmatch(r"[a-f0-9]{64}", credential):
+            raise ValueError("journey_gateway_configuration_missing")
+        # Dedicated server-only authorization, never transport/rail/browser.
+        headers["X-Ballina-Gateway"] = credential
     opener = urllib.request.build_opener(NoRedirect())
     budget = 20 if name in {"stops", "journeys"} else 8
     deadline = time.monotonic() + budget
@@ -338,18 +349,24 @@ class ScheduleService:
         self.pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
         self.lock = threading.Lock()
         self.futures = set()
+        self.client_work = {}
         self.catalog_cache = None
         self.catalog_at = 0
 
-    def get(self, params=None):
+    def get(self, params=None, client=None):
         with self.lock:
             if params is None and self.catalog_cache is not None and time.monotonic() - self.catalog_at < 45:
                 return self.catalog_cache
             self.futures = {f for f in self.futures if not f.done()}
+            self.client_work = {k: f for k, f in self.client_work.items() if not f.done()}
+            if client is not None and client in self.client_work:
+                raise ValueError("schedule_client_busy")
             if len(self.futures) >= 2:
                 raise ValueError("schedule_capacity")
             future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
             self.futures.add(future)
+            if client is not None:
+                self.client_work[client] = future
         value = public_schedule(future.result(timeout=21), params)
         if params is None:
             with self.lock:
@@ -426,6 +443,49 @@ class LiveService:
                 self.condition.notify_all()
 
 
+class PeerBudget:
+    """Short-lived network-peer shaping, not authenticated passenger identity.
+
+    Ignores all forwarded headers/cookies. Behind a proxy peers can be shared;
+    deployment must validate that boundary. No IPs/logs/persistent identifiers.
+    """
+    LIMITS = {"/api/journeys": 6, "/api/stops": 10, "/api/live": 8}
+
+    def __init__(self, clock=time.monotonic, maximum=512):
+        self.clock, self.maximum = clock, maximum
+        self.salt = secrets.token_bytes(32)
+        self.lock, self.buckets = threading.Lock(), {}
+
+    def identity(self, address):
+        ip = ipaddress.ip_address(address)
+        network = ipaddress.ip_network(f"{ip}/64", strict=False) if ip.version == 6 else ip
+        return hmac.new(self.salt, str(network).encode("ascii"), hashlib.sha256).hexdigest()
+
+    def allow(self, identity, path):
+        if path not in self.LIMITS:
+            return False
+        with self.lock:
+            now = self.clock()
+            expired = []
+            for key, times in self.buckets.items():
+                while times and now - times[0] >= 60:
+                    times.popleft()
+                if not times:
+                    expired.append(key)
+            for key in expired:
+                del self.buckets[key]
+            key = (identity, path)
+            times = self.buckets.get(key)
+            if times is None:
+                if len(self.buckets) >= self.maximum:
+                    return False  # Never evict live budgets to reset a caller.
+                times = self.buckets[key] = deque()
+            if len(times) >= self.LIMITS[path]:
+                return False
+            times.append(now)
+            return True
+
+
 class GatewayHandler(http.server.BaseHTTPRequestHandler):
     service: LiveService
     rate_lock = threading.Lock()
@@ -476,6 +536,12 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
             except ValueError:
                 self.respond(b'{"error":"invalid_search"}', 400)
                 return
+            # Only the actual TCP peer defines this soft budget. Client-supplied
+            # IP, cookie, authorization and forwarding headers cannot rotate it.
+            client = self.server.client_budget.identity(self.client_address[0])
+            if not self.server.client_budget.allow(client, path):
+                self.respond(b'{"error":"rate_limited"}', 429, retry_after=60)
+                return
             with self.rate_lock:
                 now = time.monotonic()
                 self.request_times[:] = [t for t in self.request_times if now - t < 60]
@@ -484,7 +550,7 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
                     return
                 self.request_times.append(now)
             try:
-                value = self.service.get() if path == "/api/live" else self.schedules.get(params)
+                value = self.service.get() if path == "/api/live" else self.schedules.get(params, client=client)
                 self.respond(json.dumps(value, ensure_ascii=False).encode("utf-8"))
             except SafeScheduleError as error:
                 self.respond(json.dumps({"error": error.code}).encode("utf-8"), error.status, retry_after=error.retry_after)
@@ -503,6 +569,10 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 class GatewayServer(http.server.ThreadingHTTPServer):
+    def __init__(self, *args, **kwargs):
+        self.client_budget = PeerBudget()
+        super().__init__(*args, **kwargs)
+
     def handle_error(self, request, client_address):
         # Base socketserver handler otherwise prints client address/traceback.
         print('{"event":"gateway_request_failed"}', file=sys.stderr)
