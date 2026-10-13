@@ -1,3 +1,5 @@
+> Current13October2026 technical preview: published source `06b72b428fa623e7daf4d244b4851683506b78d0`, Render deployment `dep-db7b4uad0e5s73fv1i4g`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. The owner-approved preview update passed actual public-browser verification; see [PROGRESS](PROGRESS.md) and [published evidence](evidence/technical-preview-20261013/README.md). Regional NO-GO remains. Previous sections are historical phase evidence; do not repeat completed publication/rollback steps without fresh specific approval.
+
 # Passenger field and pilot evidence — UNVERIFIED
 
 No real passenger tests or seven-day pilot occurred in this audit. REGIONAL_ACCEPTANCE_MATRIX.csv is32 offline official-capture queries only (28 options /4 empty), not live field acceptance. The historical hospital fixture and synthetic adversarial oracle are labelled separately.

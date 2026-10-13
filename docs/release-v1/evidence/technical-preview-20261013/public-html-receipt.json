@@ -1,0 +1,24 @@
+{
+  "observedAtUtc": "2026-10-13T22:40:45.015831+00:00",
+  "httpStatus": 200,
+  "bytes": 774,
+  "sha256": "fc95deabd64b507a75348767ae2752ffc8835f13bb350c55fe94f5f7b93f5788",
+  "tlsVerified": true,
+  "privateHeadersSent": false,
+  "featureCheckMode": "Actual browser; external JS/CSS assets, not inline HTML",
+  "assets": [
+    {
+      "path": "/assets/index-Bi53XOAD.js",
+      "bytes": 412843,
+      "sha256": "8d4bac7811992a222f4fc87fdae1a37bf2d616c6adc602181df422825092b58a",
+      "matchesLocallyTestedBuild": true
+    },
+    {
+      "path": "/assets/index-C_0F1kgi.css",
+      "bytes": 47931,
+      "sha256": "140e6bbc762462b9e40fe60b87f5d67f935a448d9c7c8ad4ff253a87a69c1301",
+      "matchesLocallyTestedBuild": true
+    }
+  ],
+  "matchesLocallyTestedBuildIndex": true
+}

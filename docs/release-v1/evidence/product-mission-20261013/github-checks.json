@@ -1,0 +1,230 @@
+{
+  "45": {
+    "baseRefName": "feature/internal-rollout-readiness",
+    "headRefName": "feature/passenger-place-search",
+    "headRefOid": "9d115a7d684cde85ef48a2b07572084b580f3161",
+    "isDraft": true,
+    "statusCheckRollup": [
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457846120/job/115505060381"
+      },
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457752208/job/115504733351"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457846120/job/115505062545"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457752208/job/115504735340"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457846120/job/115505062442"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457752208/job/115504735287"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457846120/job/115506997646"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38457752208/job/115505558011"
+      }
+    ],
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45"
+  },
+  "46": {
+    "baseRefName": "feature/passenger-place-search",
+    "headRefName": "feature/vehicle-cards-map-view",
+    "headRefOid": "7047f48da3ae51487585131da964dc5d49749c5f",
+    "isDraft": true,
+    "statusCheckRollup": [
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458861792/job/115508488542"
+      },
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458790183/job/115508243203"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458861792/job/115508490948"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458790183/job/115508246092"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458861792/job/115508490666"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458790183/job/115508244903"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458861792/job/115509480849"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38458790183/job/115509103683"
+      }
+    ],
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/46"
+  },
+  "47": {
+    "baseRefName": "feature/vehicle-cards-map-view",
+    "headRefName": "feature/passenger-local-tools",
+    "headRefOid": "39f30e68ca80bacff4a6556aa5c9e701018f7efa",
+    "isDraft": true,
+    "statusCheckRollup": [
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461220052/job/115516577237"
+      },
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461042968/job/115515968266"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461220052/job/115516580243"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461042968/job/115515970411"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461220052/job/115516580325"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461042968/job/115515970340"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461220052/job/115517694048"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38461042968/job/115516977913"
+      }
+    ],
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/47"
+  },
+  "48": {
+    "baseRefName": "feature/passenger-local-tools",
+    "headRefName": "fix/map-tile-deadline",
+    "headRefOid": "06b72b428fa623e7daf4d244b4851683506b78d0",
+    "isDraft": true,
+    "statusCheckRollup": [
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462399036/job/115520631914"
+      },
+      {
+        "name": "web-validation",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462389752/job/115520598879"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462399036/job/115520635329"
+      },
+      {
+        "name": "render-connection-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462389752/job/115520601685"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462399036/job/115520634820"
+      },
+      {
+        "name": "publisher-binding-probe",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462389752/job/115520600945"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462399036/job/115521585548"
+      },
+      {
+        "name": "deploy-live-gateway",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./actions/runs/38462389752/job/115521573439"
+      }
+    ],
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/48"
+  }
+}

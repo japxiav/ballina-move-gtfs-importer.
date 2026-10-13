@@ -1,0 +1,672 @@
+{
+  "scope": "Controlled single-run offline scenario analysis of exact unchanged candidate schedule source and retained official tables. Not a hosted benchmark, live provider/device test or evidence of pedestrian access. Zero additional HTTP or paid calls.",
+  "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "receipts": [
+    {
+      "name": "hospital15109",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 39.8,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 28800,
+        "arrivalAt": 31920,
+        "changes": 0,
+        "rides": [
+          {
+            "tripId": "5940_96273",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "boardAt": 28800,
+            "alightAt": 31920,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "hospital15108",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151081",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 15.08,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 28800,
+        "arrivalAt": 33840,
+        "changes": 1,
+        "rides": [
+          {
+            "tripId": "5940_96273",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "boardAt": 28800,
+            "alightAt": 31920,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          },
+          {
+            "tripId": "5940_98212",
+            "routeId": "2 440 c a",
+            "route": "440",
+            "mode": "bus",
+            "destination": "Knock Airport",
+            "from": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "to": {
+              "id": "8490B151081",
+              "name": "Mayo Hospital",
+              "code": "15108",
+              "lat": 53.85194,
+              "lon": -9.30559
+            },
+            "boardAt": 33720,
+            "alightAt": 33840,
+            "boardSequence": 6,
+            "alightSequence": 8,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "return15109",
+      "query": {
+        "from": "8490B151091",
+        "to": "8490B5550501",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 13.26,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 5,
+      "first": {
+        "id": "1",
+        "departureAt": 35400,
+        "arrivalAt": 37980,
+        "changes": 0,
+        "rides": [
+          {
+            "tripId": "5940_96333",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Ballina",
+            "from": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "to": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "boardAt": 35400,
+            "alightAt": 37980,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "return15108",
+      "query": {
+        "from": "8490B151081",
+        "to": "8490B5550501",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 11.95,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 0,
+      "first": null
+    },
+    {
+      "name": "castlebar",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5557201",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 12.18,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 28800,
+        "arrivalAt": 31680,
+        "changes": 0,
+        "rides": [
+          {
+            "tripId": "5940_96273",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B5557201",
+              "name": "Castlebar",
+              "code": "555721",
+              "lat": 53.85412,
+              "lon": -9.303623
+            },
+            "boardAt": 28800,
+            "alightAt": 31680,
+            "boardSequence": 1,
+            "alightSequence": 10,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "foxford",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141651",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 12.42,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 34200,
+        "arrivalAt": 50400,
+        "changes": 1,
+        "rides": [
+          {
+            "tripId": "5940_48616",
+            "routeId": "2 22 d",
+            "route": "22",
+            "mode": "bus",
+            "destination": "Dublin Airport",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8290B1357701",
+              "name": "Longford Stn",
+              "code": "135771",
+              "lat": 53.724391,
+              "lon": -7.796019
+            },
+            "boardAt": 34200,
+            "alightAt": 40920,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          },
+          {
+            "tripId": "5940_48476",
+            "routeId": "2 22 d",
+            "route": "22",
+            "mode": "bus",
+            "destination": "Ballina",
+            "from": {
+              "id": "8290B1357701",
+              "name": "Longford Stn",
+              "code": "135771",
+              "lat": 53.724391,
+              "lon": -7.796019
+            },
+            "to": {
+              "id": "8490B141651",
+              "name": "Foxford",
+              "code": "141651",
+              "lat": 53.9811532794397,
+              "lon": -9.11072459408715
+            },
+            "boardAt": 45060,
+            "alightAt": 50400,
+            "boardSequence": 10,
+            "alightSequence": 19,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "swinford",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B141751",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 11.93,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 34200,
+        "arrivalAt": 49860,
+        "changes": 1,
+        "rides": [
+          {
+            "tripId": "5940_48616",
+            "routeId": "2 22 d",
+            "route": "22",
+            "mode": "bus",
+            "destination": "Dublin Airport",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8290B1357701",
+              "name": "Longford Stn",
+              "code": "135771",
+              "lat": 53.724391,
+              "lon": -7.796019
+            },
+            "boardAt": 34200,
+            "alightAt": 40920,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          },
+          {
+            "tripId": "5940_48476",
+            "routeId": "2 22 d",
+            "route": "22",
+            "mode": "bus",
+            "destination": "Ballina",
+            "from": {
+              "id": "8290B1357701",
+              "name": "Longford Stn",
+              "code": "135771",
+              "lat": 53.724391,
+              "lon": -7.796019
+            },
+            "to": {
+              "id": "8490B141751",
+              "name": "Swinford",
+              "code": "141751",
+              "lat": 53.944179,
+              "lon": -8.950942
+            },
+            "boardAt": 45060,
+            "alightAt": 49860,
+            "boardSequence": 10,
+            "alightSequence": 18,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "airport",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B5530801",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 10.68,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 28800,
+        "arrivalAt": 37770,
+        "changes": 1,
+        "rides": [
+          {
+            "tripId": "5940_96273",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "boardAt": 28800,
+            "alightAt": 31920,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-14"
+          },
+          {
+            "tripId": "5940_98212",
+            "routeId": "2 440 c a",
+            "route": "440",
+            "mode": "bus",
+            "destination": "Knock Airport",
+            "from": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "to": {
+              "id": "8490B5530801",
+              "name": "Ireland W Airport",
+              "code": "553081",
+              "lat": 53.914066,
+              "lon": -8.812639
+            },
+            "boardAt": 33720,
+            "alightAt": 37770,
+            "boardSequence": 6,
+            "alightSequence": 18,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rail",
+      "query": {
+        "from": "8490IR0076",
+        "to": "8220IR0132",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 7.95,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 34500,
+        "arrivalAt": 47400,
+        "changes": 1,
+        "rides": [
+          {
+            "tripId": "5963_13692",
+            "routeId": "DUB-WESTPORT-I",
+            "route": "rail",
+            "mode": "rail",
+            "destination": "Manulla Junction",
+            "from": {
+              "id": "8490IR0076",
+              "name": "Ballina",
+              "code": "999167",
+              "lat": 54.109063,
+              "lon": -9.160596
+            },
+            "to": {
+              "id": "8490IR0077",
+              "name": "Manulla Junction",
+              "code": "999194",
+              "lat": 53.827975,
+              "lon": -9.192956
+            },
+            "boardAt": 34500,
+            "alightAt": 36120,
+            "boardSequence": 1,
+            "alightSequence": 3,
+            "serviceDate": "2026-10-14"
+          },
+          {
+            "tripId": "5963_13694",
+            "routeId": "DUB-WESTPORT-I",
+            "route": "rail",
+            "mode": "rail",
+            "destination": "Dublin Heuston",
+            "from": {
+              "id": "8490IR0077",
+              "name": "Manulla Junction",
+              "code": "999194",
+              "lat": 53.827975,
+              "lon": -9.192956
+            },
+            "to": {
+              "id": "8220IR0132",
+              "name": "Dublin Heuston",
+              "code": "999001",
+              "lat": 53.346404,
+              "lon": -6.293487
+            },
+            "boardAt": 36240,
+            "alightAt": 47400,
+            "boardSequence": 3,
+            "alightSequence": 12,
+            "serviceDate": "2026-10-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "last_service",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-14",
+        "time": "23:30",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 14.65,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 4,
+      "first": {
+        "id": "1",
+        "departureAt": 115200,
+        "arrivalAt": 118320,
+        "changes": 0,
+        "rides": [
+          {
+            "tripId": "5940_96272",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "boardAt": 115200,
+            "alightAt": 118320,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-15"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sunday",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-18",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 23.04,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 6,
+      "first": {
+        "id": "1",
+        "departureAt": 28800,
+        "arrivalAt": 31740,
+        "changes": 0,
+        "rides": [
+          {
+            "tripId": "5940_96269",
+            "routeId": "2 420 c a",
+            "route": "420",
+            "mode": "bus",
+            "destination": "Mayo Hospital",
+            "from": {
+              "id": "8490B5550501",
+              "name": "Ballina Bus Stn",
+              "code": "555051",
+              "lat": 54.11101,
+              "lon": -9.1599
+            },
+            "to": {
+              "id": "8490B151091",
+              "name": "Mayo Hospital",
+              "code": "15109",
+              "lat": 53.85184,
+              "lon": -9.30599
+            },
+            "boardAt": 28800,
+            "alightAt": 31740,
+            "boardSequence": 1,
+            "alightSequence": 11,
+            "serviceDate": "2026-10-18"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rail_filter_hospital",
+      "query": {
+        "from": "8490B5550501",
+        "to": "8490B151091",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "rail",
+        "changes": "1"
+      },
+      "outcome": "valid_scheduled_response",
+      "elapsedMs": 7.4,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "journeys": 0,
+      "first": null
+    },
+    {
+      "name": "unknown_stop",
+      "query": {
+        "from": "8490B5550501",
+        "to": "NO_SUCH_OFFICIAL_STOP",
+        "date": "2026-10-14",
+        "time": "07:55",
+        "modes": "bus,rail",
+        "changes": "1"
+      },
+      "outcome": "explicit_error",
+      "error": "unknown_stop",
+      "elapsedMs": 3.49
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+> Current13October2026 technical preview: published source `06b72b428fa623e7daf4d244b4851683506b78d0`, Render deployment `dep-db7b4uad0e5s73fv1i4g`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. The owner-approved preview update passed actual public-browser verification; see [PROGRESS](PROGRESS.md) and [published evidence](evidence/technical-preview-20261013/README.md). Regional NO-GO remains. Previous sections are historical phase evidence; do not repeat completed publication/rollback steps without fresh specific approval.
+
 # S4/S5/S6 candidate: honest cancellation freshness and failures
 
 Independent branch fix/release-v1-realtime-freshness from main22bf89c; no production mutation. A cancellation was accepted without preserving its own observation timestamp, unlike predictions. The browser retained it until scheduled departure despite fresh DTO retrieval not proving current cancellation.

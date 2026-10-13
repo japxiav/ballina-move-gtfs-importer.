@@ -1,3 +1,5 @@
+> Current13October2026 technical preview: published source `06b72b428fa623e7daf4d244b4851683506b78d0`, Render deployment `dep-db7b4uad0e5s73fv1i4g`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. The owner-approved preview update passed actual public-browser verification; see [PROGRESS](PROGRESS.md) and [published evidence](evidence/technical-preview-20261013/README.md). Regional NO-GO remains. Previous sections are historical phase evidence; do not repeat completed publication/rollback steps without fresh specific approval.
+
 # Decisions
 
 -2026-10-13: user explicitly adopted the uploaded launch PDF as roadmap, beginningS0/S1. Its text alone never supplied credentials or new production/gasto authority. New candidates stay Draft; final v1 go/no-go requires human approval.

@@ -1,0 +1,16 @@
+{
+  "actualProjects": [
+    {
+      "path": "/workspace/ballina-move-gtfs-importer.",
+      "head": "8412595db9c11ee601fad122792016dde11ad109",
+      "host": "github.com",
+      "repository": "japxiav/ballina-move-gtfs-importer."
+    }
+  ],
+  "emptyGitPlaceholderDirectoriesExcluded": [
+    "/workspace/.git"
+  ],
+  "dependencyCachesExcluded": "node_modules directories only",
+  "inspectionErrors": [],
+  "scope": "Repository discovery only; root empty.git directory is not an unborn project repository"
+}

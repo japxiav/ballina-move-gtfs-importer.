@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://www.transportforireland.ie/available-apps/tfi-live/",
+    "status": 200,
+    "boundedBytesRead": 104136,
+    "sourceRead": true
+  },
+  {
+    "url": "https://transitapp.com/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://citymapper.com/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://moovit.com/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://bustimes.org/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://developer.onebusaway.org/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://buspulse.ie/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  },
+  {
+    "url": "https://www.google.com/maps/",
+    "sourceRead": false,
+    "errorType": "URLError",
+    "status": null
+  }
+]

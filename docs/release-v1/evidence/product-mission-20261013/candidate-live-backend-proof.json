@@ -1,0 +1,41 @@
+{
+  "scope": "Unpublished frontend06 at internal loopback5181 using real existing public gateway3a through a bounded, no-credential/no-redirect native TLS relay. No fixtures, frozen clock, deployment or private endpoint. OSM tiles reused through native TLS32/two verification dispatcher.",
+  "frontendSource": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "backendSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "observedAt": "2026-10-13T20:54:23.670Z",
+  "pageErrors": [],
+  "calls": {
+    "stops": 4,
+    "journeys": 2,
+    "live": 1
+  },
+  "browserCredentials": false,
+  "publicCandidate": false,
+  "hospitalFirst": "DirectNTA SCHEDULE08:00 → 08:5252 minBus 420Arrives at Mayo Hospital · stop 15109No walking directionsView itinerary →",
+  "realItinerary": true,
+  "liveGeneratedAt": "2026-10-13T20:54:53.005378Z",
+  "livePositions": 38,
+  "realVehicleCard": true,
+  "scheduleResponses": [
+    {
+      "status": 200,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "source": "nta_gtfs",
+      "options": 6,
+      "walking": false,
+      "realtime": false
+    },
+    {
+      "status": 200,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+      "source": "nta_gtfs",
+      "options": 6,
+      "walking": false,
+      "realtime": false
+    }
+  ],
+  "tileUniqueRequests": 18,
+  "maximumTileConcurrency": 2,
+  "tileBudgetExceeded": false,
+  "browserVerified": true
+}

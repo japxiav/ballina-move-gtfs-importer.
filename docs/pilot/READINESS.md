@@ -1,3 +1,5 @@
+> Current13October2026 technical preview: published source `06b72b428fa623e7daf4d244b4851683506b78d0`, Render deployment `dep-db7b4uad0e5s73fv1i4g`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. The owner-approved preview update passed actual public-browser verification; see [PROGRESS](../release-v1/PROGRESS.md) and [published evidence](../release-v1/evidence/technical-preview-20261013/README.md). Regional NO-GO remains. Previous sections are historical phase evidence; do not repeat completed publication/rollback steps without fresh specific approval.
+
 # Pilot readiness candidate — 13 October 2026
 
 This candidate extends immutable PR36 checkpoint138951b in integration/pilot-readiness. Public Render source643bc52 and journey-apiv2, main22bf89c, active feed and collectors remain unchanged. The CPU, gateway quota/cache and offline walking/realtime preparations remain separate branches and Draft PRs; A12/PR26 stays isolated. Historical docs/release-v1 records describe the older checkpoint, not completion of these new gates.

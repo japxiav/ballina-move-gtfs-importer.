@@ -1,0 +1,23 @@
+{
+  "scope": "Import existing platform public CA into existing Chromium NSS store; no browser or system verification disabled",
+  "publicCAPath": "/usr/local/share/ca-certificates/environment-proxy-ca.crt",
+  "sha256": "c71b4d1e9d7775c538c688ab10cea9ce417d7312e89838f9d15ff73256cd7fc3",
+  "alreadyNativeTrusted": true,
+  "chromiumNssDirectory": "/home/agent/.pki/nssdb",
+  "existingStorePreserved": true,
+  "newCredentials": false,
+  "tlsVerificationDisabled": false,
+  "additionalNativeTrustedProxyRoots": [
+    {
+      "publicCAPath": "/usr/local/share/ca-certificates/mitmproxy-ca-cert.crt",
+      "sha256": "3dfd81e23035008ac48adcce5644726c468066bdc84d6cf76978faa1dba320f8",
+      "alreadyNativeTrusted": true
+    },
+    {
+      "publicCAPath": "/usr/local/share/ca-certificates/nebula-mitmproxy.crt",
+      "sha256": "92ae3b5172d60eaf8edf47fce83cd9cbcea4599c3f90b8e67824d614ed17baa2",
+      "alreadyNativeTrusted": true
+    }
+  ],
+  "diagnosis": "Chromium NSS access(cert9.db,W_OK) returns EROFS inside workspace sandbox; scoped approved execution permits its existing store to initialize. No HTTPS verification bypass."
+}

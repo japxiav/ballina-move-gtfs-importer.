@@ -1,0 +1,120 @@
+{
+  "scope": "Evidence for unpublished technical candidate, not a deployment/main merge/regional GO. Browser tests include offline fixtures and a browser geolocation emulator. Logs containing mock deployment receipts are tests, not production actions.",
+  "recordedAt": "2026-10-13T20:29:54.478734+00:00",
+  "testedCode": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "main": "f38826625e08fe6bcd92073df45685fa36bbf7cf",
+  "publishedSource": "3a96758b87d33908635f03d2e833cd5742609997",
+  "journeyApiSourceVersion": 4,
+  "readOnlySourceFeed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3",
+  "fileHashes": {
+    "web/src/RealJourneys.tsx": "de43d509cc4b5fac6acc1772fcd108b27070bc99e1d50b2f16fd56bbed045144",
+    "web/src/StopPicker.tsx": "2841d11d124b5d695a81872294c91ca1a0bf8fd1aabd710d4ef1e03500d7d150",
+    "web/src/passengerSearch.ts": "cdfd097b2e4bc862d2a1caaf781b9a3835436ab0cf97de2929be4a7b85f490e9",
+    "web/src/scheduleData.ts": "4f1caca70d2bcdc2becbcef41c691826e16d4f5ebe56427c14e6e9cb4692c580",
+    "web/src/LiveMap.tsx": "19865a7d7d9fce2f215b654ef5cdcae2aa2fcbe3d7b105186a1e3d3e6b5c4cf1",
+    "web/src/VehicleCard.tsx": "a9773147ff9da3670aad67643dbd601b3bd778c28f307afc1d15df9e448c49a3",
+    "web/src/mapGroups.ts": "9ebf4ce2030a7cfc43e7e970e6bc9e1bfe35219551c7abae0a566f2bc52d77e9",
+    "web/src/JourneyTools.tsx": "16c6bcb8fb2c817b948f808fc5e52cd15642a793b9614f0b26ff59d9b11b1e48",
+    "web/src/passengerPrefs.ts": "699a83fe12f5560583bd0a8b4856a41fd7990670b6360c4a7e90f09e96529424",
+    "web/src/main.tsx": "d11abfed7012ba6b5a2588c3b96fcff21b766e62f7d2fc852fc30e3ed710530c",
+    "web/src/styles.css": "8571bc9951b81207c894dcc408772083d83a9779a6c4b6b7dfc3365a2a5d120f",
+    "web/index.html": "288d6f5ed72ec0e03f6876f2dc71f32a9ee6d2b0d660ad81c1c8d0d31276dafb",
+    "web/scripts/check-live-host.cjs": "2e39ece3dac683864e7620770b7d14e4b6bcc9f37f6285f58bf5a95eff3af215"
+  },
+  "validation": {
+    "browserFinal": {
+      "passed": 182,
+      "failed": 0,
+      "logSha256": "ec7dde6fcf5948a3865372c4b97aa87caa9c028feb8a2db81746ff49d7d8db32"
+    },
+    "gatewayOffline": {
+      "passed": 95,
+      "failed": 0
+    },
+    "rootPython": {
+      "passed": 70,
+      "failed": 0
+    },
+    "routing": {
+      "passed": 414,
+      "failed": 0,
+      "skipped": 0
+    },
+    "staging": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "compiledSinglefileParityModules": 16,
+    "rebuildArtifactTrackedDiff": false,
+    "strictSimulatedApis": "all passed; run_tests.sh includes1642 oracle comparisons",
+    "offlineOfficialScenarioMatrix": 13,
+    "physicalDevicesValidated": false,
+    "pedestrianAccessValidated": false,
+    "hostingResourceMarginsMeasured": false,
+    "regionalReleaseGo": false,
+    "publicCaptureCollectorHealthy": true,
+    "nativeTileCapture": {
+      "scope": "Historical official capture,32 unique tiles maximum/two parallel native TLS requests; tile PNGs relayed into local browser, direct proxied localhost returned403",
+      "downloaded": 16,
+      "displayedAtCapture": 5,
+      "fullyLoadedEveryTile": false,
+      "browserVerified": true
+    },
+    "allBackendSuitesAtFrozenSource": {
+      "source": "06b72b428fa623e7daf4d244b4851683506b78d0",
+      "allPassed": true,
+      "logSha256": "97751a2b4572de69ea5fb21c6cae8efd06f3104d1924d62cf8ccd4872218f67a",
+      "syntheticReceiptWarning": "Mock publication metadata printed by unit tests is not a real deployment."
+    },
+    "standaloneAndProductionBuild": true,
+    "localFrontendRealBackendIntegration": {
+      "browserVerified": true,
+      "frontendSource": "06b72b428fa623e7daf4d244b4851683506b78d0",
+      "backendSource": "3a96758b87d33908635f03d2e833cd5742609997",
+      "publicCandidate": false,
+      "observedAt": "2026-10-13T20:54:23.670Z",
+      "liveGeneratedAt": "2026-10-13T20:54:53.005378Z",
+      "positions": 38,
+      "requests": {
+        "stops": 4,
+        "journeys": 2,
+        "live": 1
+      },
+      "tileUnique": 18,
+      "maximumTileConcurrency": 2,
+      "fixtures": false,
+      "frozenClock": false,
+      "credentialsInBrowser": false,
+      "scope": "Loopback-only temporary frontend/strict read-only public-gateway relay; native TLS; this is actual public-backend integration, not deployed frontend or physical device validation."
+    }
+  },
+  "productionMutations": false,
+  "paidProviderCalls": 0,
+  "newSecrets": false,
+  "independentReviews": [
+    {
+      "agent": "routing_adversarial_review",
+      "scope": "3a96758..9d115a7",
+      "result": "approved after one-shot retry, canonical key, feed-aware cache, non-renewing TTL, swap and origin stop fixes",
+      "execution": "read-only code review; no external HTTP"
+    },
+    {
+      "agent": "independent_review",
+      "scope": "9d115a7..7047f48 and map recovery through06b72b4",
+      "result": "approved after member anchor, viewport/focus, marker keyboard and Refresh cycle fixes",
+      "execution": "read-only review plus offline handler/group reproductions; no external HTTP"
+    },
+    {
+      "agent": "security_integration_review",
+      "scope": "7047f48..39f30e6",
+      "result": "approved after shared storage bound, sticky fallback, honest clear/toggle, cross-tab deletion fixes",
+      "execution": "read-only review; no external HTTP"
+    }
+  ],
+  "preparedVerificationController": {
+    "path": "smoke-tile-budget.cjs",
+    "sha256": "e399e4c372695018d9451016884be486888d3f8cc2028edfc66b84d519a7654e",
+    "scope": "Not deployed code;32 unique tiles/two concurrent jobs proven offline. Actual fetcher must independently enforce TLS/no redirects/PNG-size bounds."
+  }
+}

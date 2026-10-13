@@ -1,3 +1,5 @@
+> Current13October2026 technical preview: published source `06b72b428fa623e7daf4d244b4851683506b78d0`, Render deployment `dep-db7b4uad0e5s73fv1i4g`, journey-api version4, main `f38826625e08fe6bcd92073df45685fa36bbf7cf`. The owner-approved preview update passed actual public-browser verification; see [PROGRESS](PROGRESS.md) and [published evidence](evidence/technical-preview-20261013/README.md). Regional NO-GO remains. Previous sections are historical phase evidence; do not repeat completed publication/rollback steps without fresh specific approval.
+
 # Hosting and costs
 
 Read-only Render config verified: existing service srv-db6nhvrbc2fs739pb7mg, free Docker plan, one Frankfurt instance, port10000, auto-deploy disabled. No new service or upgrade purchased. Free host can suspend; observed latency does not establish warm/cold state or a production SLO.

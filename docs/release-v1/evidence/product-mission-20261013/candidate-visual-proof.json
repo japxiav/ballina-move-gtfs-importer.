@@ -1,0 +1,15 @@
+{
+  "scope": "Local unpublished candidate browser screenshots. Hospital data retained official14Oct capture; map illustrative source-contract fixture and stub tiles. Not the published app, live GPS, real physical device or walking validation.",
+  "screenshots": [
+    "candidate-home-mobile.png",
+    "candidate-hospital-mobile.png",
+    "candidate-itinerary-mobile.png",
+    "candidate-vehicle-mobile.png",
+    "candidate-vehicle-desktop.png"
+  ],
+  "pageErrors": [],
+  "browserCredentials": false,
+  "browserVerified": true,
+  "sourceCommitAtCapture": "39f30e68ca80bacff4a6556aa5c9e701018f7efa",
+  "laterChanges": "Subsequent06b72b4 adds tile deadline/Refresh recovery; these early UI captures use stub tiles and are not a verification of that later recovery patch."
+}
