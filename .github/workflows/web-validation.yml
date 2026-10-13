@@ -6,6 +6,7 @@ on:
       - "render.yaml"
       - ".dockerignore"
       - "scripts/deploy_live_gateway_render.py"
+      - "scripts/run_live_gateway_deployment.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
@@ -14,6 +15,7 @@ on:
       - "render.yaml"
       - ".dockerignore"
       - "scripts/deploy_live_gateway_render.py"
+      - "scripts/run_live_gateway_deployment.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
@@ -23,6 +25,19 @@ on:
         type: boolean
         required: false
         default: false
+      deploy_live_gateway:
+        description: "Create the already-authorized FREE read-only service and verify browser"
+        type: boolean
+        required: false
+        default: false
+      reviewed_source_commit:
+        description: "Full reviewed commit required for deployment"
+        type: string
+        required: false
+      render_owner_id:
+        description: "Optional workspace ID when multiple workspaces are connected"
+        type: string
+        required: false
 permissions:
   contents: read
 jobs:
@@ -106,3 +121,35 @@ jobs:
           with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write('Render transport diagnostic: ' + json.dumps(result) + '\n')
           PY
+  deploy-live-gateway:
+    needs: web-validation
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_live_gateway == true && inputs.render_connection_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: ballina-live-gateway-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Prepare pinned browser smoke dependencies
+        run: |
+          npm --prefix web ci --ignore-scripts
+          cd web
+          npx playwright install --with-deps chromium
+      - name: Create free target, verify deployed commit and open actual app
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
+          BALLINA_RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
+        run: python scripts/run_live_gateway_deployment.py

@@ -7,6 +7,25 @@ const { once } = require("node:events");
 const path = require("node:path");
 const fs = require("node:fs");
 
+test("host readiness rejects stale GPS, unavailable bus channel and a static capture", () => {
+  const { verifyLiveData } = require("../scripts/check-live-host.cjs");
+  const now = Date.parse("2026-10-13T10:00:00Z");
+  const fixture = () => ({ version: 1, mode: "live", generatedAt: "2026-10-13T10:00:00Z", collectorHealthy: true,
+    sources: { bus: { status: "ready" }, rail: { status: "empty" } },
+    vehicles: [{ mode: "bus", source: "nta", quality: "gps_observation", observedAt: "2026-10-13T09:59:00Z" }] });
+  assert.equal(verifyLiveData(fixture(), now).length, 1);
+  for (const mutate of [
+    data => { data.mode = "snapshot"; },
+    data => { data.sources.bus.status = "unavailable"; },
+    data => { data.collectorHealthy = false; },
+    data => { data.vehicles[0].observedAt = "2026-10-13T09:00:00Z"; },
+    data => { data.generatedAt = "2026-10-13T11:00:00Z"; },
+    data => { data.vehicles = [{ mode: "train", source: "irish_rail", quality: "reported_location", observedAt: "2026-10-13T10:00:00Z" }]; },
+  ]) { const data = fixture(); mutate(data); assert.throws(() => verifyLiveData(data, now)); }
+  const empty = fixture(); empty.vehicles = []; empty.sources.bus.status = "empty";
+  assert.equal(verifyLiveData(empty, now).length, 0); // Valid quiet feed, no fake movement.
+});
+
 test("cloud preview serves only reviewed static files, including forwarded hosts", async () => {
   const reservation = net.createServer();
   reservation.listen(0, "127.0.0.1");

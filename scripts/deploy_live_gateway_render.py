@@ -47,10 +47,10 @@ def service_payload(owner):
                                "envSpecificDetails": {"dockerfilePath": "./web/Dockerfile", "dockerContext": "."}}}
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--create", action="store_true", help="Create the explicitly authorized free read-only service.")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     key = os.environ.get("RENDER_API_KEY")
     if not key:
         raise ValueError("RENDER_API_KEY is missing; connect Render through secure environment settings.")
@@ -73,6 +73,13 @@ def main():
     if git("branch", "--show-current") != BRANCH or git("status", "--porcelain"):
         raise ValueError("Deployment requires the clean reviewed hosting branch.")
     head = git("rev-parse", "HEAD")
+    if os.environ.get("GITHUB_ACTIONS") == "true" and (
+        os.environ.get("GITHUB_EVENT_NAME") != "workflow_dispatch"
+        or os.environ.get("GITHUB_REF") != "refs/heads/" + BRANCH
+        or os.environ.get("BALLINA_EXPECTED_SOURCE_COMMIT") != head
+        or os.environ.get("GITHUB_SHA") != head
+    ):
+        raise ValueError("Runner deployment requires the explicit manual event and reviewed source commit.")
     if git("ls-remote", "origin", "refs/heads/" + BRANCH).split()[0] != head:
         raise ValueError("Local and remotely reviewed deployment sources differ.")
     existing = request("/services?" + urllib.parse.urlencode({"name": NAME, "ownerId": selected, "limit": 100}), key)
@@ -92,8 +99,10 @@ def main():
         if parsed.scheme != "https" or not parsed.hostname or not parsed.hostname.endswith(".onrender.com") or parsed.username or parsed.password:
             print(json.dumps({"serviceId": service.get("id"), "created": True, "urlVerified": False}))
             raise ValueError("Unexpected deployment URL; inspect the created service before retrying.")
-    print(json.dumps({"serviceId": service.get("id"), "url": url, "sourceCommit": head,
-                      "plan": "free", "created": True, "browserVerificationRequired": True}))
+    outcome = {"serviceId": service.get("id"), "url": url, "sourceCommit": head,
+               "plan": "free", "created": True, "browserVerificationRequired": True}
+    print(json.dumps(outcome))
+    return outcome
 
 
 if __name__ == "__main__":
