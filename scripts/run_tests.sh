@@ -31,4 +31,6 @@ node tests/runtime/test_schedule_oracle.cjs
 node --test tests/runtime/test_journey_api.cjs
 node tests/runtime/test_import_api.cjs
 node --test tests/runtime/test_import_body_bounds.cjs
+tsc --target es2022 --lib es2022,dom --strict --skipLibCheck --module commonjs --outDir /tmp/ballina-pilot-compiled experimental/pilot/walking.ts experimental/pilot/realtime.ts
+node --test tests/runtime/test_pilot_walking.cjs tests/runtime/test_pilot_realtime.cjs
 echo 'ALL LOCAL TESTS PASSED'
