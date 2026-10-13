@@ -8,6 +8,8 @@
   --line: #dde2d5;
   --lime: #dfebae;
 }
+.journey-tools { border-top: 1px solid var(--line); margin-top: 12px; font-size: 13px; line-height: 1.5; }.journey-tools summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 600; }.journey-tools h2 { font-size: 15px; margin: 16px 0 8px; }.journey-tools p { margin: 8px 0; }
+.journey-tools ul { list-style: none; padding: 0; margin: 8px 0; }.journey-tools li > button { padding: 10px; width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 8px; background: white; text-align: left; margin: 3px 0; overflow-wrap: anywhere; }.journey-tools small { display: block; color: var(--muted); }.tools-actions { display: flex; flex-wrap: wrap; gap: 8px; }.journey-tools .button { min-height: 44px; font-size: 13px; padding: 8px 12px; }.tools-status { padding: 10px; background: #eef2df; border-radius: 8px; }.demo-entry { display: inline-flex; min-height: 44px; align-items: center; margin: 12px; }
 .map-count, .selection-notice { font-size: 13px; line-height: 1.5; margin: 8px 0; }
 .map-stage { position: relative; }
 .vehicle-cluster { border: 3px solid #fff; border-radius: 50%; display: grid !important; place-items: center; color: white; background: #254e43; font-weight: 800; box-shadow: 0 2px 7px #203f3855; }
@@ -1354,7 +1356,7 @@ main {
   .hero-copy > .eyebrow, .hero-description, .hero-tags, .county-art { display: none; }
   .search-panel { border-radius: 14px; box-shadow: none; }
   .search-form { padding: 14px; }
-  .search-form > .eyebrow, .search-form h2, .form-intro, .panel-foot { display: none; }
+  .search-form > .eyebrow, .search-form > h2, .form-intro, .panel-foot { display: none; }
   .field { gap: 6px; }
   .field > span { font-size: 12px; }
   .field select, .field input { height: 44px; padding: 0 6px; font-size: 16px; }
