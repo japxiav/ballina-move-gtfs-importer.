@@ -68,6 +68,9 @@ test("map shows source-specific details, filters, departures and accessible mobi
   expect(small).toEqual([]); expect(errors).toEqual([]);
 });
 test("static capture is labelled; no gateway is claimed and GPS expires", async ({ page }) => {
+  // Stop automatic clock ticks before manually jumping. Playwright's older
+  // realtime tick can otherwise finish after fastForward and rewind Date.now.
+  await page.clock.pauseAt(new Date(now + 1000));
   await page.route("**/api/live", route => route.fulfill({ status: 404 }));
   const data = fixture(); data.mode = "snapshot";
   await page.route("**/live-data.json?*", route => route.fulfill({ json: data }));
@@ -76,6 +79,7 @@ test("static capture is labelled; no gateway is claimed and GPS expires", async 
   await expect(page.getByText(/Continuous live updates require the server gateway/)).toBeVisible();
   await expect(page.locator(".vehicle-marker")).toHaveCount(2);
   await page.clock.fastForward(185000);
+  expect(await page.evaluate(() => Date.now())).toBe(now + 186000);
   await expect(page.locator(".vehicle-bus")).toHaveCount(0);
   await expect(page.locator(".vehicle-train")).toHaveCount(1);
 });
@@ -91,12 +95,14 @@ test("unavailable gateway presents an error and retry without fixture vehicles",
 });
 
 test("failed refresh cannot retain expired observations", async ({ page }) => {
+  await page.clock.pauseAt(new Date(now + 1000));
   let fail = false;
   await page.route("**/api/live", route => fail ? route.fulfill({ status: 503 }) : route.fulfill({ json: fixture() }));
   await page.goto("/#/live");
   await expect(page.locator(".vehicle-marker")).toHaveCount(2);
   fail = true;
   await page.clock.fastForward(185000);
+  expect(await page.evaluate(() => Date.now())).toBe(now + 186000);
   await expect(page.getByRole("alert")).toContainText("Unable to refresh");
   await expect(page.locator(".vehicle-marker")).toHaveCount(0);
 });
@@ -140,11 +146,13 @@ test('missing old or future cancellation stamps are not current cancellation con
 });
 
 test('a fresh cancellation becomes unconfirmed in the map instead of silently becoming scheduled',async({page})=>{
+ await page.clock.pauseAt(new Date(now + 1000));
  const value=fixture();value.departures=[{...value.departures[0],status:'cancelled',expectedAt:null,predictionObservedAt:null,cancellationObservedAt:at}];
  await page.route('**/api/live',route=>route.fulfill({json:value}));
  await page.goto('/#/live');await page.getByText('Next departures · Ballina',{exact:true}).click();
  await expect(page.locator('.departure-row')).toContainText('Cancelled');
  await page.clock.fastForward(185000);
+ expect(await page.evaluate(()=>Date.now())).toBe(now + 186000);
  await expect(page.locator('.departure-row')).toContainText('Cancellation unconfirmed · check operator');
  await expect(page.locator('.departure-row')).not.toContainText('Scheduled');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
