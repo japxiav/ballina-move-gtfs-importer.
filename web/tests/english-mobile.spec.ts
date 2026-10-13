@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("English interface includes navigation, forms, notices and recovery", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/#/demo");
   await expect(page.locator("html")).toHaveAttribute("lang", "en-IE");
   await expect(page).toHaveTitle(/Your next journey/);
   await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
@@ -25,7 +25,7 @@ test("English interface includes navigation, forms, notices and recovery", async
 for (const [width, height] of [[320, 640], [390, 844]]) {
   test(`compact mobile ${width}px keeps search reachable and results short`, async ({ page }) => {
     await page.setViewportSize({ width, height });
-    await page.goto("/");
+    await page.goto("/#/demo");
     const home = await page.evaluate(() => ({
       height: document.documentElement.scrollHeight,
       ctaBottom: document.querySelector(".search-submit")!.getBoundingClientRect().bottom,
@@ -66,7 +66,7 @@ test("mobile controls remain easy to tap through filters and recovery", async ({
       .map(({ label, box }) => ({ label, width: box.width, height: box.height })));
     expect(small).toEqual([]);
   };
-  await page.goto("/");
+  await page.goto("/#/demo");
   await checkTargets();
   await page.locator(".search-options > summary").click();
   await page.getByText("Demo states", { exact: true }).click();

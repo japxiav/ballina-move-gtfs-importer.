@@ -8,6 +8,29 @@
   --line: #dde2d5;
   --lime: #dfebae;
 }
+.schedule-entry { display: inline-flex; align-items: center; min-height: 44px; color: var(--green); text-decoration: underline; }
+.official-planner { max-width: 960px; margin: auto; }
+.schedule-note { background: #eef2df; border-radius: 12px; padding: 12px 16px; font-size: 13px; line-height: 1.5; }
+.schedule-note a { text-decoration: underline; }
+.official-form { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.official-form select { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+.official-form .date-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.official-form .field { min-width: 0; }
+.official-form .field input { min-width: 0; width: 100%; }
+.scheduled-results { max-width: 720px; }
+.scheduled-itinerary { margin-top: 20px; }
+.scheduled-itinerary .step-header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.scheduled-itinerary details summary { min-height: 44px; cursor: pointer; display: flex; align-items: center; }
+.scheduled-itinerary p { overflow-wrap: anywhere; }
+.official-planner .results-footnote { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .official-planner h1 { font-size: 32px; }
+  .official-planner .page-heading { gap: 8px; }
+  .official-form { padding: 12px; }
+  .official-planner .schedule-note { padding: 10px; font-size: 12px; }
+  .official-planner .journey-times { font-size: 21px; }
+  .schedule-entry { font-size: 13px; }
+}
 * {
   box-sizing: border-box;
 }

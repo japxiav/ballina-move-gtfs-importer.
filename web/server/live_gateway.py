@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 UTC = dt.timezone.utc
 TRANSPORT_URL = "https://giwiqbnyozjbpmetrjhe.supabase.co/functions/v1/transport-api"
 RAIL_URL = "https://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML"
+JOURNEY_URL = "https://giwiqbnyozjbpmetrjhe.supabase.co/functions/v1/journey-api"
 MAX_BODY = 1_048_576
 MAX_GPS_AGE = 180
 ROOT = Path(__file__).resolve().parents[1] / "dist"
@@ -156,17 +157,19 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError("upstream_redirect_forbidden")
 
 
-def fetch_source(name, public_key):
-    if name not in {"health", "vehicles", "departures", "rail"}:
+def fetch_source(name, public_key, params=None):
+    if name not in {"health", "vehicles", "departures", "rail", "stops", "journeys"}:
         raise ValueError("unknown_source")
     headers = {"User-Agent": "BallinaMove/0.1 official-source reader"}
-    url = RAIL_URL if name == "rail" else TRANSPORT_URL + "?" + urllib.parse.urlencode({"action": name, "max_age": 180, "limit": 60})
+    query = {"action": name, **(params or {})} if name in {"stops", "journeys"} else {"action": name, "max_age": 180, "limit": 60}
+    url = RAIL_URL if name == "rail" else (JOURNEY_URL if name in {"stops", "journeys"} else TRANSPORT_URL) + "?" + urllib.parse.urlencode(query)
     if name != "rail":
         headers["apikey"] = public_key
     opener = urllib.request.build_opener(NoRedirect())
-    deadline = time.monotonic() + 8
+    budget = 20 if name in {"stops", "journeys"} else 8
+    deadline = time.monotonic() + budget
     try:
-        response = opener.open(urllib.request.Request(url, headers=headers), timeout=8)
+        response = opener.open(urllib.request.Request(url, headers=headers), timeout=budget)
     except urllib.error.HTTPError as exc:
         if name != "health" or exc.code != 503:
             raise ValueError("upstream_unavailable") from None
@@ -206,6 +209,108 @@ def public_key():
     if not re.fullmatch(r"sb_publishable_[A-Za-z0-9_-]{12,160}", key):
         raise ValueError("public_transport_key_unavailable")
     return key
+
+
+def schedule_query(query, now=None):
+    if len(query) > 700:
+        raise ValueError("invalid_search")
+    params = urllib.parse.parse_qs(query, keep_blank_values=True, max_num_fields=6)
+    keys = {"from", "to", "date", "time", "modes", "changes"}
+    if params.keys() != keys or any(len(v) != 1 for v in params.values()):
+        raise ValueError("invalid_search")
+    q = {k: v[0] for k, v in params.items()}
+    today = (now or dt.datetime.now(UTC)).astimezone(ZoneInfo("Europe/Dublin")).date()
+    try:
+        date = dt.date.fromisoformat(q["date"])
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", q["date"]) or not 0 <= (date - today).days <= 14:
+            raise ValueError("invalid_search")
+    except ValueError:
+        raise ValueError("invalid_search") from None
+    if not all(re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", q[k]) for k in ["from", "to"]) or q["from"] == q["to"] or not re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", q["time"]) or q["modes"] not in {"bus", "rail", "bus,rail"} or q["changes"] not in {"0", "1", "2"}:
+        raise ValueError("invalid_search")
+    return q
+
+
+def public_stop(row):
+    if not isinstance(row, dict):
+        raise ValueError("invalid_stop")
+    point = coordinate(row.get("lat"), row.get("lon"))
+    identifier = row.get("id")
+    if not point or not isinstance(identifier, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", identifier) or not isinstance(row.get("name"), str) or not row["name"]:
+        raise ValueError("invalid_stop")
+    return {"id": identifier, "name": text(row["name"]), "code": text(row.get("code"), 50) or None, "lat": point[0], "lon": point[1]}
+
+
+def public_schedule(value, params=None):
+    if not isinstance(value, dict) or value.get("version") != 1 or value.get("source") != "nta_gtfs" or value.get("timezone") != "Europe/Dublin" or value.get("scope") != "stop_to_stop_same_stop_transfers" or not stamp(value.get("loadedAt")) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", str(value.get("feedVersion", ""))):
+        raise ValueError("invalid_schedule")
+    base = {k: value[k] for k in ["version", "source", "timezone", "scope", "loadedAt", "feedVersion"]}
+    if params is None:
+        stops = value.get("stops")
+        if not isinstance(stops, list) or not 1 <= len(stops) <= 1000:
+            raise ValueError("invalid_stops")
+        cleaned = [public_stop(s) for s in stops]
+        if len({s["id"] for s in cleaned}) != len(cleaned):
+            raise ValueError("duplicate_stop")
+        for k in ["validFrom", "validUntil"]:
+            if not isinstance(value.get(k), str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value[k]):
+                raise ValueError("invalid_feed_dates")
+            dt.date.fromisoformat(value[k])
+        return {**base, "validFrom": value["validFrom"], "validUntil": value["validUntil"], "stops": cleaned}
+    if value.get("serviceDate") != params["date"] or value.get("walkingIncluded") is not False or value.get("realTimeApplied") is not False or value.get("predictionType") != "scheduled" or value.get("minBoardingSeconds") != 60 or value.get("minTransferSeconds") != 120:
+        raise ValueError("invalid_journey_provenance")
+    journeys = value.get("journeys")
+    if not isinstance(journeys, list) or len(journeys) > 6:
+        raise ValueError("invalid_journeys")
+    cleaned = []
+    depart = int(params["time"][:2]) * 3600 + int(params["time"][3:]) * 60
+    for j in journeys:
+        if not isinstance(j, dict) or not isinstance(j.get("rides"), list) or not 1 <= len(j["rides"]) <= int(params["changes"]) + 1:
+            raise ValueError("invalid_journey")
+        rides, trip_keys = [], set()
+        for r in j["rides"]:
+            if not isinstance(r, dict) or r.get("mode") not in params["modes"].split(",") or not isinstance(r.get("tripId"), str) or not r["tripId"] or len(r["tripId"]) > 120:
+                raise ValueError("invalid_ride")
+            board, alight = r.get("boardAt"), r.get("alightAt")
+            if any(type(t) is not int for t in [board, alight]) or not depart + 60 <= board <= alight <= depart + 36 * 3600:
+                raise ValueError("invalid_ride_time")
+            start, end = public_stop(r.get("from")), public_stop(r.get("to"))
+            if (rides and (start["id"] != rides[-1]["to"]["id"] or board < rides[-1]["alightAt"] + 120)) or (not rides and start["id"] != params["from"]):
+                raise ValueError("invalid_connection")
+            date = r.get("serviceDate")
+            if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or abs((dt.date.fromisoformat(date) - dt.date.fromisoformat(params["date"])).days) > 2 or (date, r["tripId"]) in trip_keys:
+                raise ValueError("invalid_service_day")
+            trip_keys.add((date, r["tripId"]))
+            rides.append({"tripId": text(r["tripId"], 120), "route": text(r.get("route")), "mode": r["mode"], "destination": text(r.get("destination")), "from": start, "to": end, "boardAt": board, "alightAt": alight, "serviceDate": date})
+        if rides[-1]["to"]["id"] != params["to"] or j.get("departureAt") != rides[0]["boardAt"] or j.get("arrivalAt") != rides[-1]["alightAt"] or j.get("changes") != len(rides) - 1:
+            raise ValueError("invalid_journey_summary")
+        cleaned.append({"id": str(len(cleaned) + 1), "departureAt": rides[0]["boardAt"], "arrivalAt": rides[-1]["alightAt"], "changes": len(rides) - 1, "rides": rides})
+    return {**base, "serviceDate": params["date"], "predictionType": "scheduled", "walkingIncluded": False, "realTimeApplied": False, "minBoardingSeconds": 60, "minTransferSeconds": 120, "journeys": cleaned}
+
+
+class ScheduleService:
+    def __init__(self, loader=fetch_source, key=None):
+        self.loader, self.key = loader, key or public_key()
+        self.pool = concurrent.futures.ThreadPoolExecutor(max_workers=2)
+        self.lock = threading.Lock()
+        self.futures = set()
+        self.catalog_cache = None
+        self.catalog_at = 0
+
+    def get(self, params=None):
+        with self.lock:
+            if params is None and self.catalog_cache is not None and time.monotonic() - self.catalog_at < 45:
+                return self.catalog_cache
+            self.futures = {f for f in self.futures if not f.done()}
+            if len(self.futures) >= 2:
+                raise ValueError("schedule_capacity")
+            future = self.pool.submit(self.loader, "stops" if params is None else "journeys", self.key, params)
+            self.futures.add(future)
+        value = public_schedule(future.result(timeout=21), params)
+        if params is None:
+            with self.lock:
+                self.catalog_cache, self.catalog_at = value, time.monotonic()
+        return value
 
 
 class LiveService:
@@ -316,8 +421,8 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         url = urllib.parse.urlsplit(self.path)
         path = urllib.parse.unquote(url.path)
-        if path == "/api/live":
-            if url.query or self.command != "GET":
+        if path in {"/api/live", "/api/stops", "/api/journeys"}:
+            if (url.query and path != "/api/journeys") or self.command != "GET":
                 self.respond(b'{"error":"invalid_request"}', 400)
                 return
             with self.rate_lock:
@@ -328,10 +433,15 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
                     return
                 self.request_times.append(now)
             try:
-                value = self.service.get()
+                params = schedule_query(url.query) if path == "/api/journeys" else None
+            except ValueError:
+                self.respond(b'{"error":"invalid_search"}', 400)
+                return
+            try:
+                value = self.service.get() if path == "/api/live" else self.schedules.get(params)
                 self.respond(json.dumps(value, ensure_ascii=False).encode("utf-8"))
             except Exception:
-                self.respond(b'{"error":"live_service_unavailable"}', 503)
+                self.respond(b'{"error":"live_service_unavailable"}' if path == "/api/live" else b'{"error":"schedules_unavailable"}', 503)
             return
         if path not in {"/", "/index.html", "/ballina-move.html", "/favicon.svg"} and not path.startswith("/assets/"):
             self.respond(b'{"error":"not_found"}', 404)
@@ -382,6 +492,7 @@ def main():
     if not 1024 <= port <= 65535 or not ROOT.is_dir():
         raise ValueError("invalid_live_preview_configuration")
     GatewayHandler.service = service
+    GatewayHandler.schedules = ScheduleService()
     server = GatewayServer(("0.0.0.0", port), GatewayHandler)
     print(f"Ballina read-only live app on internal port {port}", flush=True)
     try:

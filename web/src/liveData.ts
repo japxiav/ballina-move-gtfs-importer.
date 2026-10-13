@@ -54,7 +54,7 @@ export function decodeLiveData(value: unknown): LiveData {
   return value as unknown as LiveData;
 }
 
-async function boundedJson(response: Response): Promise<unknown> {
+export async function boundedJson(response: Response): Promise<unknown> {
   if (!response.ok || !response.body) throw Error("Live data is unavailable.");
   const reader = response.body.getReader(), body = new Uint8Array(1_048_576);
   let size = 0;

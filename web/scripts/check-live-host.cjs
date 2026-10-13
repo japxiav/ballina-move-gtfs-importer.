@@ -60,16 +60,29 @@ async function run() {
     await page.locator(".live-heading button").filter({ hasText: "Refresh" }).waitFor();
     await page.waitForFunction(() => !document.querySelector(".live-heading button").disabled, null, { timeout: 20000 });
     await page.getByRole("navigation").getByRole("link", { name: "Home", exact: true }).click();
-    await page.getByRole("button", { name: "Find journeys" }).click();
-    await page.locator(".journey-card").nth(2).waitFor();
-    await page.getByRole("link", { name: "View details: Arrive sooner" }).click();
-    await page.getByRole("heading", { name: "Bus 22" }).waitFor();
+    await page.getByLabel('From stop', { exact: true }).waitFor({ timeout: 30000 });
+    await page.getByLabel('Schedule time').fill('07:00');
+    await page.getByRole('button', { name: 'Find scheduled journeys' }).click();
+    await page.locator('.scheduled-results').waitFor({ timeout: 30000 });
+    const scheduled = await page.evaluate(async () => {
+      const query = location.hash.split('?')[1];
+      const response = await fetch('api/journeys?' + query, { credentials: 'omit', cache: 'no-store', redirect: 'error' });
+      if (!response.ok) throw Error('Actual official search failed.');
+      return response.json();
+    });
+    assert.equal(scheduled.source, 'nta_gtfs'); assert.equal(scheduled.predictionType, 'scheduled');
+    assert.equal(scheduled.walkingIncluded, false); assert.equal(scheduled.realTimeApplied, false);
+    assert(scheduled.journeys.length > 0 && scheduled.journeys.every(j => j.rides.length > 0));
+    await page.getByRole('link', { name: 'View itinerary' }).first().click();
+    await page.locator('.scheduled-itinerary').waitFor({ timeout: 30000 });
     assert.deepEqual(errors, []); assert.deepEqual(csp, []);
     assert(requests.every(request => request.origin === url.origin || request.hostname === "tile.openstreetmap.org"));
     const proof = { url: url.href + "#/live", browserVerified: true, mode: "live", sources: data.sources,
       vehiclesAtVerification: data.vehicles.length, generatedAt: data.generatedAt, responsiveWidths: widths,
       busGpsPositionsAtVerification: buses.length, railPositionsAreReported: true,
-      realMapTiles: true, browserCredentials: false, journeySearchRemainsDemo: true };
+      realMapTiles: true, browserCredentials: false, journeySearchRemainsDemo: false,
+      officialScheduledSearch: true, officialItineraryDetails: true, feedVersion: scheduled.feedVersion, scheduledOptions: scheduled.journeys.length,
+      walkingDirectionsVerified: false, realTimeAppliedToItineraries: false };
     fs.writeFileSync("live-browser-proof.json", JSON.stringify(proof, null, 2));
     console.log("::notice title=Live gateway browser verified::" + JSON.stringify(proof));
   } finally { await browser.close(); }
