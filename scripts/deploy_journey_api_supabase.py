@@ -22,6 +22,8 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def request(path, key, body=None, content_type=None):
+    if not isinstance(key, str) or not key or len(key) > 512 or any(ord(c) < 33 or ord(c) > 126 for c in key):
+        raise ValueError('Secure publication binding invalid.')
     headers = {'Authorization': 'Bearer ' + key, 'Accept': 'application/json'}
     if content_type:
         headers['Content-Type'] = content_type
@@ -60,7 +62,7 @@ def main():
         raise ValueError('Publish requires preserved clean source.')
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     functions = request('/functions', key)
-    if not isinstance(functions, list) or any(f.get('slug', f.get('name')) == 'journey-api' for f in functions):
+    if not isinstance(functions, list) or any(not isinstance(f, dict) for f in functions) or any(f.get('slug', f.get('name')) == 'journey-api' for f in functions):
         raise ValueError('Isolated function already exists; inspect before modifying it.')
     body, content_type, hashes = package(root)
     response = request('/functions/deploy?slug=journey-api', key, body, content_type)
@@ -73,5 +75,5 @@ if __name__ == '__main__':
     try:
         main()
     except (ValueError, OSError, json.JSONDecodeError) as error:
-        print(str(error) if isinstance(error, ValueError) else 'Management transport failed; inspect function before retrying.')
+        print('Management deployment failed; inspect function before retrying. No credentials or private responses logged.')
         raise SystemExit(1)
