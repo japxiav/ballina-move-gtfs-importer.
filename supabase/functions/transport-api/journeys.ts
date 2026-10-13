@@ -81,7 +81,8 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const times = new Map<unknown, Row[]>();
   for (const row of snapshot.tables.times!) { const group = times.get(row.trip_id) ?? []; group.push(row); times.set(row.trip_id, group); }
   const depart = Number(q.time.slice(0, 2)) * 3600 + Number(q.time.slice(3)) * 60, horizon = depart + 36 * 3600;
-  type Event = { key: string; trip: Row; route: Row; rows: Row[]; index: number; at: number; offset: number; date: string; tripId: string; routeId: string; routeLabel: string; destination: string };
+  type TripDetails = { tripId: string; routeId: string; routeLabel: string; destination: string; mode: 'bus' | 'rail' };
+  type Event = { key: string; details: TripDetails; rows: Row[]; index: number; at: number; offset: number; date: string };
   type State = { stop: string; at: number; rides: Ride[]; used: string[] };
   const departures = new Map<string, Event[]>(), terminalDepartures = new Map<string, Event[]>(), tripIds = new Set<unknown>();
   const eligibleTrips: Row[][] = [];
@@ -99,6 +100,9 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     if (!route || !mode || !modes.has(mode)) continue;
     const tripId = trip.trip_id, routeId = clean(route.route_id, 120);
     const routeLabel = clean(route.route_short_name) || clean(route.route_long_name), destination = clean(trip.trip_headsign);
+    // These immutable presentation/identity fields belong to one trip, not
+    // every boarding event. Share their reference within this query only.
+    const details: TripDetails = { tripId, routeId, routeLabel, destination, mode };
     const rows = [...(times.get(trip.trip_id) ?? [])].sort((a, b) => Number(a.stop_sequence) - Number(b.stop_sequence));
     let previous = -1, sequence = -1;
     for (const r of rows) {
@@ -123,7 +127,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
         const row = rows[index]!, at = Number(row.departure_seconds) + offset * 86400;
         if (!seconds(row.departure_seconds) || !regular(row.pickup_type) || at < depart + 60 || at > horizon) continue;
         const id = String(row.stop_id), group = departures.get(id) ?? [];
-        const event = { key: `${date}:${trip.trip_id}`, trip, route, rows, index, at, offset, date, tripId, routeId, routeLabel, destination };
+        const event = { key: `${date}:${trip.trip_id}`, details, rows, index, at, offset, date };
         group.push(event); departures.set(id, group); eligible = true;
         if (ends.some(end => end > index)) { const final = terminalDepartures.get(id) ?? []; final.push(event); terminalDepartures.set(id, final); }
       }
@@ -159,7 +163,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
         const event = events[i]!;
         if (++work > 150000) throw Error('search_capacity_reached');
         if (state.used.includes(event.key)) continue;
-        const alights = finalRound ? destinationRows.get(event.trip.trip_id)! : null;
+        const alights = finalRound ? destinationRows.get(event.details.tripId)! : null;
         // Visit exactly the same indices in the same order, with the same work
         // accounting, without allocating a whole index array per event/state.
         for (let cursor = alights ? 0 : event.index + 1; cursor < (alights ? alights.length : event.rows.length); cursor++) {
@@ -169,7 +173,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
           const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset * 86400;
           if (!seconds(row.arrival_seconds) || at > horizon || !regular(row.drop_off_type)) continue;
           if (!reachable[Number(q.changes) - round]!.has(String(row.stop_id))) continue;
-          const ride: Ride = { tripId: event.tripId, routeId: event.routeId, route: event.routeLabel, mode: event.route.route_type === 2 ? 'rail' : 'bus', destination: event.destination, from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
+          const ride: Ride = { tripId: event.details.tripId, routeId: event.details.routeId, route: event.details.routeLabel, mode: event.details.mode, destination: event.details.destination, from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
           const rides = [...state.rides, ride], identity = operationalKey(rides);
           if (seen.has(identity)) continue;
           seen.add(identity);
