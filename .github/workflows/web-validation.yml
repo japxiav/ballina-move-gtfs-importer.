@@ -87,9 +87,11 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Check Render API transport without credentials
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           python - <<'PY'
-          import json, urllib.request, urllib.error
+          import json, os, urllib.request, urllib.error
           request = urllib.request.Request('https://api.render.com/v1/owners', headers={'Accept': 'application/json', 'User-Agent': 'BallinaMoveDeployment/0.1'})
           try:
               response = urllib.request.urlopen(request, timeout=15)
@@ -98,7 +100,9 @@ jobs:
           with response:
               body = response.read(16384).decode('utf-8', 'replace').lower()
               result = {'status': response.status, 'jsonResponse': response.headers.get('Content-Type', '').startswith('application/json'), 'cloudflareBlock': 'sorry, you have been blocked' in body, 'credentialsUsed': False, 'deploymentAttempted': False}
+          result['runnerBindingPresent'] = bool(os.environ.get('RENDER_API_KEY'))
           print(json.dumps(result))
+          print('::notice title=Render API transport::' + json.dumps(result))
           with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write('Render transport diagnostic: ' + json.dumps(result) + '\n')
           PY
