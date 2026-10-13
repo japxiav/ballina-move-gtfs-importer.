@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { clock, dateLabel, daySuffix, dublinToday, minutes } from './fixtures';
 const lastSearchDate = () => new Date(Date.parse(dublinToday() + 'T00:00:00Z') + 14 * 86400000).toISOString().slice(0, 10);
+function upcomingDeparture() {
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Dublin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(Date.now() + 5 * 60000));
+  const get = (type: string) => parts.find(p => p.type === type)!.value;
+  return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${get('hour')}:${get('minute')}` };
+}
 import { decodeStopSearch, encodeStopSearch, fetchCatalog, fetchSchedules, type StopCatalog, type StopSearch, type ScheduleResult } from './scheduleData';
 function ScheduleNotice() {
   return <p className="schedule-note">Official scheduled times. Delays and cancellations are not applied to these itineraries. Check <a href="#/live">live departures</a> before travel. Walking, bays and accessibility are unverified.</p>;
@@ -9,7 +14,7 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
   const query = React.useMemo(() => search ? decodeStopSearch(search) : null, [search]);
   const [catalog, setCatalog] = useState<StopCatalog | null>(null), [result, setResult] = useState<ScheduleResult | null>(null);
   const [loading, setLoading] = useState(true), [error, setError] = useState(''), [attempt, setAttempt] = useState(0);
-  const [form, setForm] = useState<StopSearch>({ from: '', to: '', date: dublinToday(), time: '09:00', modes: 'bus,rail', changes: '1' });
+  const [form, setForm] = useState<StopSearch>(() => ({ from: '', to: '', ...upcomingDeparture(), modes: 'bus,rail', changes: '1' }));
   useEffect(() => {
     const controller = new AbortController();
     let timedOut = false;
