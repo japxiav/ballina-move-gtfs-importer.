@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import urllib.error
 import urllib.request
@@ -62,7 +63,9 @@ def main():
         raise ValueError('Publish requires preserved clean source.')
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     functions = request('/functions', key)
-    if not isinstance(functions, list) or any(not isinstance(f, dict) for f in functions) or any(f.get('slug', f.get('name')) == 'journey-api' for f in functions):
+    if not isinstance(functions, list) or any(not isinstance(f, dict) or not isinstance(f.get('slug', f.get('name')), str) or not re.fullmatch(r'[a-z0-9_-]{1,100}', f.get('slug', f.get('name'))) for f in functions):
+        raise ValueError('Function list did not establish absence safely.')
+    if any(f.get('slug') == 'journey-api' or f.get('name') == 'journey-api' for f in functions):
         raise ValueError('Isolated function already exists; inspect before modifying it.')
     body, content_type, hashes = package(root)
     response = request('/functions/deploy?slug=journey-api', key, body, content_type)
