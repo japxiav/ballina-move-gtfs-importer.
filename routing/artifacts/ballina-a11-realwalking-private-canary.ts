@@ -316,6 +316,9 @@ function stateDominates(a, b) {
 const byTime = (a, b) => a.at - b.at || a.walkingMeters - b.walkingMeters || a.rides - b.rides || b.latestLeaveAtSeconds - a.latestLeaveAtSeconds || 0;
 const byWalk = (a, b) => a.walkingMeters - b.walkingMeters || a.at - b.at || a.rides - b.rides || b.latestLeaveAtSeconds - a.latestLeaveAtSeconds || 0;
 const byLeave = (a, b) => b.latestLeaveAtSeconds - a.latestLeaveAtSeconds || byTime(a, b);
+// A strict time order with equal walking has exactly this immutable walk rank.
+// Share it across retained frontiers instead of allocating the same 24 indices.
+const uniformTimeRanks = Object.freeze(Array.from({ length: MAX_STATES_PER_STOP }, (_, i) => i));
 const frontierIndexes = new WeakMap();
 function retainFrontier(states, indexes, stopId, entries, latestLeave, order) {
     states.set(stopId, entries);
@@ -358,6 +361,73 @@ function selectRanks(length, walk, leave, extremes) {
     }
     return { mask, selected };
 }
+/** The existing strict 24→25 selector with virtual insertion ranks. Rejected
+ * labels allocate no rank/selection arrays; the selected mask is identical. */
+function virtualRank(rank, slot, ordinal) {
+    return ordinal === slot ? MAX_STATES_PER_STOP : rank[ordinal < slot ? ordinal : ordinal - 1];
+}
+function insertionSlot(entries, rank, state, compare) {
+    let lo = 0, hi = rank.length;
+    while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (compare(entries[rank[mid]], state) <= 0)
+            lo = mid + 1;
+        else
+            hi = mid;
+    }
+    return lo;
+}
+function selectVirtualMask(walk, walkSlot, leave, leaveSlot) {
+    const length = MAX_STATES_PER_STOP + 1;
+    let mask = 1, count = 1;
+    let index = virtualRank(walk, walkSlot, 0), bit = 1 << index;
+    if (!(mask & bit)) {
+        mask |= bit;
+        count++;
+    }
+    index = virtualRank(leave, leaveSlot, 0);
+    bit = 1 << index;
+    if (!(mask & bit)) {
+        mask |= bit;
+        count++;
+    }
+    let ti = 0, wi = 0, li = 0;
+    while (count < MAX_STATES_PER_STOP) {
+        const previous = count;
+        while (ti < length && (mask & (1 << ti)))
+            ti++;
+        if (ti < length && count < MAX_STATES_PER_STOP) {
+            mask |= 1 << ti++;
+            count++;
+        }
+        while (wi < length && (mask & (1 << virtualRank(walk, walkSlot, wi))))
+            wi++;
+        if (wi < length && count < MAX_STATES_PER_STOP) {
+            mask |= 1 << virtualRank(walk, walkSlot, wi++);
+            count++;
+        }
+        while (li < length && (mask & (1 << virtualRank(leave, leaveSlot, li))))
+            li++;
+        if (li < length && count < MAX_STATES_PER_STOP) {
+            mask |= 1 << virtualRank(leave, leaveSlot, li++);
+            count++;
+        }
+        if (count === previous)
+            break;
+    }
+    return mask;
+}
+function retainedVirtualRank(rank, slot, excluded) {
+    // Indices 0..23 need one byte; the cap remains exactly 24 labels.
+    const result = new Uint8Array(MAX_STATES_PER_STOP);
+    let at = 0;
+    for (let i = 0; i <= MAX_STATES_PER_STOP; i++) {
+        const index = virtualRank(rank, slot, i);
+        if (index !== excluded)
+            result[at++] = index < excluded ? index : index - 1;
+    }
+    return result;
+}
 /** Entries are already time ordered. Upper-bound insertion preserves stable ties. */
 function insertOrdered(entries, state, compare) {
     let lo = 0, hi = entries.length;
@@ -392,36 +462,22 @@ function addBest(states, state) {
     // snap risk lets the existing extrema be read directly from those ranks.
     if (entries.length === MAX_STATES_PER_STOP && order && order.snap !== null && metadata(state).snap === order.snap && byTime(state, entries[entries.length - 1]) > 0) {
         const appended = entries.length;
-        const insertRank = (rank, compare) => {
-            let lo = 0, hi = rank.length;
-            while (lo < hi) {
-                const mid = (lo + hi) >>> 1;
-                if (compare(entries[rank[mid]], state) <= 0)
-                    lo = mid + 1;
-                else
-                    hi = mid;
-            }
-            const result = [...rank];
-            result.splice(lo, 0, appended);
-            return result;
-        };
         const uniformWalk = order.uniformWalk && state.walkingMeters === entries[0].walkingMeters;
-        const walk = uniformWalk ? [...order.walk, appended] : insertRank(order.walk, byWalk);
-        const leave = insertRank(order.leave, byLeave);
-        const { mask } = selectRanks(appended + 1, walk, leave, [0, walk[0], leave[0]]);
+        const walkSlot = uniformWalk ? appended : insertionSlot(entries, order.walk, state, byWalk);
+        const leaveSlot = insertionSlot(entries, order.leave, state, byLeave);
+        const mask = selectVirtualMask(order.walk, walkSlot, order.leave, leaveSlot);
         // With strict numeric order an excluded insertion leaves the array exact.
         if (!(mask & (1 << appended)))
             return;
         if (!(state.latestLeaveAtSeconds > latestLeave) && entries.some(x => stateDominates(x, state)))
             return;
-        const result = [], remap = new Array(appended + 1);
+        // Exactly one of 25 labels is excluded by the unchanged 24-label cap.
+        const excluded = 31 - Math.clz32((~mask) & 0x1ffffff), result = [];
         for (let i = 0; i <= appended; i++)
-            if (mask & (1 << i)) {
-                remap[i] = result.length;
+            if (i !== excluded)
                 result.push(i === appended ? state : entries[i]);
-            }
-        const keepRank = (rank) => rank.filter(i => Boolean(mask & (1 << i))).map(i => remap[i]);
-        retainFrontier(states, indexes, state.stopId, result, Math.max(latestLeave, state.latestLeaveAtSeconds), { walk: keepRank(walk), leave: keepRank(leave), uniformWalk: uniformWalk || result.every(entry => entry.walkingMeters === result[0].walkingMeters), snap: order.snap });
+        const resultUniformWalk = uniformWalk || result.every(entry => entry.walkingMeters === result[0].walkingMeters);
+        retainFrontier(states, indexes, state.stopId, result, Math.max(latestLeave, state.latestLeaveAtSeconds), { walk: resultUniformWalk ? uniformTimeRanks : retainedVirtualRank(order.walk, walkSlot, excluded), leave: retainedVirtualRank(order.leave, leaveSlot, excluded), uniformWalk: resultUniformWalk, snap: order.snap });
         return;
     }
     // Exact scalar impossibility bounds; selection still considers every label.
@@ -456,7 +512,7 @@ function addBest(states, state) {
         const reuse = previousOrder && noRemoval && !timeTies;
         const time = viable.map((_, i) => i);
         const updateOrder = (order, compare) => {
-            const result = order.map(i => i >= inserted ? i + 1 : i);
+            const result = Array.from(order, i => i >= inserted ? i + 1 : i);
             let lo = 0, hi = result.length;
             while (lo < hi) {
                 const mid = (lo + hi) >>> 1;
