@@ -1,0 +1,23 @@
+{
+  "scope": "Read-only limited preview preflight; not authorization or deployment",
+  "observedAtUtc": "2026-10-13T22:14:15.639841+00:00",
+  "requestsMaximum": 3,
+  "previousUncredentialedRequestReturned401": true,
+  "candidateSource": "06b72b428fa623e7daf4d244b4851683506b78d0",
+  "deploymentPerformed": false,
+  "secretValuesQueried": false,
+  "paidCalls": 0,
+  "serviceVerified": true,
+  "previousDeployment": {
+    "id": "dep-db76rdc9v7es73alv28g",
+    "status": "live",
+    "sourceCommit": "3a96758b87d33908635f03d2e833cd5742609997"
+  },
+  "journeyFunction": {
+    "slug": "journey-api",
+    "version": 4,
+    "status": "ACTIVE",
+    "verify_jwt": false
+  },
+  "passed": true
+}
