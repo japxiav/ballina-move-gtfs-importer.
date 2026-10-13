@@ -1,0 +1,13 @@
+# Local passenger tools and compact official interface
+
+Unpublished candidate stacked on vehicle-map commit `7047f48`. No credentials, production configuration, provider queries, deployment, main merge or A12 changes.
+
+Favorites and submitted recent searches are local shortcuts containing only official/place IDs and transport/change filters. They store neither dates nor times nor device coordinates, and recall uses a new departure time for review. Limits are six favorites, eight recent routes and 8192 characters with matching reader/writer validation. Unknown coverage disables a stored shortcut; corrupt or coordinate-bearing storage is rejected. A clear control removes the app's key. If browser writes fail, a tab-only fallback survives route navigation; failed deletion honestly distinguishes clearing this tab from deleting the stored data.
+
+Optional **Use my location** is inside the initially collapsed **Saved & nearby stops** section after the main search button. No location API runs on load. Returned coordinates are used only in the device callback to rank three covered official stops by spherical straight-line distance. No geocoder, fetch, map pan, URL, log or storage receives those coordinates. This does not establish walking access or complete stop coverage, and the browser/OS controls how device location is obtained. Permission denial, unavailable or thrown API, cancellation and late/unmounted callbacks are handled without private diagnostics.
+
+Metadata now describes official timetable search and reported locations. About has a primary official-search link, an explicitly illustrative demo link and accurate local-preference/geolocation privacy text. About no longer receives a DEMO footer, and the home navigation exposes only one current-page link. Mobile titles inside the saved tools remain accessible. Vehicle cards provide a mode-based fallback for an empty source label.
+
+The results-to-home browser test exposed a render crash from old results being paired with a newly empty query. Result presentation is now bound to the completed query identity; stale results cannot construct links for another search. A same-query submit requests a single retry without rewriting the hash.
+
+Validation: pinned standalone build and **20 desktop/mobile Playwright checks** for persistence, corruption, maximum IDs, unavailable/write-only storage, clear failure, cross-tab deletion, navigation, location permission emulation, refusal/cancellation, no coordinate transmission, source metadata, current navigation and widths320/360/390/430/768/1440. Browser geolocation is emulated, not a real physical GPS test. Full composed-suite and independent review receipts are recorded with the product-mission evidence.

@@ -914,13 +914,12 @@ function About() {
           <span>04</span>
           <h2>Sources &amp; privacy</h2>
           <p>NTA timetable data is attributed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noreferrer">CC BY 4.0</a>. Irish Rail reported positions and OpenStreetMap tiles have separate source policies.</p>
-          <p>Your chosen stop IDs, date, time and transport filters are sent to the server and remain in the search URL and browser history. We do not offer accounts or request device geolocation. Hosting and data providers may process IP addresses and requests; OpenStreetMap receives your IP and the map area requested.</p>
+          <p>Your chosen stop IDs, date, time and transport filters are sent to the server and remain in the search URL and browser history. We do not offer accounts. Favorites and recent routes are stored on your browser with a clear control; dates, times and device coordinates are not saved in these shortcuts. Device geolocation is requested only when you choose Use my location, and is used on your device to suggest covered stops. Coordinates are not sent to our server or map providers. Hosting and data providers may process IP addresses and requests; OpenStreetMap receives your IP and the map area requested.</p>
           <p><a href="https://github.com/japxiav/ballina-move-gtfs-importer./issues/new" rel="noreferrer">Report a timetable issue</a>. Reports are public: include stop codes and the timetable date, without personal details or private locations.</p>
         </section>
       </div>
-      <a className="button primary" href="#/demo">
-        Explore the demo <Icon name="arrow" />
-      </a>
+      <a className="button primary" href="#/plan">Find scheduled journeys <Icon name="arrow" /></a>
+      <a className="text-link demo-entry" href="#/demo">Explore illustrative demo</a>
     </article>
   );
 }
@@ -948,6 +947,7 @@ function App() {
     defaults = React.useMemo(defaultQuery, []);
   const scheduledMatch = /^\/scheduled\/([1-6]|j-[a-f0-9]{64})$/.exec(path);
   const isHome = !path || path === "/", isLive = path === "/live", isDemo = path === "/demo", isPlan = isHome || path === "/plan" || !!scheduledMatch;
+  const isFixture = isDemo || isSearch || isJourney;
   useEffect(() => {
     document.title = `${isLive ? "Live map" : isPlan ? "Official journeys" : isDemo ? "Your next journey" : isJourney ? "Journey" : isSearch ? "Journeys" : "About"} · Ballina Move`;
   }, [isHome, isJourney, isSearch, isLive, isPlan, isDemo]);
@@ -982,9 +982,9 @@ function App() {
             Home
           </a>
           <a
-            className={isSearch || isJourney || isPlan ? "active" : ""}
+            className={!isHome && isPlan ? "active" : ""}
             href="#/plan"
-            aria-current={isSearch || isJourney || isPlan ? "page" : undefined}
+            aria-current={!isHome && isPlan ? "page" : undefined}
           >
             Journeys
           </a>
@@ -998,7 +998,7 @@ function App() {
           </a>
         </nav>
         <span className="header-demo">
-          <span className="status-dot" /> {isLive ? "MAP" : isPlan ? "SCHEDULE" : "DEMO"}
+          <span className="status-dot" /> {isLive ? "MAP" : isPlan ? "SCHEDULE" : isFixture ? "DEMO" : "PREVIEW"}
         </span>
       </header>
       <main id="main-content" ref={main} tabIndex={-1}>
@@ -1044,12 +1044,12 @@ function App() {
           ballina move<span>Your next journey in Mayo.</span>
         </span>
         <span>
-          {isLive || isPlan ? "Official transport sources" : "Demo prototype · Fixtures v1"}
+          {isFixture ? "Demo prototype · Fixtures v1" : "Official transport sources"}
           <br />
-          {isLive || isPlan ? "Source timestamps shown. No paid requests." : "No live data. No paid requests."}
+          {isFixture ? "Illustrative data. Do not use for travel." : "Schedules and reported locations. Check before travel."}
         </span>
         <a href="#/about">
-          {isLive || isPlan ? "About Ballina Move" : "About this demo"} <Icon name="arrow" size={16} />
+          {isFixture ? "About this demo" : "About Ballina Move"} <Icon name="arrow" size={16} />
         </a>
       </footer>
     </>

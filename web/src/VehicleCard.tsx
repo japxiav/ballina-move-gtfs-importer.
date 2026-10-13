@@ -18,7 +18,7 @@ export function VehicleCard({ vehicle, cluster, now, snapshot, inView, onClose, 
     return () => document.removeEventListener('keydown', escape);
   }, [onClose]);
   return <section className="vehicle-card" role="region" aria-label={vehicle ? 'Selected vehicle' : 'Vehicles in this group'}>
-    <div className="vehicle-card-heading"><div><span className="eyebrow">{vehicle ? vehicle.mode === 'bus' ? 'BUS LOCATION' : 'TRAIN LOCATION' : 'OVERLAPPING LOCATIONS'}</span><h2 ref={heading} tabIndex={-1}>{vehicle?.label || `${cluster.length} vehicles`}</h2></div><button type="button" className="vehicle-close" aria-label="Close vehicle details" onClick={onClose}>×</button></div>
+    <div className="vehicle-card-heading"><div><span className="eyebrow">{vehicle ? vehicle.mode === 'bus' ? 'BUS LOCATION' : 'TRAIN LOCATION' : 'OVERLAPPING LOCATIONS'}</span><h2 ref={heading} tabIndex={-1}>{vehicle ? vehicle.label || (vehicle.mode === 'bus' ? 'Bus location' : 'Train location') : `${cluster.length} vehicles`}</h2></div><button type="button" className="vehicle-close" aria-label="Close vehicle details" onClick={onClose}>×</button></div>
     {vehicle ? <>
       <p className="vehicle-destination">{vehicle.destination ? `Reported direction: ${vehicle.destination}` : 'Direction not supplied'}</p>
       <p className={`vehicle-quality ${vehicle.mode === 'bus' ? 'quality-gps' : 'quality-reported'}`}>{vehicle.mode === 'bus' ? `${snapshot ? 'Captured GPS' : 'GPS observation'} · ${observationAge(vehicle.observedAt!, now)}s ago` : 'Reported train location · observation age unknown'}</p>
