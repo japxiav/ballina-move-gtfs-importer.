@@ -67,7 +67,27 @@
       "logSha256": "97751a2b4572de69ea5fb21c6cae8efd06f3104d1924d62cf8ccd4872218f67a",
       "syntheticReceiptWarning": "Mock publication metadata printed by unit tests is not a real deployment."
     },
-    "standaloneAndProductionBuild": true
+    "standaloneAndProductionBuild": true,
+    "localFrontendRealBackendIntegration": {
+      "browserVerified": true,
+      "frontendSource": "06b72b428fa623e7daf4d244b4851683506b78d0",
+      "backendSource": "3a96758b87d33908635f03d2e833cd5742609997",
+      "publicCandidate": false,
+      "observedAt": "2026-10-13T20:54:23.670Z",
+      "liveGeneratedAt": "2026-10-13T20:54:53.005378Z",
+      "positions": 38,
+      "requests": {
+        "stops": 4,
+        "journeys": 2,
+        "live": 1
+      },
+      "tileUnique": 18,
+      "maximumTileConcurrency": 2,
+      "fixtures": false,
+      "frozenClock": false,
+      "credentialsInBrowser": false,
+      "scope": "Loopback-only temporary frontend/strict read-only public-gateway relay; native TLS; this is actual public-backend integration, not deployed frontend or physical device validation."
+    }
   },
   "productionMutations": false,
   "paidProviderCalls": 0,
