@@ -91,3 +91,25 @@ test('about page states limited technical preview and real request/privacy bound
  await expect(about.getByRole('link',{name:'CC BY 4.0'})).toHaveAttribute('href','https://creativecommons.org/licenses/by/4.0/');
  await expect(about.getByRole('link',{name:'Report a timetable issue'})).toHaveAttribute('href','https://github.com/japxiav/ballina-move-gtfs-importer./issues/new');
 });
+
+test('a failed parallel catalog request cancels its stalled schedule sibling',async({page})=>{
+ await page.addInitScript(()=>{
+  const original=window.fetch.bind(window);(window as unknown as {scheduleAborted:boolean}).scheduleAborted=false;
+  window.fetch=(input,init)=>{const url=String(input);
+   if(url.includes('/api/stops')) return Promise.reject(new Error('offline catalog failure'));
+   if(url.includes('/api/journeys')) return new Promise((_resolve,reject)=>{init?.signal?.addEventListener('abort',()=>{(window as unknown as {scheduleAborted:boolean}).scheduleAborted=true;reject(new DOMException('Aborted','AbortError'));},{once:true});});
+   return original(input,init);
+  };
+ });
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.getByRole('alert')).toContainText('offline catalog failure');
+ await expect.poll(()=>page.evaluate(()=>(window as unknown as {scheduleAborted:boolean}).scheduleAborted)).toBe(true);
+});
+
+test('results show journeys before the editable form and keep editing accessible',async({page})=>{
+ await page.route('**/api/stops',route=>route.fulfill({json:catalog}));
+ await page.route('**/api/journeys?*',route=>route.fulfill({json:result()}));
+ await page.goto('/#/plan?'+encodeStopSearch(q));await expect(page.locator('.journey-card')).toHaveCount(1);
+ await expect(page.getByLabel('From stop')).toBeHidden();
+ const edit=page.getByText('Edit search',{exact:false});await expect(edit).toBeVisible();await edit.click();
+ await expect(page.getByLabel('From stop')).toBeVisible();await expect(page.getByRole('button',{name:'Find scheduled journeys'})).toBeVisible();
+});
