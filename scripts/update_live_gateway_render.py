@@ -8,7 +8,7 @@ import time
 
 import deploy_live_gateway_render as api
 import run_live_gateway_deployment as verify
-from schedule_admission_guard import require_local_binding
+from publisher_admission_binding import require_publisher_binding
 
 SERVICE_ID = 'srv-db6nhvrbc2fs739pb7mg'
 PUBLIC_URL = 'https://ballina-move-live.onrender.com/'
@@ -36,7 +36,7 @@ def main():
     service = api.request('/services/' + SERVICE_ID, key)
     if verify.verified_service(service, SERVICE_ID) != PUBLIC_URL:
         raise ValueError('Existing service URL differs from the authorized app.')
-    require_local_binding(root, 'gateway')
+    require_publisher_binding(root, key, reader=api.request)
     # No service creation, plan/config changes, deletion, clear-cache or retries.
     response = api.request('/services/' + SERVICE_ID + '/deploys', key, {'commitId': expected})
     if not isinstance(response, dict) or not isinstance(response.get('id'), str) or not re.fullmatch(r'dep-[a-z0-9]+', response['id']):

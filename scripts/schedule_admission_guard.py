@@ -25,10 +25,11 @@ def requires_private_admission(root, target):
     return True
 
 
-def require_local_binding(root, target):
+def require_local_binding(root, target, binding=None):
     if not requires_private_admission(root, target):
         return False  # Retained older source has no private-admission contract.
-    if not re.fullmatch(r'[a-f0-9]{64}', os.environ.get(NAME, '')):
+    value = os.environ.get(NAME, '') if binding is None else binding
+    if not isinstance(value, str) or not re.fullmatch(r'[a-f0-9]{64}', value):
         raise ValueError('Reviewed source requires the configured server-only schedule binding; no publication attempted.')
     # This is deliberately not a deployment approval or remote verification.
     return True

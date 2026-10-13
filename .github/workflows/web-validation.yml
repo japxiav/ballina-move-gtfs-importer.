@@ -9,6 +9,7 @@ on:
       - "scripts/run_live_gateway_deployment.py"
       - "scripts/update_live_gateway_render.py"
       - "scripts/schedule_admission_guard.py"
+      - "scripts/publisher_admission_binding.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
@@ -20,12 +21,18 @@ on:
       - "scripts/run_live_gateway_deployment.py"
       - "scripts/update_live_gateway_render.py"
       - "scripts/schedule_admission_guard.py"
+      - "scripts/publisher_admission_binding.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
     inputs:
       render_connection_probe:
         description: "Read-only Render connectivity diagnostic; no credentials or deployment"
+        type: boolean
+        required: false
+        default: false
+      publisher_binding_probe:
+        description: "Read-only check of the existing publisher's canonical Render app binding; no deploy"
         type: boolean
         required: false
         default: false
@@ -51,7 +58,7 @@ permissions:
   contents: read
 jobs:
   web-validation:
-    if: ${{ inputs.render_connection_probe != true }}
+    if: ${{ inputs.render_connection_probe != true && inputs.publisher_binding_probe != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -106,7 +113,7 @@ jobs:
           assert b'Ballina Move' in response.read()
           PY
   render-connection-probe:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.render_connection_probe == true }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.render_connection_probe == true && inputs.publisher_binding_probe != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -130,9 +137,25 @@ jobs:
           with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write('Render transport diagnostic: ' + json.dumps(result) + '\n')
           PY
+  publisher-binding-probe:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publisher_binding_probe == true && inputs.render_connection_probe != true && inputs.deploy_live_gateway != true && inputs.update_live_gateway != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Verify only the existing canonical app binding without exposing it
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: python scripts/publisher_admission_binding.py
   deploy-live-gateway:
     needs: web-validation
-    if: ${{ github.event_name == 'workflow_dispatch' && ((inputs.deploy_live_gateway == true && inputs.update_live_gateway != true) || (inputs.update_live_gateway == true && inputs.deploy_live_gateway != true)) && inputs.render_connection_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
+    if: ${{ github.event_name == 'workflow_dispatch' && ((inputs.deploy_live_gateway == true && inputs.update_live_gateway != true) || (inputs.update_live_gateway == true && inputs.deploy_live_gateway != true)) && inputs.render_connection_probe != true && inputs.publisher_binding_probe != true && github.ref == 'refs/heads/ops/live-gateway-hosting' && inputs.reviewed_source_commit == github.sha }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:
@@ -171,6 +194,6 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: "1"
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-          BALLINA_JOURNEY_GATEWAY_SECRET: ${{ secrets.BALLINA_JOURNEY_GATEWAY_SECRET }}
+          BALLINA_LOAD_SCHEDULE_SECRET_FROM_RENDER: "1"
           BALLINA_EXPECTED_SOURCE_COMMIT: ${{ inputs.reviewed_source_commit }}
         run: python scripts/update_live_gateway_render.py
