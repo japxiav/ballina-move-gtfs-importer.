@@ -260,6 +260,18 @@ test('overlapping vehicles are keyboard reachable; card opens visibly and Escape
   await expect(marker).toBeFocused();
 });
 
+test('zooming a selected group into separate markers closes stale group membership', async ({ page }) => {
+  await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
+  await page.goto('/#/live');
+  await page.locator('.vehicle-cluster').click();
+  const group = page.getByRole('region', { name: 'Vehicles in this group' });
+  await expect(group.getByRole('button', { name: /Fixture train A1/ })).toBeVisible();
+  await group.getByRole('button', { name: 'Zoom to group', exact: true }).click();
+  await expect(group).toHaveCount(0);
+  await expect(page.locator('.transport-marker')).toHaveCount(2);
+  await expect(page.locator('.selection-notice')).toHaveText('Selection closed: map locations regrouped in this view.');
+});
+
 test('viewport list and counters distinguish Mayo from the whole feed and follow selected coordinates', async ({ page }) => {
   const data = fixture();
   data.vehicles.push({ ...data.vehicles[0]!, id: 'fixture:dublin', label: 'Fixture Dublin bus', lat: 53.35, lon: -6.26 });

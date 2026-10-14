@@ -39,3 +39,33 @@ test('source notices and Show Ireland work while map tiles fail independently', 
   await expect(sources).toContainText('1 bus GPS observations in this view');
   await expect(page.getByText('Some map tiles could not load. Use the vehicle list or refresh to retry.', { exact: true })).toBeVisible();
 });
+
+test('pending initial and resumed reads do not announce another attempt before completion', async ({ page }) => {
+  await page.clock.install({ time: now });
+  await page.clock.pauseAt(new Date(now + 1000));
+  let requests = 0, finishFirst!: () => void, finishSecond!: () => void;
+  const first = new Promise<void>(resolve => { finishFirst = resolve; });
+  const second = new Promise<void>(resolve => { finishSecond = resolve; });
+  await page.route('**/api/live', async route => {
+    requests++; await (requests === 1 ? first : second);
+    await route.fulfill({ json: fixture() });
+  });
+  await page.route('https://tile.openstreetmap.org/**', route => route.abort());
+  await page.goto('/#/live');
+  await page.getByText('Transport source status', { exact: true }).click();
+  const sources = page.locator('.source-details');
+  await expect.poll(() => requests).toBe(1);
+  await expect(sources).toContainText('Refresh in progress.');
+  await expect(sources).not.toContainText('Next automatic attempt:');
+  finishFirst(); await expect(sources).toContainText('Next automatic attempt:');
+  await page.clock.fastForward(25000);
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect.poll(() => requests).toBe(2);
+  await expect(sources).toContainText('Refresh in progress.');
+  await page.clock.fastForward(5000);
+  expect(requests).toBe(2);
+  await expect(sources).toContainText('Refresh in progress.');
+  await expect(sources).not.toContainText('Next automatic attempt:');
+  finishSecond();
+  await expect(sources).toContainText('Next automatic attempt: 21:01 Ireland time.');
+});

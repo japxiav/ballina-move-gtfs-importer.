@@ -76,6 +76,18 @@ class LiveContract(unittest.TestCase):
             self.assertEqual(sanitized['mappingStatus'], mapping if mapping in {'route_only', 'unmapped_trip', 'route_mismatch', 'realtime_only_trip'} else 'unknown')
             self.assertNotIn("api_key", sanitized)
 
+    def test_malformed_optional_bus_metadata_preserves_valid_gps_without_decoder_overflow(self):
+        for mapping in [[], {}, ['exact_trip']]:
+            parsed = gateway.parse_buses({'vehicles': [bus(mapping_status=mapping, trip_id='reported-trip')]}, NOW)
+            self.assertEqual(len(parsed), 1)
+            self.assertEqual(parsed[0]['service']['mappingStatus'], 'unknown')
+            self.assertIsNone(parsed[0]['service']['tripId'])
+        for name in ['😀' * 81, '😀' * 160, '\ud800']:
+            parsed = gateway.parse_buses({'vehicles': [bus(operator_name=name)]}, NOW)
+            self.assertEqual(len(parsed), 1)
+            self.assertIsNone(parsed[0]['service']['operator'])
+        self.assertEqual(gateway.reported_bus_service({'operator_name': '😀' * 80})['operator'], '😀' * 80)
+
     def test_train_service_date_rejects_obsolete_reports_without_becoming_observation_age(self):
         for date in [b"01 Jan 2020", b"13 Oct 2026", b"invalid", b""]:
             self.assertEqual(gateway.parse_trains(rail().replace(b"12 Oct 2026", date), NOW), [])
