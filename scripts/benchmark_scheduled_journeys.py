@@ -70,7 +70,7 @@ def main():
                    for metric in ('cpuMs', 'wallMs', 'peakRssMb')
                    for values in [[r[metric] for r in samples if r['version'] == label]]} for label in labels}
     gate = performance_gate(summaries, equal)
-    report = {'measurement': 'cold_module_query_validation_solve' if args.request_path else 'solve', 'scope': 'offline captured official snapshot; fresh serial rotated processes; no warmup or provider calls; not hosted performance',
+    report = {'measurement': 'cold_module_query_validation_solve' if args.request_path else 'solve', 'workerSha256': hashlib.sha256((ROOT / 'scripts/schedule_benchmark_worker.cjs').read_bytes()).hexdigest(), 'scope': 'offline captured official snapshot; fresh serial rotated processes; no warmup or provider calls; not hosted performance',
               'refs': versions, 'hashes': hashes, 'runtime': subprocess.check_output(['node', '--version'], text=True).strip(),
               'snapshotSha256': hashlib.sha256(raw).hexdigest(), 'snapshotVersion': snapshot['version'],
               'snapshotRows': {k: len(v) for k, v in snapshot['tables'].items()},
