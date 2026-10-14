@@ -207,7 +207,9 @@ test('cache canonicalizes query order, prefers a validated new feed, expires and
   const c1 = { ...catalog, feedVersion: r1.feedVersion }, c2 = { ...catalog, feedVersion: r2.feedVersion };
   rememberStopOptions(q, c1, signal, r1); rememberStopOptions(q, c2, signal, r2);
   const reordered = { changes: q.changes, modes: q.modes, time: q.time, date: q.date, to: q.to, from: q.from };
-  expect(await prefetchStopOptions(reordered, signal, false)).toBe(r2);
+  expect(await prefetchStopOptions(reordered, signal, false)).toBeNull();
+  expect(await loadStopOptions(reordered, c1, signal, false)).toBe(r1);
+  expect(await loadStopOptions(reordered, c2, signal, false)).toBe(r2);
   expect(rememberStopOptions(q, c2, signal, r1)).toBe(r2);
   const originalNow = Date.now, originalFetch = globalThis.fetch;
   const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
@@ -229,6 +231,28 @@ test('cache canonicalizes query order, prefers a validated new feed, expires and
     await expect(prefetchStopOptions(q, signal, false)).rejects.toThrow(); expect(calls).toBe(3);
   } finally {
     Date.now = originalNow; globalThis.fetch = originalFetch;
+    if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow); else Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('a fresh old-feed cache defers to the new catalog and performs one healthy read', async () => {
+  const q = { ...place, to: '8490B151091', time: '07:54' }, signal = new AbortController().signal;
+  const old = { ...decodeSchedules(bodies['15109'], q), feedVersion: 'transition-old' };
+  const next = { ...old, feedVersion: 'transition-new' };
+  rememberStopOptions(q, { ...catalog, feedVersion: old.feedVersion }, signal, old);
+  const originalFetch = globalThis.fetch, originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  let calls = 0;
+  try {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { href: 'http://127.0.0.1:4173/' } } });
+    globalThis.fetch = async () => { calls++; return Response.json(next); };
+    expect(await prefetchStopOptions(q, signal, false)).toBeNull();
+    expect(calls).toBe(0);
+    const currentCatalog = { ...catalog, feedVersion: next.feedVersion };
+    const result = await loadStopOptions(q, currentCatalog, signal, false);
+    expect(result.feedVersion).toBe('transition-new'); expect(calls).toBe(1);
+    expect(await loadStopOptions(q, currentCatalog, signal, false)).toBe(result); expect(calls).toBe(1);
+  } finally {
+    globalThis.fetch = originalFetch;
     if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow); else Reflect.deleteProperty(globalThis, 'window');
   }
 });

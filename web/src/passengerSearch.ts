@@ -52,10 +52,12 @@ export function itineraryLink(option: JourneyOption, context: StopSearch): strin
 const cache = new Map<string, { at: number; result: ScheduleResult }>();
 const firstRemembered = new WeakMap<ScheduleResult, number>();
 const fresh = (entry: { at: number }) => Date.now() - entry.at >= 0 && Date.now() - entry.at < 15000;
-export function prefetchStopOptions(q: StopSearch, signal: AbortSignal, retry: boolean): Promise<ScheduleResult> {
+export function prefetchStopOptions(q: StopSearch, signal: AbortSignal, retry: boolean): Promise<ScheduleResult | null> {
   const suffix = `|${encodeStopSearch(q)}`;
-  const cached = [...cache].reverse().find(([key, value]) => key.endsWith(suffix) && fresh(value))?.[1];
-  return !retry && cached ? Promise.resolve(cached.result) : fetchSchedules(q, signal);
+  // A suffix identifies the query, never the feed. Wait for the fresh catalog
+  // before using any cached result; cold reads can still run in parallel.
+  const cachedQuery = [...cache].some(([key, value]) => key.endsWith(suffix) && fresh(value));
+  return !retry && cachedQuery ? Promise.resolve(null) : fetchSchedules(q, signal);
 }
 export function rememberStopOptions(q: StopSearch, catalog: StopCatalog, signal: AbortSignal, result: ScheduleResult): ScheduleResult {
   if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
