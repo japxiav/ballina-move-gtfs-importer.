@@ -1033,6 +1033,154 @@
       "query": {
         "from": "A",
         "to": "B",
+        "date": "2026-03-30",
+        "time": "00:50",
+        "modes": "bus",
+        "changes": "0"
+      },
+      "result": {
+        "version": 2,
+        "referenceAt": "2026-03-29T23:00:00.000Z",
+        "source": "nta_gtfs",
+        "feedVersion": "offline-dst",
+        "loadedAt": "2026-10-14T00:00:00Z",
+        "serviceDate": "2026-03-30",
+        "timezone": "Europe/Dublin",
+        "scope": "stop_to_stop_same_stop_transfers",
+        "predictionType": "scheduled",
+        "walkingIncluded": false,
+        "realTimeApplied": false,
+        "minBoardingSeconds": 60,
+        "minTransferSeconds": 120,
+        "journeys": [
+          {
+            "id": "j-c4c7f8feb8dea0d65b7e90fd982b9d9505c08e6ddfc51e5d9b9a6e4d401c7493",
+            "departureAt": 3599,
+            "arrivalAt": 3600,
+            "changes": 0,
+            "rides": [
+              {
+                "tripId": "dst-trip",
+                "routeId": "dst-route",
+                "route": "Fixture DST",
+                "mode": "bus",
+                "destination": "",
+                "from": {
+                  "id": "A",
+                  "name": "Offline DST A",
+                  "code": "A",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "to": {
+                  "id": "B",
+                  "name": "Offline DST B",
+                  "code": "B",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "boardAt": 3599,
+                "alightAt": 3600,
+                "boardSequence": 1,
+                "alightSequence": 2,
+                "serviceDate": "2026-03-27"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "from": "A",
+        "to": "C",
+        "date": "2026-03-29",
+        "time": "00:55",
+        "modes": "bus",
+        "changes": "1"
+      },
+      "result": {
+        "version": 2,
+        "referenceAt": "2026-03-29T00:00:00.000Z",
+        "source": "nta_gtfs",
+        "feedVersion": "offline-dst",
+        "loadedAt": "2026-10-14T00:00:00Z",
+        "serviceDate": "2026-03-29",
+        "timezone": "Europe/Dublin",
+        "scope": "stop_to_stop_same_stop_transfers",
+        "predictionType": "scheduled",
+        "walkingIncluded": false,
+        "realTimeApplied": false,
+        "minBoardingSeconds": 60,
+        "minTransferSeconds": 120,
+        "journeys": [
+          {
+            "id": "j-384255849dbb717ae99e5fd7fe4f407bd49953186ce6dd4bf8c7e76055cbb949",
+            "departureAt": 3600,
+            "arrivalAt": 4200,
+            "changes": 1,
+            "rides": [
+              {
+                "tripId": "dst-trip",
+                "routeId": "dst-route",
+                "route": "Fixture DST",
+                "mode": "bus",
+                "destination": "",
+                "from": {
+                  "id": "A",
+                  "name": "Offline DST A",
+                  "code": "A",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "to": {
+                  "id": "B",
+                  "name": "Offline DST B",
+                  "code": "B",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "boardAt": 3600,
+                "alightAt": 3900,
+                "boardSequence": 1,
+                "alightSequence": 2,
+                "serviceDate": "2026-03-28"
+              },
+              {
+                "tripId": "dst-transfer",
+                "routeId": "dst-route",
+                "route": "Fixture DST",
+                "mode": "bus",
+                "destination": "",
+                "from": {
+                  "id": "B",
+                  "name": "Offline DST B",
+                  "code": "B",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "to": {
+                  "id": "C",
+                  "name": "Offline DST C",
+                  "code": "C",
+                  "lat": 54.1,
+                  "lon": -9.1
+                },
+                "boardAt": 4020,
+                "alightAt": 4200,
+                "boardSequence": 1,
+                "alightSequence": 2,
+                "serviceDate": "2026-03-29"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "query": {
+        "from": "A",
+        "to": "B",
         "date": "2026-03-29",
         "time": "01:30",
         "modes": "bus",
