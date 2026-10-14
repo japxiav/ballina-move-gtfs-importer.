@@ -15,7 +15,7 @@ test('historical official 420 timetable retains actual IDs, stops, pickup and 08
 test('never projects historical calendar onto the next day or manufactures no-service after schema failure',()=>{
  assert.equal(searchSchedules(snapshot(),{...q,date:'2026-10-09'}).journeys.length,0);
  const s=snapshot();s.tables.times[1].arrival_seconds=NaN;assert.throws(()=>searchSchedules(s,q),/invalid_trip_schedule/);
- assert.throws(()=>searchSchedules(snapshot(),{...q,date:'2026-10-26'}),/clock_change/);
+ assert.equal(searchSchedules(snapshot(),{...q,date:'2026-10-26'}).journeys.length,0);
  assert.throws(()=>searchSchedules(snapshot(),{...q,from:'made-up'}),/unknown_stop/);
 });
 test('GTFS untimed intermediate stop is preserved without interpolation or disabling timed endpoints',()=>{

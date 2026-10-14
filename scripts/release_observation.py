@@ -59,7 +59,7 @@ def summarize(path, body, now):
         valid = b'<!doctype html>' in body.lower() and b'id="root"' in body
         return {'available': valid, 'htmlSha256': hashlib.sha256(body).hexdigest(), 'browserVerified': False}
     data = json.loads(body.decode('utf-8', errors='strict'))
-    if not isinstance(data, dict) or data.get('version') != 1:
+    if not isinstance(data, dict) or type(data.get('version')) is not int or data.get('version') not in ({1, 2} if path == '/api/live' else {1}):
         raise ValueError('invalid_observation_schema')
     if path == '/api/stops':
         if data.get('source') != 'nta_gtfs' or data.get('timezone') != 'Europe/Dublin' or data.get('scope') != 'stop_to_stop_same_stop_transfers' or not isinstance(data.get('stops'), list) or not 1 <= len(data['stops']) <= 1000 or not isinstance(data.get('feedVersion'), str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,128}', data['feedVersion']):

@@ -1,29 +1,34 @@
 import { boundedJson } from './liveData';
 import { validDate, validTime } from './fixtures';
+import { dublinInstant } from './dublinTime';
 export interface OfficialStop { id: string; name: string; code: string | null; lat: number; lon: number }
 export interface StopCatalog { version: 1; source: 'nta_gtfs'; feedVersion: string; loadedAt: string; validFrom: string; validUntil: string; timezone: 'Europe/Dublin'; scope: 'stop_to_stop_same_stop_transfers'; stops: OfficialStop[] }
 export interface StopSearch { from: string; to: string; date: string; time: string; modes: string; changes: string }
 export interface ScheduledRide { tripId: string; routeId?: string; boardSequence?: number; alightSequence?: number; route: string; mode: 'bus' | 'rail'; destination: string; from: OfficialStop; to: OfficialStop; boardAt: number; alightAt: number; serviceDate: string }
 export interface ScheduledJourney { id: string; departureAt: number; arrivalAt: number; changes: number; rides: ScheduledRide[] }
-export interface ScheduleResult { version: 1; source: 'nta_gtfs'; feedVersion: string; loadedAt: string; serviceDate: string; timezone: 'Europe/Dublin'; scope: 'stop_to_stop_same_stop_transfers'; predictionType: 'scheduled'; walkingIncluded: false; realTimeApplied: false; minBoardingSeconds: 60; minTransferSeconds: 120; journeys: ScheduledJourney[] }
+export interface ScheduleResult { version: 1 | 2; referenceAt?: string; source: 'nta_gtfs'; feedVersion: string; loadedAt: string; serviceDate: string; timezone: 'Europe/Dublin'; scope: 'stop_to_stop_same_stop_transfers'; predictionType: 'scheduled'; walkingIncluded: false; realTimeApplied: false; minBoardingSeconds: 60; minTransferSeconds: 120; journeys: ScheduledJourney[] }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const text = (v: unknown): v is string => typeof v === 'string' && v.length <= 160;
 const identifier = (v: unknown): v is string => text(v) && /^[A-Za-z0-9_ .:-]{1,120}$/.test(v);
 function provenance(v: unknown): asserts v is Record<string, unknown> {
-  if (!object(v) || v.version !== 1 || v.source !== 'nta_gtfs' || v.timezone !== 'Europe/Dublin' || v.scope !== 'stop_to_stop_same_stop_transfers' || !text(v.feedVersion) || !/^[A-Za-z0-9_-]{1,128}$/.test(v.feedVersion) || !text(v.loadedAt) || !/(Z|[+-]\d{2}:\d{2})$/.test(v.loadedAt) || !Number.isFinite(Date.parse(v.loadedAt))) throw Error('Invalid schedule source.');
+  if (!object(v) || ![1, 2].includes(v.version as number) || v.source !== 'nta_gtfs' || v.timezone !== 'Europe/Dublin' || v.scope !== 'stop_to_stop_same_stop_transfers' || !text(v.feedVersion) || !/^[A-Za-z0-9_-]{1,128}$/.test(v.feedVersion) || !text(v.loadedAt) || !/(Z|[+-]\d{2}:\d{2})$/.test(v.loadedAt) || !Number.isFinite(Date.parse(v.loadedAt))) throw Error('Invalid schedule source.');
 }
 function stop(v: unknown): v is OfficialStop {
   return object(v) && identifier(v.id) && text(v.name) && !!v.name && (v.code === null || text(v.code)) && typeof v.lat === 'number' && typeof v.lon === 'number' && Number.isFinite(v.lat) && Number.isFinite(v.lon) && v.lat >= 51 && v.lat <= 55.7 && v.lon >= -11 && v.lon <= -5;
 }
 export function decodeCatalog(value: unknown): StopCatalog {
   provenance(value);
+  if (value.version !== 1) throw Error('Invalid catalog version.');
   if (!text(value.validFrom) || !validDate(value.validFrom) || !text(value.validUntil) || !validDate(value.validUntil) || !Array.isArray(value.stops) || !value.stops.length || value.stops.length > 1000 || !value.stops.every(stop) || new Set(value.stops.map(s => s.id)).size !== value.stops.length) throw Error('Invalid stop catalog.');
   return value as unknown as StopCatalog;
 }
 export function decodeSchedules(value: unknown, query: StopSearch): ScheduleResult {
   provenance(value);
   if (value.serviceDate !== query.date || value.predictionType !== 'scheduled' || value.walkingIncluded !== false || value.realTimeApplied !== false || value.minBoardingSeconds !== 60 || value.minTransferSeconds !== 120 || !Array.isArray(value.journeys) || value.journeys.length > 6) throw Error('Invalid scheduled journeys.');
-  const depart = Number(query.time.slice(0, 2)) * 3600 + Number(query.time.slice(3)) * 60;
+  const reference = value.version === 2 ? dublinInstant(query.date, '00:00') : null;
+  if (reference !== null && (typeof value.referenceAt !== 'string' || Date.parse(value.referenceAt) !== reference || !/(Z|[+-]\d{2}:\d{2})$/.test(value.referenceAt))) throw Error('Invalid schedule time reference.');
+  if (value.version === 1 && value.referenceAt !== undefined) throw Error('Invalid legacy time reference.');
+  const depart = reference === null ? Number(query.time.slice(0, 2)) * 3600 + Number(query.time.slice(3)) * 60 : (dublinInstant(query.date, query.time) - reference) / 1000;
   const ids = new Set<string>();
   for (const j of value.journeys) {
     if (!object(j) || !identifier(j.id) || ids.has(j.id) || !Array.isArray(j.rides) || !j.rides.length || j.rides.length > Number(query.changes) + 1 || j.changes !== j.rides.length - 1) throw Error('Invalid journey.');
@@ -67,7 +72,7 @@ async function request(path: string, signal: AbortSignal): Promise<unknown> {
       date_outside_feed: 'Choose a date covered by the current timetable.',
       invalid_search: 'Choose different stops and a valid date and time.',
     } : response.status === 503 ? {
-      clock_change_unsupported: 'Searches around the Ireland clock change are not supported yet. Choose another date.',
+      clock_change_unsupported: 'This Ireland clock change time is nonexistent or ambiguous. Choose another time.',
       search_capacity_reached: 'This search could not finish. Try Direct only or a later departure time.',
     } : {};
     throw new ScheduleRequestError(response.status, typeof code === 'string' && Object.hasOwn(known, code) ? known[code]! : 'Official schedules are unavailable. Try again later.');
