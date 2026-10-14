@@ -3,6 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { groupVehicles } from "./mapGroups";
 import { VehicleCard } from "./VehicleCard";
+import { mapSourceStates } from './mapSourceState';
 import { fetchLiveData, visibleVehicles, visibleDepartures, departureStatusLabel, type LiveData, type VehiclePosition } from "./liveData";
 
 const time = (date: string) => new Intl.DateTimeFormat("en-IE", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Dublin" }).format(new Date(date));
@@ -35,25 +36,29 @@ export function LiveMap() {
     }
   }, [selectedId, clusterIds, active]);
   const departures = data ? visibleDepartures(data, now) : [];
+  const sourceStates = data ? mapSourceStates(data, now, inView, mode) : [];
+  const [nextAttempt, setNextAttempt] = useState<number | null>(null);
   useEffect(() => {
     const clock = window.setInterval(() => setNow(Date.now()), 5000);
     return () => window.clearInterval(clock);
   }, []);
   useEffect(() => {
-    let controller: AbortController | null = null, pending = false, stopped = false;
+    let controller: AbortController | null = null, pending = false, stopped = false, nextPoll = Date.now() + 30000;
     const load = async () => {
       if (pending || document.hidden) return;
       pending = true; controller = new AbortController();
+      setNextAttempt(null);
       const timeout = window.setTimeout(() => controller?.abort(), 12000);
       try {
         const value = await fetchLiveData(controller.signal);
         if (!stopped) { setData(value); setError(""); setNow(Date.now()); }
       } catch {
         if (!stopped) setError("Unable to refresh transport data. Please try again.");
-      } finally { window.clearTimeout(timeout); pending = false; if (!stopped) setLoading(false); }
+      } finally { window.clearTimeout(timeout); pending = false; if (!stopped) { setLoading(false); setNextAttempt(nextPoll); } }
     };
     void load();
-    const poll = window.setInterval(() => { void load(); }, 30000);
+    setNextAttempt(Date.now() + 30000);
+    const poll = window.setInterval(() => { nextPoll = Date.now() + 30000; setNextAttempt(nextPoll); void load(); }, 30000);
     const resume = () => { if (!document.hidden) void load(); };
     document.addEventListener("visibilitychange", resume);
     return () => { stopped = true; controller?.abort(); window.clearInterval(poll); document.removeEventListener("visibilitychange", resume); };
@@ -127,6 +132,8 @@ export function LiveMap() {
     {data && Object.values(data.sources).some(s => s.status === "unavailable") && <p className="source-warning" role="status">Some official feeds are unavailable. No example vehicles are substituted.</p>}
     <div className="map-toolbar"><fieldset aria-label="Vehicle filter"><legend className="sr-only">Vehicle filter</legend>{(["all", "bus", "train"] as const).map(value => <button ref={value === "all" ? filterFallback : undefined} key={value} type="button" aria-pressed={mode === value} onClick={() => setMode(value)}>{value === "all" ? "All" : value === "bus" ? "Buses" : "Trains"}</button>)}</fieldset><div><button onClick={() => map.current?.fitBounds(mayo, { animate: false })}>Mayo</button><button onClick={() => map.current?.fitBounds(ireland, { animate: false })}>Ireland</button></div></div>
     <p className="map-count" role="status">{inView.length} locations in this view · {active.length} available with this filter</p>
+    {sourceStates.some(s => s.showIreland) && <button className="button secondary" onClick={() => map.current?.fitBounds(ireland, { animate: false })}>Show Ireland</button>}
+    <details className="source-details"><summary>Transport source status</summary>{sourceStates.map(s => <p key={s.mode}>{s.message} Retrieved: {s.retrievedAt ? `${time(s.retrievedAt)} Ireland time` : 'no successful retrieval'}.</p>)}<p>{document.hidden ? 'Auto-refresh paused while this page is hidden.' : nextAttempt ? `Next automatic attempt: ${time(new Date(nextAttempt).toISOString())} Ireland time.` : 'Refresh in progress.'} Train observation age is unknown. Map tile loading is separate from transport feeds.</p></details>
     {selectionNotice && <p className="selection-notice" role="status">{selectionNotice}</p>}
     <div className="map-stage"><div ref={container} className="live-map" role="region" aria-label="Map of reported bus and train locations" />
     {(selected || cluster.length > 0) && <VehicleCard vehicle={selected} cluster={cluster} now={now} snapshot={data?.mode === "snapshot"} inView={!!selected && inView.some(v => v.id === selected.id)} onClose={() => closeSelection()} onSelect={v => { setSelectedId(v.id); setClusterIds([]); }} onZoom={focusSelection} />}
