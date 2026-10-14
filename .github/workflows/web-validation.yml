@@ -13,6 +13,7 @@ on:
       - "scripts/test_departures_rpc_contract.py"
       - "scripts/capture_schema_baseline.py"
       - "docs/schema-baseline-20261014/**"
+      - "docs/applied_migrations/PROPOSED_restrict_sequence_grants_20261014.sql"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
@@ -28,6 +29,7 @@ on:
       - "scripts/test_departures_rpc_contract.py"
       - "scripts/capture_schema_baseline.py"
       - "docs/schema-baseline-20261014/**"
+      - "docs/applied_migrations/PROPOSED_restrict_sequence_grants_20261014.sql"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
