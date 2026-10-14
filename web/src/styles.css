@@ -1481,8 +1481,9 @@ main {
 .bus-dot { background: #254e43; }.train-dot { background: #825923; }
 .position-detail { background: white; border: 1px solid #d8dfd1; border-radius: 12px; padding: 14px; margin: 8px 0; font-size: 13px; }
 .position-detail > div { display: flex; justify-content: space-between; gap: 12px; }.position-detail p { margin: 10px 0; }.position-detail small { color: #527664; }
-.live-list { margin: 10px 0; border: 1px solid #d8dfd1; border-radius: 10px; background: white; padding: 0 12px; }
-.live-list summary { min-height: 44px; padding: 12px 0; font-size: 14px; cursor: pointer; }
+.live-list, .source-details { margin: 10px 0; border: 1px solid #d8dfd1; border-radius: 10px; background: white; padding: 0 12px; }
+.live-list summary, .source-details summary { min-height: 44px; padding: 12px 0; font-size: 14px; cursor: pointer; }
+.source-details p { padding-bottom: 12px; font-size: 13px; }
 .live-list ul { list-style: none; padding: 0; margin: 0; }
 .live-list li { border-top: 1px solid #e8ebd7; }
 .live-list button { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 12px 0; min-height: 44px; width: 100%; border: 0; background: transparent; text-align: left; color: #254e43; font: inherit; font-size: 13px; cursor: pointer; }
