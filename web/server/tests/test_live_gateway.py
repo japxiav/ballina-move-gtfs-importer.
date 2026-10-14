@@ -63,6 +63,18 @@ class LiveContract(unittest.TestCase):
         self.assertNotIn("tripId", row)
         self.assertNotIn("TrainDate", row)
 
+    def test_bus_service_references_are_exact_bounded_and_explicitly_unverified(self):
+        raw = bus(route_id="r" * 120, trip_id="t" * 120, operator_name="Bus Éireann", direction_id=1, mapping_status="exact_trip", api_key="never-forward")
+        service = gateway.parse_buses({"vehicles": [raw]}, NOW)[0]["service"]
+        self.assertEqual(service, {"routeId": "r" * 120, "tripId": "t" * 120, "operator": "Bus Éireann", "directionId": 1, "mappingStatus": "exact_trip", "linkage": "source_reported_unverified", "source": "get_live_vehicles"})
+        for mapping in ["route_only", "unmapped", "new-status", None]:
+            sanitized = gateway.reported_bus_service({**raw, "mapping_status": mapping, "route_id": "r" * 121, "operator_name": "bad\nname", "direction_id": True})
+            self.assertIsNone(sanitized["tripId"])
+            self.assertIsNone(sanitized["routeId"])
+            self.assertIsNone(sanitized["operator"])
+            self.assertIsNone(sanitized["directionId"])
+            self.assertNotIn("api_key", sanitized)
+
     def test_train_service_date_rejects_obsolete_reports_without_becoming_observation_age(self):
         for date in [b"01 Jan 2020", b"13 Oct 2026", b"invalid", b""]:
             self.assertEqual(gateway.parse_trains(rail().replace(b"12 Oct 2026", date), NOW), [])
