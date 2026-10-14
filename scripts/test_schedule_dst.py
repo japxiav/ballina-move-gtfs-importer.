@@ -43,6 +43,12 @@ def main():
     cases = [case(f'2026-{month:02d}-{day:02d}') for month, days in [(3, range(27, 32)), (10, range(23, 28))] for day in days]
     cases += [case('2026-03-28', '2026-03-29', time='03:55', board=28*3600, alight=29*3600), case('2026-10-24', '2026-10-25', time='02:55', board=28*3600, alight=29*3600), case('2026-03-29', time='23:55', board=25*3600, alight=26*3600), case('2026-10-25', time='23:55', board=25*3600, alight=26*3600)]
     cases += [transfer_case('2026-10-25', 0, 300, 3720, 4320), transfer_case('2026-03-29', 7200, 7300, 7420, 7800)]
+    cases += [case('2026-03-27', '2026-03-30', time='00:50', board=72*3600-1, alight=72*3600)]
+    cross_day = transfer_case('2026-03-29', 25*3600, 25*3600+300, 7620, 7800)
+    cross_day.update(serviceDate='2026-03-28', alight=25*3600+600, wait=120)
+    cross_day['snapshot']['tables']['trips'][1]['service_id'] = 'S2'
+    cross_day['snapshot']['tables']['exceptions'] = [{'service_id': 'S', 'service_date': '2026-03-28', 'exception_type': 1}, {'service_id': 'S2', 'service_date': '2026-03-29', 'exception_type': 1}]
+    cases += [cross_day]
     cases += [case('2026-03-29', time='01:30'), case('2026-10-25', time='01:30')]
     env = {'PATH': os.environ['PATH']}
     results = json.loads(subprocess.check_output(['node', '-e', NODE], input=json.dumps(cases).encode(), env=env, timeout=30))

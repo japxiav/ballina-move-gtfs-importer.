@@ -1,0 +1,193 @@
+{
+  "project": "giwiqbnyozjbpmetrjhe",
+  "scope": "public application DDL only; platform extensions/roles must already exist",
+  "productionWrites": 0,
+  "applicationRowsExported": 0,
+  "migrationHistory": [
+    {
+      "name": "create_transport_collector_schema",
+      "version": "20261006074627",
+      "statementsSha256": "066752fb9fb113bace5db7381907b80c340ea4dc075da91a06c54b306e194081"
+    },
+    {
+      "name": "schedule_transport_collector",
+      "version": "20261006074849",
+      "statementsSha256": "4e823106683994194d778adfc16b7a5a794574d5514a9ceef4611decd2e37297"
+    },
+    {
+      "name": "point_collector_schedule_to_v2",
+      "version": "20261006075047",
+      "statementsSha256": "51644f192526e4e750ca1e42999d2dae8d001c04d313682ffc13b4c5d9647f79"
+    },
+    {
+      "name": "index_observations_route_id",
+      "version": "20261006075112",
+      "statementsSha256": "4af8556423e911a51fd77e4ff485d7cec5a95e817a0bf857bc01d8a8999fd314"
+    },
+    {
+      "name": "secure_collector_and_add_retention",
+      "version": "20261006080138",
+      "statementsSha256": "0af5e31b18a6bb598f63556bf47550c899e489f1e720f02f944f98c4ff11424e"
+    },
+    {
+      "name": "point_collector_schedule_to_v4",
+      "version": "20261006080459",
+      "statementsSha256": "061d2e1e85a1affbc90706c89669aaf065b9e37a55cd60d66e17cf7a9339348c"
+    },
+    {
+      "name": "create_versioned_gtfs_schema",
+      "version": "20261006081229",
+      "statementsSha256": "a55b4b7fde0a845b1fae7cd15adf328b8eb384267ed894646dd87762b0eb800b"
+    },
+    {
+      "name": "add_streaming_gtfs_import_rpc",
+      "version": "20261006081339",
+      "statementsSha256": "ba86cffa15a7aa00b2c86c1fcb087b299ec1e43014ebff187ec413fe6b820aff"
+    },
+    {
+      "name": "add_realtime_trip_context_rpc",
+      "version": "20261006082330",
+      "statementsSha256": "87efe8032d0878962788a7623c6d2e06f1e1899109386ef346a2972a81aa04c5"
+    },
+    {
+      "name": "point_collector_schedule_to_v5",
+      "version": "20261006082415",
+      "statementsSha256": "922e0b5204cf2d5807d8e813fb0848ffacd47f9daa1a16d4503aa1f3185fd328"
+    },
+    {
+      "name": "lock_down_gtfs_import_rpcs",
+      "version": "20261006083101",
+      "statementsSha256": "81f0a88973482daed9ff06c889d2f21726190842ee6f6877534e558d1ab541de"
+    },
+    {
+      "name": "tighten_regional_route_scope",
+      "version": "20261006083517",
+      "statementsSha256": "4f868c3485caf791a7f93e886859f953c2a3b5871b58b44b4eb8fe0880d6e154"
+    },
+    {
+      "name": "point_collector_schedule_to_v6",
+      "version": "20261006083605",
+      "statementsSha256": "e75e120439dfc58cc2917cd996025f3e3728a83793b21f7eb18a847364153635"
+    },
+    {
+      "name": "add_server_departure_board_rpc",
+      "version": "20261006083747",
+      "statementsSha256": "004f9a72faac2c78e49caff9cb1135983c884e89f79521b4d9d81f92f4b913cb"
+    },
+    {
+      "name": "add_server_live_vehicles_rpc",
+      "version": "20261006083827",
+      "statementsSha256": "efbff049ba47821e00683f70fbc03478f63ae03f9539ab8fac73fd2d81233351"
+    },
+    {
+      "name": "filter_live_vehicle_scope",
+      "version": "20261006083903",
+      "statementsSha256": "ca55ca0c33963220caedeaff9ea7949a4ed974fb0ed37b985e57c126b3a15ab3"
+    },
+    {
+      "name": "harden_collection_timing_and_history",
+      "version": "20261006091725",
+      "statementsSha256": "c0b2cb1efe1a25afcdd801e7b57a4b80f6c0d3fcc8edc803cd87cdef2d554aa8"
+    },
+    {
+      "name": "complete_nta_gtfs_static_schema",
+      "version": "20261006091910",
+      "statementsSha256": "dc5aadf7707f09c628ff2bc3939d692919b2d006c70317cad2ee8fdc25140982"
+    },
+    {
+      "name": "add_realtime_semantics_and_api_limits",
+      "version": "20261006092030",
+      "statementsSha256": "35c7af6b6b76151a80e3e83746f9480a440a813bf551215bce64e8baa3eac13b"
+    },
+    {
+      "name": "version_transport_collector_claims",
+      "version": "20261006092525",
+      "statementsSha256": "059e25df7fb17b666f3d961324a5fd3f4bfb0c965bc5bba9544bb9566d084f69"
+    },
+    {
+      "name": "promote_transport_collector_v7",
+      "version": "20261006092959",
+      "statementsSha256": "e42f9c27ef587f0d579c875c728c8187fad732f822694bc407f981e2ecba3d42"
+    },
+    {
+      "name": "use_wall_clock_for_collection_runs",
+      "version": "20261006093306",
+      "statementsSha256": "182510fab7ae7785856ab8968a63b47ec6971c824f248252433c5f46090f50a3"
+    },
+    {
+      "name": "align_gtfs_and_realtime_retention",
+      "version": "20261006093604",
+      "statementsSha256": "846063357bb07ec488ee9d8cd6295f176ad4f98e9a12c29e0963e849891679dd"
+    },
+    {
+      "name": "add_gtfs_import_targets_and_runs",
+      "version": "20261006134353",
+      "statementsSha256": "cbf049501189971d4aa8b6382844fb13d735456841da80983a0682ad2cfaa9a9"
+    },
+    {
+      "name": "cascade_gtfs_internal_references",
+      "version": "20261006135059",
+      "statementsSha256": "d1ebcf9cf4310e1b866e807fdcdb41c714692e20b1d65ef5b873d0f676cce06a"
+    },
+    {
+      "name": "harden_gtfs_import_worker_lock_and_recovery",
+      "version": "20261006135738",
+      "statementsSha256": "de41fadebcc26ae62f1e803944991a3bf9456c8763f6c248fd5ef02e29176487"
+    },
+    {
+      "name": "classify_realtime_only_gtfs_trips",
+      "version": "20261006140835",
+      "statementsSha256": "28f84777fe8d9361479e508eb6afa0b286010dddd01d2d000090a225a77c80ae"
+    },
+    {
+      "name": "promote_transport_collector_v8",
+      "version": "20261006141219",
+      "statementsSha256": "1d90b9c97347fc0b9e789e4b1a9e86f6aea81b00ed7df89dcec8a2216b103f87"
+    },
+    {
+      "name": "validate_gtfs_feed_window_and_target_count",
+      "version": "20261006141621",
+      "statementsSha256": "e68fab78d58fef2c6abaa1c96bed17a372e3ae67b5ff205337dd32c5ed589e63"
+    },
+    {
+      "name": "support_realtime_only_departures",
+      "version": "20261006141951",
+      "statementsSha256": "febebd632ed1b31b339cfeffe4df5d9f9f900d33ce6f5a6549663f680fd1e000"
+    },
+    {
+      "name": "harden_gtfs_import_validation_gate",
+      "version": "20261006152650",
+      "statementsSha256": "33fe4b492f4f2beb186f788cb4b3db6e0361cf1a0d1a563c0bbf922a88292a59"
+    },
+    {
+      "name": "fix_gtfs_service_day_dst_semantics",
+      "version": "20261006153147",
+      "statementsSha256": "90bfbb5404b10f5c0b2e30af6a2c17ba8b76087a25536cdebb3b6e1002af862d"
+    },
+    {
+      "name": "scope_gtfs_importer_to_token_rpc_api",
+      "version": "20261006153606",
+      "statementsSha256": "7e6f056f095353a85cab27bb99e7698f9fc620038451850d137efa291384ccca"
+    },
+    {
+      "name": "mark_stale_departure_realtime_as_scheduled_no_realtime",
+      "version": "20261006154216",
+      "statementsSha256": "317bef8106e86b298c2d0de4af717236c936c5943fc94357112e41bf0e1d4ab6"
+    },
+    {
+      "name": "route_gtfs_importer_through_edge_gateway",
+      "version": "20261006154345",
+      "statementsSha256": "87bc1eaf4d6cd64f3c58cc8ee0f53ae8eb75b66915a9911da1603e27e2d57f5c"
+    },
+    {
+      "name": "transport_quality_hardening_20261008",
+      "version": "20261008014438",
+      "statementsSha256": "8b00c7f0298153564f57dbe82246d95287d0682e91672a543fc6db62151977aa"
+    }
+  ],
+  "statementHashEncoding": "PostgreSQL to_jsonb(statements)::text UTF8 SHA256",
+  "schemaSha256": "74fed9d22e669c194826875210351c73ffad2e2fc9db0d48aade628771215b49",
+  "tables": 23,
+  "functions": 23,
+  "sequences": 3
+}

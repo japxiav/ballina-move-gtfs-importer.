@@ -67,12 +67,13 @@ class LiveContract(unittest.TestCase):
         raw = bus(route_id="r" * 120, trip_id="t" * 120, operator_name="Bus Éireann", direction_id=1, mapping_status="exact_trip", api_key="never-forward")
         service = gateway.parse_buses({"vehicles": [raw]}, NOW)[0]["service"]
         self.assertEqual(service, {"routeId": "r" * 120, "tripId": "t" * 120, "operator": "Bus Éireann", "directionId": 1, "mappingStatus": "exact_trip", "linkage": "source_reported_unverified", "source": "get_live_vehicles"})
-        for mapping in ["route_only", "unmapped", "new-status", None]:
+        for mapping in ["route_only", "unmapped_trip", "route_mismatch", "realtime_only_trip", "new-status", None]:
             sanitized = gateway.reported_bus_service({**raw, "mapping_status": mapping, "route_id": "r" * 121, "operator_name": "bad\nname", "direction_id": True})
             self.assertIsNone(sanitized["tripId"])
             self.assertIsNone(sanitized["routeId"])
             self.assertIsNone(sanitized["operator"])
             self.assertIsNone(sanitized["directionId"])
+            self.assertEqual(sanitized['mappingStatus'], mapping if mapping in {'route_only', 'unmapped_trip', 'route_mismatch', 'realtime_only_trip'} else 'unknown')
             self.assertNotIn("api_key", sanitized)
 
     def test_train_service_date_rejects_obsolete_reports_without_becoming_observation_age(self):

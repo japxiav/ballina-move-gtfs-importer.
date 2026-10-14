@@ -32,6 +32,7 @@ def sql(container, body):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--write-browser-fixture', action='store_true', help='Regenerate the checked synthetic fixture from actual SQL execution.')
+    parser.add_argument('--full-schema', action='store_true', help='Restore the reviewed full public application baseline, then exercise the RPC.')
     args = parser.parse_args()
     definition = (FIXTURE / 'get_stop_departures_v2.sql').read_bytes()
     provenance = json.loads((FIXTURE / 'provenance.json').read_text())
@@ -50,15 +51,54 @@ def main():
             time.sleep(.1)
         else:
             raise ValueError('Offline Postgres did not become ready')
-        sql(container, (FIXTURE / 'schema.sql').read_text() + '\n' + definition.decode())
+        if args.full_schema:
+            directory = ROOT / 'docs/schema-baseline-20261014'
+            baseline = (directory / 'schema.sql').read_bytes()
+            manifest = json.loads((directory / 'manifest.json').read_text())
+            require(hashlib.sha256(baseline).hexdigest() == manifest['schemaSha256'], 'Baseline hash changed')
+            sql(container, 'CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;\n' + baseline.decode())
+            metadata = json.loads((directory / 'metadata.json').read_text())
+            # Query the same structural catalog without the production migration
+            # ledger. Compare columns/defaults/identity, constraints/indexes,
+            # RLS/owners and every ACL, including sequences and service_role.
+            import capture_schema_baseline as capture
+            start, end = capture.QUERY.index(" 'history',"), capture.QUERY.index(" 'types',")
+            catalog_query = capture.QUERY[:start] + capture.QUERY[end:]
+            restored = json.loads(sql(container, catalog_query))
+            def canonical(data):
+                data = json.loads(json.dumps(data))
+                for group in ['tables', 'functions', 'sequences']:
+                    data[group].sort(key=lambda item: item.get('signature', item['name']))
+                    for item in data[group]:
+                        for key in ['grants', 'constraints', 'policies', 'indexes', 'triggers']:
+                            if item.get(key) is not None:
+                                item[key].sort(key=lambda value: json.dumps(value, sort_keys=True))
+                return data
+            require(canonical(restored) == canonical(metadata), 'Full restored public catalog/owners/ACL/sequence parameters mismatch')
+            for f in metadata['functions']:
+                actual = sql(container, "SELECT pg_get_functiondef('" + f['signature'].replace("'", "''") + "'::regprocedure);")
+                require(actual == f['definition'].strip(), 'Restored RPC definition mismatch: ' + f['name'])
+            protected = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND c.relrowsecurity AND NOT has_table_privilege('anon',c.oid,'SELECT') AND NOT has_table_privilege('authenticated',c.oid,'SELECT');")
+            require(int(protected) == len(metadata['tables']), 'Restored table security mismatch')
+            forbidden = sql(container, "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND (has_function_privilege('anon',p.oid,'EXECUTE') OR has_function_privilege('authenticated',p.oid,'EXECUTE'));")
+            require(forbidden == '0', 'Restored privileged RPC became public')
+            # A separate proposed fix for inherited sequence permissions; never
+            # change the faithful baseline to conceal the observed grants.
+            sql(container, (ROOT / 'docs/applied_migrations/PROPOSED_restrict_sequence_grants_20261014.sql').read_text())
+            sequence_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE CASE WHEN n.nspname='public' AND c.relkind='S' THEN (has_sequence_privilege('anon',c.oid,'USAGE') OR has_sequence_privilege('anon',c.oid,'SELECT') OR has_sequence_privilege('anon',c.oid,'UPDATE') OR has_sequence_privilege('authenticated',c.oid,'USAGE') OR has_sequence_privilege('authenticated',c.oid,'SELECT') OR has_sequence_privilege('authenticated',c.oid,'UPDATE')) ELSE false END;")
+            require(sequence_access == '0', 'Proposed sequence grant restriction failed')
+            service_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE CASE WHEN n.nspname='public' AND c.relkind='S' THEN (has_sequence_privilege('service_role',c.oid,'USAGE') AND has_sequence_privilege('service_role',c.oid,'SELECT') AND has_sequence_privilege('service_role',c.oid,'UPDATE')) ELSE false END;")
+            require(int(service_access) == manifest['sequences'], 'Proposed restriction changed service_role access')
+        else:
+            sql(container, (FIXTURE / 'schema.sql').read_text() + '\n' + definition.decode())
         cases = [('cancel-fresh', 'CANCELED', None, -60), ('cancel-stale', 'CANCELED', None, -600), ('cancel-missing', 'CANCELED', None, -60), ('skip-fresh', None, 'SKIPPED', -60), ('skip-stale', None, 'SKIPPED', -600), ('no-data', None, 'NO_DATA', -60), ('no-realtime-stale', None, None, -1200), ('scheduled', None, None, -60), ('prediction-fresh', None, None, -60), ('prediction-stale', None, None, -600)]
         seed = """
-INSERT INTO public.gtfs_feed_versions(version,label,active,imported_at) VALUES ('offline-rpc','nta-realtime',true,now());
-INSERT INTO public.gtfs_calendars(version,service_id,start_date,end_date,monday) VALUES ('offline-rpc','fixture-service','2026-10-12','2026-10-12',true);
+INSERT INTO public.gtfs_feed_versions(version,label,sha256,active,imported_at) VALUES ('offline-rpc','nta-realtime',repeat('0',64),true,now());
+INSERT INTO public.gtfs_calendars(version,service_id,start_date,end_date,monday,tuesday,wednesday,thursday,friday,saturday,sunday) VALUES ('offline-rpc','fixture-service','2026-10-12','2026-10-12',true,false,false,false,false,false,false);
 INSERT INTO public.gtfs_stops(version,stop_id,stop_name) VALUES ('offline-rpc','fixture-stop','Ballina SQL fixture');
 INSERT INTO public.gtfs_routes(version,route_id,route_short_name) VALUES ('offline-rpc','fixture-route','Fixture route');
-INSERT INTO public.regional_routes(route_id,route_name,operator_name,enabled) VALUES ('fixture-route','Fixture route','Fixture operator',true);
-INSERT INTO public.collection_runs(channel,status,started_at) VALUES ('trip_update','ok',clock_timestamp());
+INSERT INTO public.regional_routes(route_id,route_name,operator_name,feed_version,enabled) VALUES ('fixture-route','Fixture route','Fixture operator','offline-rpc',true);
+INSERT INTO public.collection_runs(id,source,channel,status,started_at) VALUES ('00000000-0000-4000-8000-000000000001','offline-nta','trip_update','ok',clock_timestamp());
 """
         for name, trip_relation, stop_relation, age in cases:
             observed = (NOW + dt.timedelta(seconds=age)).isoformat()
@@ -67,9 +107,9 @@ INSERT INTO public.collection_runs(channel,status,started_at) VALUES ('trip_upda
             prediction = "'2026-10-12T20:35:00Z'::timestamptz" if name.startswith('prediction') or name == 'no-realtime-stale' else 'NULL'
             seed += f"INSERT INTO public.gtfs_trips(version,trip_id,route_id,service_id,trip_headsign) VALUES ('offline-rpc','{name}','fixture-route','fixture-service','SQL fixture {name}');\n"
             seed += f"INSERT INTO public.gtfs_stop_times(version,trip_id,stop_id,stop_sequence,departure_seconds,pickup_type) VALUES ('offline-rpc','{name}','fixture-stop',1,77400,0);\n"
-            seed += f"INSERT INTO public.stop_predictions(version,trip_id,stop_id,service_date,observed_at,source_timestamp,trip_schedule_relationship,schedule_relationship,predicted_departure) VALUES ('offline-rpc','{name}','fixture-stop','2026-10-12','{observed}','{observed}',{tr},{sr},{prediction});\n"
+            seed += f"INSERT INTO public.stop_predictions(run_id,entity_id,route_id,stop_name,version,trip_id,stop_id,service_date,observed_at,source_timestamp,trip_schedule_relationship,schedule_relationship,predicted_departure) VALUES ('00000000-0000-4000-8000-000000000001','{name}','fixture-route','Ballina SQL fixture','offline-rpc','{name}','fixture-stop','2026-10-12','{observed}','{observed}',{tr},{sr},{prediction});\n"
             if trip_relation and name != 'cancel-missing':
-                seed += f"INSERT INTO public.service_observations(feed_version,trip_id,service_date,channel,mapping_status,schedule_relationship,observed_at,source_timestamp) VALUES ('offline-rpc','{name}','2026-10-12','trip_update','exact_trip','CANCELED','{observed}','{observed}');\n"
+                seed += f"INSERT INTO public.service_observations(run_id,entity_id,route_id,route_name,operator_name,payload,feed_version,trip_id,service_date,channel,mapping_status,schedule_relationship,observed_at,source_timestamp) VALUES ('00000000-0000-4000-8000-000000000001','{name}','fixture-route','Fixture route','Fixture operator','{{}}','offline-rpc','{name}','2026-10-12','trip_update','exact_trip','CANCELED','{observed}','{observed}');\n"
         sql(container, seed)
         raw = json.loads(sql(container, "SELECT json_agg(d) FROM public.get_stop_departures_v2(ARRAY['fixture-stop'],'2026-10-12T20:00:00Z',40) d;"))
         require(len(raw) == len(cases), 'SQL fixture departure count mismatch')
@@ -87,7 +127,7 @@ INSERT INTO public.collection_runs(channel,status,started_at) VALUES ('trip_upda
             target.write_text(json.dumps(evidence, indent=2) + '\n')
         else:
             require(json.loads(target.read_text()) == evidence, 'Checked browser replay differs from actual SQL/gateway output')
-        print(json.dumps({'offlineSqlCases': len(cases), 'sqlGatewayMatched': True, 'browserFixtureMatched': True, 'network': 'none', 'publicPorts': 0, 'productionWrites': 0}))
+        print(json.dumps({'offlineSqlCases': len(cases), 'fullPublicSchemaRestored': args.full_schema, 'sqlGatewayMatched': True, 'browserFixtureMatched': True, 'network': 'none', 'publicPorts': 0, 'productionWrites': 0}))
     finally:
         subprocess.run(['docker', 'rm', '-f', container], check=True, stdout=subprocess.DEVNULL)
 

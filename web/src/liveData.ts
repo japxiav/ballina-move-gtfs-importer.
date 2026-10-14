@@ -9,7 +9,7 @@ export interface VehiclePosition {
   retrievedAt: string;
   quality: "gps_observation" | "reported_location";
   source: "nta" | "irish_rail";
-  service?: { routeId: string | null; tripId: string | null; operator: string | null; directionId: 0 | 1 | null; mappingStatus: 'exact_trip' | 'route_only' | 'unmapped' | 'unknown'; linkage: 'source_reported_unverified'; source: 'get_live_vehicles' };
+  service?: { routeId: string | null; tripId: string | null; operator: string | null; directionId: 0 | 1 | null; mappingStatus: 'exact_trip' | 'route_only' | 'unmapped_trip' | 'route_mismatch' | 'realtime_only_trip' | 'unknown'; linkage: 'source_reported_unverified'; source: 'get_live_vehicles' };
 }
 export interface Departure {
   id: string;
@@ -55,7 +55,7 @@ export function decodeLiveData(value: unknown): LiveData {
     ids.add(v.id);
     if (v.service !== undefined) {
       const s = v.service, identifier = (id: unknown) => id === null || typeof id === 'string' && /^[A-Za-z0-9_ .:-]{1,120}$/.test(id);
-      if (value.version !== 2 || v.mode !== 'bus' || !object(s) || !identifier(s.routeId) || !identifier(s.tripId) || !(s.operator === null || typeof s.operator === 'string' && s.operator.length >= 1 && s.operator.length <= 160 && !/[\x00-\x1f\x7f]/.test(s.operator)) || ![null, 0, 1].includes(s.directionId as null | number) || !includes(['exact_trip', 'route_only', 'unmapped', 'unknown'], s.mappingStatus) || s.mappingStatus !== 'exact_trip' && s.tripId !== null || s.linkage !== 'source_reported_unverified' || s.source !== 'get_live_vehicles') throw Error('Invalid reported service reference.');
+      if (value.version !== 2 || v.mode !== 'bus' || !object(s) || Object.keys(s).length !== 7 || !identifier(s.routeId) || !identifier(s.tripId) || !(s.operator === null || typeof s.operator === 'string' && s.operator.length >= 1 && s.operator.length <= 160 && !/[\x00-\x1f\x7f]/.test(s.operator)) || ![null, 0, 1].includes(s.directionId as null | number) || !includes(['exact_trip', 'route_only', 'unmapped_trip', 'route_mismatch', 'realtime_only_trip', 'unknown'], s.mappingStatus) || s.mappingStatus !== 'exact_trip' && s.tripId !== null || s.linkage !== 'source_reported_unverified' || s.source !== 'get_live_vehicles') throw Error('Invalid reported service reference.');
     }
   }
   const departureIds = new Set<string>();

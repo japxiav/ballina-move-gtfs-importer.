@@ -13,6 +13,12 @@ test('only v2 bus references with explicit unverified provenance are accepted', 
     (d: LiveData) => { d.vehicles[0]!.service!.mappingStatus = 'route_only'; },
     (d: LiveData) => { d.vehicles[0]!.service!.operator = 'bad\nname'; },
   ]) { const data = fixture(); edit(data); expect(() => decodeLiveData(data)).toThrow(); }
+  const extra = structuredClone(fixture()) as unknown as { vehicles: { service: Record<string, unknown> }[] }; extra.vehicles[0]!.service.private_metadata = 'offline-should-be-rejected';
+  expect(() => decodeLiveData(extra)).toThrow();
+  for (const mappingStatus of ['unmapped_trip', 'route_mismatch', 'realtime_only_trip'] as const) {
+    const data = fixture(); Object.assign(data.vehicles[0]!.service!, { mappingStatus, tripId: null });
+    expect(decodeLiveData(data).vehicles[0]!.service!.mappingStatus).toBe(mappingStatus);
+  }
 });
 test('reported trip/operator render without claiming verified stops, path or ETA', async ({ page }) => {
   await page.clock.install({ time: Date.parse(at) });
