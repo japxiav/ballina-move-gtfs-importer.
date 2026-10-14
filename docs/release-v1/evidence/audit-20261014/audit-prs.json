@@ -1,0 +1,37 @@
+[
+  {
+    "branch": "fix/audit-departure-integrity-20261014",
+    "base": "docs/product-mission-checkpoint-20261013",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/50"
+  },
+  {
+    "branch": "fix/audit-feed-cache-20261014",
+    "base": "fix/audit-departure-integrity-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/51"
+  },
+  {
+    "branch": "fix/audit-vehicle-provenance-20261014",
+    "base": "fix/audit-feed-cache-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52"
+  },
+  {
+    "branch": "fix/audit-map-source-states-20261014",
+    "base": "fix/audit-vehicle-provenance-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/53"
+  },
+  {
+    "branch": "fix/audit-dublin-clock-20261014",
+    "base": "fix/audit-map-source-states-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/54"
+  },
+  {
+    "branch": "fix/audit-schema-recovery-20261014",
+    "base": "fix/audit-dublin-clock-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55"
+  },
+  {
+    "branch": "test/audit-performance-admission-20261014",
+    "base": "fix/audit-schema-recovery-20261014",
+    "url": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/56"
+  }
+]

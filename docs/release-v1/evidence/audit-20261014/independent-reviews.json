@@ -1,0 +1,57 @@
+{
+  "scope": "Independent Codex agents, not CodeRabbit approval",
+  "gateA": {
+    "status": "approved",
+    "reviewer": "security_integration_review",
+    "reference": "a21c2dc"
+  },
+  "cache": {
+    "status": "approved",
+    "reviewer": "independent_review",
+    "reference": "20f7030"
+  },
+  "vehicleReferences": {
+    "status": "approved",
+    "reviewer": "security_integration_review",
+    "reference": "8342c74"
+  },
+  "mapStates": {
+    "status": "approved",
+    "reviewer": "handoff_independent_review",
+    "reference": "e369ee4"
+  },
+  "dublinInstants": {
+    "status": "approved",
+    "reviewer": "routing_adversarial_review",
+    "reference": "5bb0cab",
+    "reviewerOracleCasesExecuted": 18,
+    "laterPersistedCasesExecutedByPrimary": 20
+  },
+  "schemaBaseline": {
+    "status": "approved_with_inherited_sequence_grant_finding",
+    "reviewer": "security_integration_review",
+    "reference": "50a5f53",
+    "inheritedGrantProposedFixOnly": true
+  },
+  "performance": {
+    "status": "request_path_local_pass_only",
+    "reviewer": "routing_adversarial_review",
+    "solverRssFailureRetained": true,
+    "hostPerformanceVerified": false,
+    "oldWorkerOrderRecommendationCorrected": "b860f60"
+  },
+  "externalCodeRabbitReviewVerified": false,
+  "productionChanges": false,
+  "finalSecurityIncrements": {
+    "status": "approved_locally",
+    "reviewer": "security_integration_review",
+    "reference": "b860f60",
+    "covers": [
+      "Bearer scanner",
+      "sequence revocation proposal only",
+      "guarded catalog privilege checks",
+      "actual mapping states and strict seven fields"
+    ],
+    "networkOrProductionActions": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "Actual local Chromium mobile render with retained official hospital fixture; offline replay, not current realtime or deployment",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "journeyReads": 2,
+  "externalRequests": 0,
+  "pageErrors": [],
+  "sourceCode": "b8c01ec2c21297e8a5029598475f309b7c6769ca"
+}
