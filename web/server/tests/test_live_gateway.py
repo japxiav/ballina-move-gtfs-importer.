@@ -91,7 +91,7 @@ class LiveContract(unittest.TestCase):
             gateway.parse_trains(b"x" * (gateway.MAX_BODY + 1), NOW)
 
     def test_departure_prediction_requires_its_own_fresh_source_timestamp(self):
-        row = {"scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:12:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z"}
+        row = {"stop_id": "fixture-stop", "trip_id": "fixture-trip", "scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:12:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z", "service_status": "scheduled", "data_status": "realtime_explicit"}
         actual = gateway.parse_departures({"departures": [row]}, NOW)[0]
         self.assertEqual(actual["status"], "predicted")
         row["realtime_source_timestamp"] = "2026-10-12T19:40:00Z"
@@ -100,7 +100,7 @@ class LiveContract(unittest.TestCase):
         self.assertIsNone(stale["expectedAt"])
 
     def test_cancelled_departure_never_becomes_a_live_prediction(self):
-        row = {"scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:12:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z", "service_status": "cancelled"}
+        row = {"stop_id": "fixture-stop", "trip_id": "fixture-trip", "scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:12:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z", "service_status": "cancelled"}
         result = gateway.parse_departures({"departures": [row]}, NOW)[0]
         self.assertEqual(result["status"], "cancelled")
         self.assertIsNone(result["expectedAt"])
@@ -108,14 +108,45 @@ class LiveContract(unittest.TestCase):
 
     def test_cancelled_source_observation_is_preserved_separately_from_prediction_and_retrieval(self):
         for own_stamp in ["2026-10-12T19:59:00Z", "2026-10-12T19:00:00Z", "2026-10-12T21:00:00Z", None]:
-            row = {"scheduled_at": "2026-10-12T20:10:00Z", "service_status": "cancelled", "realtime_source_timestamp": own_stamp}
+            row = {"stop_id": "fixture-stop", "trip_id": "fixture-trip", "scheduled_at": "2026-10-12T20:10:00Z", "service_status": "cancelled", "realtime_source_timestamp": own_stamp}
             result = gateway.parse_departures({"departures": [row]}, NOW)[0]
             self.assertEqual(result.get("cancellationObservedAt"), own_stamp)
             self.assertIsNone(result["expectedAt"])
             self.assertIsNone(result["predictionObservedAt"])
 
+    def test_sql_canceled_skipped_and_no_data_never_become_predictions(self):
+        base = {"stop_id": "sql-stop", "trip_id": "sql-trip", "scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:10:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z", "data_status": "realtime_explicit"}
+        for raw, canonical in [("canceled", "cancelled"), ("cancelled", "cancelled"), ("skipped", "skipped"), ("no_data", "no_data")]:
+            for timestamp in [base["realtime_source_timestamp"], "2026-10-12T19:50:00Z", "2026-10-12T21:00:00Z", None]:
+                with self.subTest(status=raw, timestamp=timestamp):
+                    actual = gateway.parse_departures({"departures": [{**base, "service_status": raw, "realtime_source_timestamp": timestamp}]}, NOW)[0]
+                    self.assertEqual(actual["status"], canonical)
+                    self.assertIsNone(actual["expectedAt"])
+                    self.assertIsNone(actual["predictionObservedAt"])
+                    self.assertEqual((actual["stopId"], actual["tripId"]), ("sql-stop", "sql-trip"))
+
+    def test_departure_identity_preserves_long_ids_and_avoids_delimiter_collisions(self):
+        base = {"scheduled_at": "2026-10-12T20:10:00Z", "service_status": "scheduled"}
+        pairs = [("a:b", "c"), ("a", "b:c"), ("s" * 120, "t" * 120)]
+        rows = [{**base, "stop_id": stop, "trip_id": trip} for stop, trip in pairs]
+        parsed = gateway.parse_departures({"departures": rows}, NOW)
+        self.assertEqual(len({row["id"] for row in parsed}), 3)
+        self.assertEqual([(row["stopId"], row["tripId"]) for row in parsed], pairs)
+        with self.assertRaisesRegex(ValueError, "duplicate_departure_identity"):
+            gateway.parse_departures({"departures": [rows[0], rows[0]]}, NOW)
+        with self.assertRaises(ValueError):
+            gateway.parse_departures({"departures": [{**base, "stop_id": "s" * 121, "trip_id": "t"}]}, NOW)
+
+    def test_schedule_fallback_with_fresh_timestamp_is_not_a_prediction(self):
+        base = {"stop_id": "fixture-stop", "trip_id": "fixture-trip", "service_status": "scheduled", "scheduled_at": "2026-10-12T20:10:00Z", "expected_at": "2026-10-12T20:10:00Z", "realtime_source_timestamp": "2026-10-12T19:59:00Z"}
+        for status in ["scheduled", None, "unknown"]:
+            self.assertEqual(gateway.parse_departures({"departures": [{**base, "data_status": status}]}, NOW)[0]["status"], "scheduled")
+        self.assertEqual(gateway.parse_departures({"departures": [{**base, "data_status": "scheduled_no_realtime"}]}, NOW)[0]["status"], "no_data")
+        with self.assertRaises(ValueError):
+            gateway.parse_departures({"departures": [{**base, "service_status": "unknown-upstream-status"}]}, NOW)
+
     def test_delayed_future_prediction_survives_old_schedule_only_while_fresh(self):
-        row = {"scheduled_at": "2026-10-12T19:50:00Z", "expected_at": "2026-10-12T20:05:00Z", "realtime_source_timestamp": "2026-10-12T19:59:40Z"}
+        row = {"stop_id": "fixture-stop", "trip_id": "fixture-trip", "scheduled_at": "2026-10-12T19:50:00Z", "expected_at": "2026-10-12T20:05:00Z", "realtime_source_timestamp": "2026-10-12T19:59:40Z", "service_status": "scheduled", "data_status": "realtime_explicit"}
         self.assertEqual(gateway.parse_departures({"departures": [row]}, NOW)[0]["status"], "predicted")
         row["realtime_source_timestamp"] = "2026-10-12T19:50:00Z"
         self.assertEqual(gateway.parse_departures({"departures": [row]}, NOW), [])

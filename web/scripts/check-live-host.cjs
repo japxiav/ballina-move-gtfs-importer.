@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { chromium } = require("playwright");
 function verifyLiveData(data, now = Date.now()) {
-  assert.equal(data.mode, "live"); assert.equal(data.version, 1); assert.equal(data.collectorHealthy, true);
+  assert.equal(data.mode, "live"); assert([1, 2].includes(data.version)); assert.equal(data.collectorHealthy, true);
   for (const channel of ["bus", "rail"]) assert(["ready", "empty"].includes(data.sources[channel].status));
   const retrievalAge = now - Date.parse(data.generatedAt);
   assert(retrievalAge >= -15000 && retrievalAge < 90000);

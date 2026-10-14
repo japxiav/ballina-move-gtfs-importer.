@@ -136,29 +136,51 @@ def parse_trains(body, now):
 def parse_departures(value, now):
     if not isinstance(value, dict) or not isinstance(value.get("departures"), list) or len(value["departures"]) > 60:
         raise ValueError("invalid_departures_response")
-    rows = []
+    rows, departure_ids = [], set()
     for row in value["departures"]:
         if not isinstance(row, dict):
             raise ValueError("invalid_departure_record")
         scheduled = stamp(row.get("scheduled_at"))
         if not scheduled:
             continue
+        stop_id, trip_id = row.get("stop_id"), row.get("trip_id")
+        if any(not isinstance(identifier, str) or not re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", identifier) for identifier in (stop_id, trip_id)):
+            raise ValueError("invalid_departure_identity")
         prediction = stamp(row.get("expected_at"))
         source_stamp = stamp(row.get("realtime_source_timestamp"))
-        cancelled = row.get("service_status") == "cancelled"
-        fresh = not cancelled and source_stamp is not None and -15 <= (now - source_stamp).total_seconds() <= MAX_GPS_AGE
+        # SQL get_stop_departures_v2 uses GTFS CANCELED -> "canceled".
+        # Accept the old gateway spelling only as a deliberate legacy alias.
+        service_status = row.get("service_status", "scheduled")
+        if not isinstance(service_status, str) or service_status not in {"scheduled", "canceled", "cancelled", "skipped", "no_data"}:
+            raise ValueError("unknown_departure_service_status")
+        cancelled = service_status in {"canceled", "cancelled"}
+        skipped = service_status == "skipped"
+        no_data = service_status == "no_data" or service_status == "scheduled" and row.get("data_status") == "scheduled_no_realtime"
+        source_fresh = source_stamp is not None and -15 <= (now - source_stamp).total_seconds() <= MAX_GPS_AGE
+        prediction_supported = row.get("data_status") in {"realtime_explicit", "realtime_derived", "realtime_propagated", "realtime_trip_delay"}
+        fresh = service_status == "scheduled" and prediction_supported and source_fresh
+        prediction_state = "none"
+        if service_status == "scheduled" and prediction_supported and prediction:
+            prediction_state = "fresh" if source_fresh else "expired" if source_stamp and (now - source_stamp).total_seconds() > MAX_GPS_AGE else "unconfirmed"
         departure_time = prediction if prediction and fresh else scheduled
         if departure_time < now - dt.timedelta(minutes=2):
             continue
-        rows.append({"id": text(row.get("stop_id"), 100) + ":" + text(row.get("trip_id"), 120) + ":" + iso(scheduled),
+        identity = "departure:" + hashlib.sha256(json.dumps([stop_id, trip_id, iso(scheduled)], separators=(",", ":")).encode()).hexdigest()
+        if identity in departure_ids:
+            raise ValueError("duplicate_departure_identity")
+        departure_ids.add(identity)
+        rows.append({"id": identity,
                      "stop": text(row.get("stop_name")), "route": text(row.get("route_name")),
                      "destination": text(row.get("trip_headsign")), "scheduledAt": iso(scheduled),
                      "expectedAt": iso(prediction) if prediction and fresh else None,
                      "predictionObservedAt": iso(source_stamp) if prediction and fresh else None,
+                     "predictionState": prediction_state,
                      # This is a reported cancellation, not a current confirmation
                      # unless the browser can validate this observation's own age.
                      "cancellationObservedAt": iso(source_stamp) if cancelled and source_stamp else None,
-                     "status": "cancelled" if cancelled else "predicted" if prediction and fresh else "scheduled"})
+                     "skippingObservedAt": iso(source_stamp) if skipped and source_stamp else None,
+                     "stopId": stop_id, "tripId": trip_id,
+                     "status": "cancelled" if cancelled else "skipped" if skipped else "no_data" if no_data else "predicted" if prediction and fresh else "scheduled"})
     return rows[:30]
 
 
@@ -500,7 +522,7 @@ class LiveService:
                         vehicles.extend(rows)
                 except Exception:
                     sources[name] = {"status": "unavailable", "retrievedAt": None}
-            value = {"version": 1, "mode": "live", "generatedAt": iso(now), "gpsMaxAgeSeconds": MAX_GPS_AGE,
+            value = {"version": 2, "mode": "live", "generatedAt": iso(now), "gpsMaxAgeSeconds": MAX_GPS_AGE,
                      "collectorHealthy": healthy, "sources": sources, "vehicles": vehicles, "departures": departures}
             with self.condition:
                 self.cached = value

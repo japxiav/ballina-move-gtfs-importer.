@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { groupVehicles } from "./mapGroups";
 import { VehicleCard } from "./VehicleCard";
-import { fetchLiveData, visibleVehicles, visibleDepartures, type LiveData, type VehiclePosition } from "./liveData";
+import { fetchLiveData, visibleVehicles, visibleDepartures, departureStatusLabel, type LiveData, type VehiclePosition } from "./liveData";
 
 const time = (date: string) => new Intl.DateTimeFormat("en-IE", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Europe/Dublin" }).format(new Date(date));
 const age = (date: string, now: number) => Math.max(0, Math.floor((now - Date.parse(date)) / 1000));
@@ -134,7 +134,7 @@ export function LiveMap() {
     {(tilesLoading || tileError) && <p className="live-status" role="status">{tileError ? "Some map tiles could not load. Use the vehicle list or refresh to retry." : tilesDelayed ? "Map tiles are taking too long. Use the vehicle list or refresh to retry." : "Loading map…"}</p>}
     <div className="map-legend"><span><b className="bus-dot" /> Buses: timestamped observations</span><span><b className="train-dot" /> Trains: reported locations, age unknown</span></div>
     <details className="live-list"><summary>{inView.length} locations in this view · vehicle list</summary>{inView.length ? <ul>{inView.map(v => <li key={v.id}><button onClick={e => locate(v, e.currentTarget)}><strong>{v.label}</strong><span>{v.destination || (v.mode === "bus" ? "Bus" : "Train")} · {v.mode === "bus" ? `${age(v.observedAt!, now)}s ago` : "observation age unknown"}</span></button></li>)}</ul> : <p>No recent locations in this view. Try Ireland or another filter. Vehicles appear only when the source supplies valid coordinates.</p>}</details>
-    <details className="live-list"><summary>Next departures · Ballina</summary>{departures.length ? <ul>{departures.slice(0, 12).map(d => <li key={d.id} className="departure-row"><div><strong>{d.route} · {d.destination}</strong><span>{d.stop}</span></div><div><strong>{time(d.status === "predicted" && d.expectedAt ? d.expectedAt : d.scheduledAt)}</strong><span>{d.status === "cancellation_unconfirmed" ? "Cancellation unconfirmed · check operator" : d.status === "cancelled" ? "Cancelled" : d.status === "predicted" ? "Prediction" : "Scheduled"}</span></div></li>)}</ul> : <p>No departures are available from this source right now.</p>}</details>
+    <details className="live-list"><summary>Next departures · Ballina</summary>{departures.length ? <ul>{departures.slice(0, 12).map(d => <li key={d.id} className="departure-row" data-stop-id={d.stopId ?? undefined} data-trip-id={d.tripId ?? undefined}><div><strong>{d.route} · {d.destination}</strong><span>{d.stop}</span></div><div><strong>{time(d.status === "predicted" && d.expectedAt ? d.expectedAt : d.scheduledAt)}</strong><span>{departureStatusLabel(d)}</span></div></li>)}</ul> : <p>No departures are available from this source right now.</p>}</details>
     <p className="live-attribution">Bus observations and departures: <a href="https://developer.nationaltransport.ie/">NTA · CC BY 4.0</a>. Train locations: <a href="https://api.irishrail.ie/realtime/">Irish Rail</a>. Reported positions may be imprecise. Train codes are not matched to GTFS trips; location reports do not confirm boarding or arrivals.</p>
     <a className="text-link" href="#/plan">Find scheduled journeys</a>
   </article>;

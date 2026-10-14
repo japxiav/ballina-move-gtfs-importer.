@@ -1,0 +1,8 @@
+{
+  "scope": "Read-only active RPC definition and column types; scaffold omits real constraints and is not a whole schema reconstruction",
+  "observedDate": "2026-10-14",
+  "function": "public.get_stop_departures_v2",
+  "definitionSha256": "6db145906e479bc37f0fa46275437c0507f54790fc965ba4875b7dce8e5afdd8",
+  "dataRowsExported": 0,
+  "productionWrites": 0
+}
