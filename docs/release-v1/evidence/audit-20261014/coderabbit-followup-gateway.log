@@ -1,0 +1,12 @@
+::notice title=Render update requested::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "deploymentId": "dep-offline", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "plan": "free"}
+::notice title=Render update requested::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "deploymentId": "dep-offline", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "plan": "free"}
+::notice title=Render update requested::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "deploymentId": "dep-offline", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "plan": "free"}
+::notice title=Render update requested::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "deploymentId": "dep-offline", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "plan": "free"}
+::notice title=Render deployed source verified::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "url": "https://ballina-move-live.onrender.com/", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+::notice title=Render update requested::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "deploymentId": "dep-offline", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "plan": "free"}
+::notice title=Render deployed source verified::{"serviceId": "srv-db6nhvrbc2fs739pb7mg", "url": "https://ballina-move-live.onrender.com/", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+----------------------------------------------------------------------
+Ran 101 tests in 5.368s
+
+OK
+{"function": "journey-api", "project": "giwiqbnyozjbpmetrjhe", "version": 2, "status": "ACTIVE", "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sourceFileHashes": {"supabase/functions/journey-api/index.ts": "872d5272414d7cb603caa47f8f365c6b3ff0137a3f8cac59396d29973ef159bc", "supabase/functions/transport-api/journeys.ts": "d0341fd976d4a7473ef705c4d0343c8453bbbcc319a448559adebcbff02135c5"}, "privateCanaryChanged": false}

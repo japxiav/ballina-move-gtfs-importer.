@@ -1,0 +1,110 @@
+{
+  "originalReviewsCompleted": 12,
+  "originalHeadsPreserved": true,
+  "allReportedFindings": [
+    {
+      "pr": 45,
+      "commentId": 4267542308,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45#discussion_r4267542308",
+      "path": "web/scripts/check-live-host.cjs",
+      "originalHead": "9d115a7d684cde85ef48a2b07572084b580f3161",
+      "disposition": "not_reproduced",
+      "reason": "Original PR45 and current RealJourneys both hide results under !loading. Added explicit smoke readiness and held-second503 regression."
+    },
+    {
+      "pr": 45,
+      "commentId": 4267542315,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45#discussion_r4267542315",
+      "path": "web/src/passengerSearch.ts",
+      "originalHead": "9d115a7d684cde85ef48a2b07572084b580f3161",
+      "disposition": "fixed",
+      "reason": "Reject feed mismatch even during forced retry and invalidate the matching old-query cache."
+    },
+    {
+      "pr": 46,
+      "commentId": 4267552374,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/46#discussion_r4267552374",
+      "path": "web/src/LiveMap.tsx",
+      "originalHead": "7047f48da3ae51487585131da964dc5d49749c5f",
+      "disposition": "fixed",
+      "reason": "Close selections when group membership changes; preserve expired/unavailable/filter messaging."
+    },
+    {
+      "pr": 48,
+      "commentId": 4267550959,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/48#discussion_r4267550959",
+      "path": "web/src/LiveMap.tsx",
+      "originalHead": "06b72b428fa623e7daf4d244b4851683506b78d0",
+      "disposition": "guarded_conditional",
+      "reason": "Only begin a manual tile deadline for pending images after redraw; existing tile tests pass. Zero-size attempts still queued four tiles, so no empty-range browser reproduction is claimed."
+    },
+    {
+      "pr": 49,
+      "commentId": 4267567109,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/49#discussion_r4267567109",
+      "path": "docs/release-v1/evidence/product-mission-20261013/README.md",
+      "originalHead": "9598512cf6935f0be72290536d8a56032a88c0f5",
+      "disposition": "fixed",
+      "reason": "Historical text now separates management deployment-record GET from deployment mutation."
+    },
+    {
+      "pr": 49,
+      "commentId": 4267567132,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/49#discussion_r4267567132",
+      "path": "docs/release-v1/evidence/technical-preview-20261013/approved-preview-publisher.py",
+      "originalHead": "9598512cf6935f0be72290536d8a56032a88c0f5",
+      "disposition": "fixed",
+      "reason": "Document Render history/source/time reconciliation before removing an ambiguous durable intent."
+    },
+    {
+      "pr": 52,
+      "commentId": 4267549439,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52#discussion_r4267549439",
+      "path": "web/server/live_gateway.py",
+      "originalHead": "8342c740b171e3dfc6acb4f4a14bc5f47516ccb6",
+      "disposition": "fixed",
+      "reason": "Bound optional operator names in UTF16 units and reject isolated surrogates; preserve valid GPS."
+    },
+    {
+      "pr": 52,
+      "commentId": 4267549456,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52#discussion_r4267549456",
+      "path": "web/server/live_gateway.py",
+      "originalHead": "8342c740b171e3dfc6acb4f4a14bc5f47516ccb6",
+      "disposition": "fixed",
+      "reason": "Only perform mapping set membership for strings; malformed optional metadata remains unknown."
+    },
+    {
+      "pr": 53,
+      "commentId": 4267532771,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/53#discussion_r4267532771",
+      "path": "web/src/LiveMap.tsx",
+      "originalHead": "e369ee477e2caf9152744ffeb3ba17d506e79335",
+      "disposition": "fixed",
+      "reason": "Keep initial/resumed in-flight requests marked pending, including poll overlap."
+    },
+    {
+      "pr": 55,
+      "commentId": 4267564208,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55#discussion_r4267564208",
+      "path": ".github/workflows/web-validation.yml",
+      "originalHead": "cc2087f30f7e3e341f397db7999b88237cdb9f67",
+      "disposition": "already_fixed",
+      "reason": "Both workflow filters already include the proposal in b8c01ec."
+    },
+    {
+      "pr": 55,
+      "commentId": 4267564217,
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55#discussion_r4267564217",
+      "path": "scripts/test_departures_rpc_contract.py",
+      "originalHead": "cc2087f30f7e3e341f397db7999b88237cdb9f67",
+      "disposition": "strengthened",
+      "reason": "Assert denial of all PostgreSQL17 table privileges including TRUNCATE and MAINTAIN, after complete catalog equality."
+    }
+  ],
+  "followupCommit": "3619cc40929cea2fb540ff6b561876ed82c55969",
+  "followupExternalReviewPending": false,
+  "publicationPerformed": false,
+  "followupCompletedWithoutActionableFindings": true,
+  "reviewSuccessIsNotRegionalApproval": true
+}

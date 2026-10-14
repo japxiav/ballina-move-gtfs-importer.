@@ -1,0 +1,15 @@
+{
+  "scope": "Synthetic local shared TCP peer; not observed Render identity",
+  "logicalConsumers": 5,
+  "mapReadsPerConsumer": 2,
+  "admittedReads": [
+    2,
+    2,
+    2,
+    2,
+    0
+  ],
+  "forwardedHeadersTrusted": false,
+  "productionRequests": 0,
+  "showsConditionalRisk": true
+}

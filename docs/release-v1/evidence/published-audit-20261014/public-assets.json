@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/assets/index-BtSpfEf1.js",
+    "sha256": "55ad1f0154ffdfc4a49b079f8f0dae08c784c262a3c309e6a11ec5d42d141c7f",
+    "matchesTestedBuild": true
+  },
+  {
+    "path": "/assets/index-CIqBe2Fm.css",
+    "sha256": "5c558365cbda86020977d26f1c6590b06847185f8844dcc4fadfcf787807cd6b",
+    "matchesTestedBuild": true
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "scope": "Local/CI audit evidence; no public promotion proof",
+  "files": {
+    "audit-prs.json": "c1e250f8531bd2405746731e98494671cd4bddd02ec3169c31b0fb5fea00e679",
+    "ci-status.json": "e5e800c585ed3c22f7622c6f89d062a2b785b9b62aa5e60873381922a289c5a1",
+    "coderabbit-completion.json": "6fa898704b16dc0a140221ca6faef58c3a4255e822ccd07837fb40acedab47db",
+    "coderabbit-dispositions.json": "a119484f9fa46ded6373d3513913634280be4d6104d2e90cadeb29dfac3b572a",
+    "coderabbit-followup-gateway.log": "af959f0e95918a12aa74d87325e7a2ad048a9fa7c27a4fccb6a81244c11683e6",
+    "coderabbit-followup-request.json": "10a6ee86100c2e90dc9a8c040000562f1a2f68e77cab7376b2e6e2672bc8d460",
+    "coderabbit-followup-status.json": "73350e23fe886ca8a6b484a618fb70285ddc3b302c9fd20a02f19162743cc2b0",
+    "coderabbit-full-browser.log": "9b3a3df3debd287b198b0e9daf8590b94d3e1a0d15215255ad55c0968912dbb4",
+    "coderabbit-full-root.log": "92072dd026ce0deb9de547e5caa695ee58e01eab2d0a0c7b6817fa5c4998d077",
+    "coderabbit-requested.json": "7fe0463d0d0b9290626549787a98762183415766561fc90fa13deed1b1cd1789",
+    "dst-benchmark.json": "c4c464f89dcef4b8b1804b443590bb783c965b49c8b5c53e41351963670192eb",
+    "dst-request-path-benchmark-isolated.json": "1cc6d0e6114c13ece171fca153400531c11b46e692c08627b7344913c81ee8ed",
+    "dst-request-path-benchmark.json": "dca4f2e620d32c492278c8989021ef6fc3006aa97687e2252642abb3cb02bde3",
+    "full-browser-tests.log": "9bb7303405dcd785d72af5a108d68e4ab73692e8875ead5d6fd3feab3241d147",
+    "full-gateway-tests.log": "50c8256cf9b1efef10628ad262e9daacb37a66957a735969820615a3076fdf02",
+    "full-root-tests-verified.log": "34a8cd2d2e715a1c82ea6e9485fa461e10d5c16689b2a640488f31838eb2fe57",
+    "independent-reviews.json": "8da5871a550a69cb95ba7b3b4321ce7be9d2719683d384dbcae34b7539f5a14f",
+    "mobile-hospital-offline-replay.png": "6bc037bdac384a4112e84bcb869530ba19c95358d94bd6437483ba103d2d23a5",
+    "mobile-itinerary-offline-replay.png": "4870cbca3a1eb74b4245a6b6dbfb65536ce5fd141ee1227f4deb5a6d6bcaff90",
+    "read-only-transition.json": "83062637e1405b4e355aa482bc9da2a9986ec70810e7ded0c927904e3dc13de2",
+    "shared-peer-offline.json": "a2c020989cc06a499b2123a3fad6695334ea7cdcc24ef316b66e52e6c55111f9",
+    "visual-replay.json": "cca6f65a7a68b650257ec21d4109dd16bec85a2958d51393c78965b55bb6a11f"
+  }
+}
