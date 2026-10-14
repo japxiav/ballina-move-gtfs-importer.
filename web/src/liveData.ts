@@ -9,6 +9,7 @@ export interface VehiclePosition {
   retrievedAt: string;
   quality: "gps_observation" | "reported_location";
   source: "nta" | "irish_rail";
+  service?: { routeId: string | null; tripId: string | null; operator: string | null; directionId: 0 | 1 | null; mappingStatus: 'exact_trip' | 'route_only' | 'unmapped' | 'unknown'; linkage: 'source_reported_unverified'; source: 'get_live_vehicles' };
 }
 export interface Departure {
   id: string;
@@ -52,6 +53,10 @@ export function decodeLiveData(value: unknown): LiveData {
     if (!object(v) || !string(v.id) || !v.id || ids.has(v.id) || !string(v.label) || !string(v.destination) || typeof v.lat !== "number" || typeof v.lon !== "number" || !Number.isFinite(v.lat) || !Number.isFinite(v.lon) || v.lat < 51 || v.lat > 55.7 || v.lon < -11 || v.lon > -5 || !date(v.retrievedAt) || !nullableDate(v.observedAt)) throw Error("Invalid vehicle position.");
     if (!(v.mode === "bus" && v.source === "nta" && v.quality === "gps_observation" && date(v.observedAt)) && !(v.mode === "train" && v.source === "irish_rail" && v.quality === "reported_location" && v.observedAt === null)) throw Error("Invalid position provenance.");
     ids.add(v.id);
+    if (v.service !== undefined) {
+      const s = v.service, identifier = (id: unknown) => id === null || typeof id === 'string' && /^[A-Za-z0-9_ .:-]{1,120}$/.test(id);
+      if (value.version !== 2 || v.mode !== 'bus' || !object(s) || !identifier(s.routeId) || !identifier(s.tripId) || !(s.operator === null || typeof s.operator === 'string' && s.operator.length >= 1 && s.operator.length <= 160 && !/[\x00-\x1f\x7f]/.test(s.operator)) || ![null, 0, 1].includes(s.directionId as null | number) || !includes(['exact_trip', 'route_only', 'unmapped', 'unknown'], s.mappingStatus) || s.mappingStatus !== 'exact_trip' && s.tripId !== null || s.linkage !== 'source_reported_unverified' || s.source !== 'get_live_vehicles') throw Error('Invalid reported service reference.');
+    }
   }
   const departureIds = new Set<string>();
   for (const d of value.departures) {

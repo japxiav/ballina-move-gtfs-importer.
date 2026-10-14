@@ -66,6 +66,22 @@ def coordinate(lat, lon):
     return None
 
 
+def reported_bus_service(row):
+    """Public RPC references, not proof of feed/service-date/stop linkage."""
+    def identifier(name):
+        value = row.get(name)
+        return value if isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", value) else None
+    operator = row.get("operator_name")
+    operator = operator if isinstance(operator, str) and 1 <= len(operator) <= 160 and not re.search(r"[\x00-\x1f\x7f]", operator) else None
+    mapping = row.get("mapping_status")
+    mapping = mapping if mapping in {"exact_trip", "route_only", "unmapped"} else "unknown"
+    direction = row.get("direction_id")
+    service = {"routeId": identifier("route_id"), "tripId": identifier("trip_id") if mapping == "exact_trip" else None,
+               "operator": operator, "directionId": direction if type(direction) is int and direction in {0, 1} else None,
+               "mappingStatus": mapping, "linkage": "source_reported_unverified", "source": "get_live_vehicles"}
+    return service
+
+
 def parse_buses(value, now):
     if not isinstance(value, dict) or not isinstance(value.get("vehicles"), list) or len(value["vehicles"]) > 150:
         raise ValueError("invalid_bus_response")
@@ -81,7 +97,8 @@ def parse_buses(value, now):
         ids.add(key)
         rows.append({"id": "nta:" + key, "mode": "bus", "label": text(row.get("route_name")) or "Bus",
                      "destination": text(row.get("trip_headsign")), "lat": point[0], "lon": point[1],
-                     "observedAt": iso(observed), "retrievedAt": iso(now), "quality": "gps_observation", "source": "nta"})
+                     "observedAt": iso(observed), "retrievedAt": iso(now), "quality": "gps_observation", "source": "nta",
+                     "service": reported_bus_service(row)})
     return rows
 
 
