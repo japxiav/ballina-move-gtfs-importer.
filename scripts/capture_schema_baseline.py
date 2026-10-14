@@ -34,7 +34,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 def safe(value):
     # Known secret formats plus long credential literals. Never print a match.
-    if re.search(r'eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}|sb_(?:secret|publishable|pat)_[A-Za-z0-9_-]+|(?:Bearer|password|api[_-]?key)\s*[:=]\s*[\x27\x22]?[A-Za-z0-9_-]{24,}', value, re.I):
+    if re.search(r'eyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}|sb_(?:secret|publishable|pat)_[A-Za-z0-9_-]+|(?:Bearer\s+|(?:password|api[_-]?key)\s*[:=]\s*)[\x27\x22]?[A-Za-z0-9_-]{24,}', value, re.I):
         raise ValueError('credential_literal_detected_export_refused')
 
 def identifier(value):

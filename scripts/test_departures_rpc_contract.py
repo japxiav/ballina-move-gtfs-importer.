@@ -85,9 +85,9 @@ def main():
             # A separate proposed fix for inherited sequence permissions; never
             # change the faithful baseline to conceal the observed grants.
             sql(container, (ROOT / 'docs/applied_migrations/PROPOSED_restrict_sequence_grants_20261014.sql').read_text())
-            sequence_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='S' AND (has_sequence_privilege('anon',c.oid,'USAGE') OR has_sequence_privilege('anon',c.oid,'SELECT') OR has_sequence_privilege('anon',c.oid,'UPDATE') OR has_sequence_privilege('authenticated',c.oid,'USAGE') OR has_sequence_privilege('authenticated',c.oid,'SELECT') OR has_sequence_privilege('authenticated',c.oid,'UPDATE'));")
+            sequence_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE CASE WHEN n.nspname='public' AND c.relkind='S' THEN (has_sequence_privilege('anon',c.oid,'USAGE') OR has_sequence_privilege('anon',c.oid,'SELECT') OR has_sequence_privilege('anon',c.oid,'UPDATE') OR has_sequence_privilege('authenticated',c.oid,'USAGE') OR has_sequence_privilege('authenticated',c.oid,'SELECT') OR has_sequence_privilege('authenticated',c.oid,'UPDATE')) ELSE false END;")
             require(sequence_access == '0', 'Proposed sequence grant restriction failed')
-            service_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='S' AND has_sequence_privilege('service_role',c.oid,'USAGE,SELECT,UPDATE');")
+            service_access = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE CASE WHEN n.nspname='public' AND c.relkind='S' THEN (has_sequence_privilege('service_role',c.oid,'USAGE') AND has_sequence_privilege('service_role',c.oid,'SELECT') AND has_sequence_privilege('service_role',c.oid,'UPDATE')) ELSE false END;")
             require(int(service_access) == manifest['sequences'], 'Proposed restriction changed service_role access')
         else:
             sql(container, (FIXTURE / 'schema.sql').read_text() + '\n' + definition.decode())
