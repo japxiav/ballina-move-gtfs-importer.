@@ -3,6 +3,13 @@
   "files": {
     "audit-prs.json": "c1e250f8531bd2405746731e98494671cd4bddd02ec3169c31b0fb5fea00e679",
     "ci-status.json": "e5e800c585ed3c22f7622c6f89d062a2b785b9b62aa5e60873381922a289c5a1",
+    "coderabbit-completion.json": "6fa898704b16dc0a140221ca6faef58c3a4255e822ccd07837fb40acedab47db",
+    "coderabbit-dispositions.json": "a119484f9fa46ded6373d3513913634280be4d6104d2e90cadeb29dfac3b572a",
+    "coderabbit-followup-gateway.log": "af959f0e95918a12aa74d87325e7a2ad048a9fa7c27a4fccb6a81244c11683e6",
+    "coderabbit-followup-request.json": "10a6ee86100c2e90dc9a8c040000562f1a2f68e77cab7376b2e6e2672bc8d460",
+    "coderabbit-followup-status.json": "73350e23fe886ca8a6b484a618fb70285ddc3b302c9fd20a02f19162743cc2b0",
+    "coderabbit-full-browser.log": "9b3a3df3debd287b198b0e9daf8590b94d3e1a0d15215255ad55c0968912dbb4",
+    "coderabbit-full-root.log": "92072dd026ce0deb9de547e5caa695ee58e01eab2d0a0c7b6817fa5c4998d077",
     "coderabbit-requested.json": "7fe0463d0d0b9290626549787a98762183415766561fc90fa13deed1b1cd1789",
     "dst-benchmark.json": "c4c464f89dcef4b8b1804b443590bb783c965b49c8b5c53e41351963670192eb",
     "dst-request-path-benchmark-isolated.json": "1cc6d0e6114c13ece171fca153400531c11b46e692c08627b7344913c81ee8ed",

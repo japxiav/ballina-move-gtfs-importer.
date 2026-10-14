@@ -14,7 +14,7 @@ provider request was made during these corrections. Regional release is NO-GO.
 | BM-AUD-04 | Europe/Dublin unique instants; GTFS noon-minus-12-elapsed-hour origin; schedule v2 reference; correct clocks/day suffix and fold offset. Only nonexistent/ambiguous query times fail. Twenty independent ZoneInfo cases cover adjacent dates, overnight, cross-service-day connections and72h boundary. | #54, #55 |
 | BM-AUD-09 | Public DDL baseline restores23tables/23RPCs/3sequences; full structural catalog/owners/ACL/identity parameters match; RPC replay passes.36 current migration hashes retained; audit's39 count unresolved. Complete hosted Supabase/collector recovery remains unproved. | #55 |
 | BM-AUD-03 | TCP peer shaping remains in force. Actual Render trusted consumer identity is NOT proved. No trust was added to client-supplied X-Forwarded-For/headers/cookies, and no budgets were disabled. Needs authenticated host-boundary evidence and a separately authorized bounded hosted test. | Open P1 |
-| BM-AUD-08 | Independent Codex reviews completed for implemented scopes. CodeRabbit's draft notices are NOT an approval. User authorized trigger comments on PRs45–56; full reviews requested and acknowledged by CodeRabbit. Processing is not a completed review or approval. | Open process gate |
+| BM-AUD-08 | Independent Codex reviews completed for implemented scopes. CodeRabbit's draft notices are NOT an approval. User authorized trigger comments on PRs45–56; all twelve original-head reviews completed (five without actionable comments). Reported findings were validated: current-code fixes, two documented conditional/already-protected cases, and the existing CI correction are tracked separately. Revised3619cc4 reviewed again: matching head/range, success status and completed summary without new actionable comments; this is not approval or regional readiness. | Open process gate |
 
 New inherited P2: anonymous/authenticated SELECT/USAGE/UPDATE grants on three
 sequences. A **proposed** revocation is tested after the faithful restore; denial
@@ -47,3 +47,21 @@ The isolated request-path pass uses the same solver hash as the failed runs; it 
 No seven-day pilot, real pedestrian/hospital entrance verification, physical
 device/manual accessibility audit or hosted disaster-recovery exercise occurred.
 Those gates remain unverified rather than being fabricated as software fixes.
+
+CodeRabbit follow-up: owner explicitly authorized trigger comments on PR45–56.
+Twelve exact original heads reached CodeRabbit success with completed summaries;
+five had no actionable comments. Eleven reported comments were checked against
+the integrated source: eight confirmed items were fixed/strengthened, one
+conditional tile-redraw guard was added, one CI item was already fixed, and one
+early-place-results claim was not reproduced (original and current UI both
+require !loading). No CodeRabbit CLI, new subscription or provider setup was used.
+
+The follow-up3619cc4 is preserved in PR56 and the separate fix branch. Build,
+208 browser tests,101 gateway tests,72 root Python tests,20 DST/1642oracle and
+ten full-schema SQL cases pass. Fresh external review and CI completed on the updated head: CodeRabbit
+summary covers cc2087f→3619cc4, reports no new actionable comments, and the
+3619 commit status is success. Web CI38525698624 and importer CI38525698662
+passed. This is separate from the original-head review evidence and does not
+certify hosted resources or regional readiness. Regional host identity remains unproved. Current public06 and main
+f388 are untouched. The prior publication question names b860; no new source
+has been published under an assumed authorization.

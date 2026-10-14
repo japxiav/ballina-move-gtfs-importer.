@@ -1,0 +1,19 @@
+{
+  "pr": 56,
+  "headSha": "3619cc40929cea2fb540ff6b561876ed82c55969",
+  "status": [
+    {
+      "state": "success",
+      "updatedAt": "2026-10-14T07:10:57Z"
+    }
+  ],
+  "exactReviewCount": 0,
+  "reviewUrls": [],
+  "findings": [],
+  "summaryUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/56#issuecomment-6159182096",
+  "summaryUpdatedAt": "2026-10-14T07:10:53Z",
+  "processing": false,
+  "noActionable": true,
+  "headMentioned": true,
+  "completedWithoutActionableFindings": true
+}
