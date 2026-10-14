@@ -19,6 +19,22 @@ def result():
     return {**BASE, 'serviceDate': Q['date'], 'walkingIncluded': False, 'realTimeApplied': False, 'predictionType': 'scheduled', 'minBoardingSeconds': 60, 'minTransferSeconds': 120, 'journeys': [{'id': 'x', 'departureAt': 29000, 'arrivalAt': 31920, 'changes': 0, 'rides': [ride]}], 'secret': 'never-forward'}
 
 class ScheduleGateway(unittest.TestCase):
+    def test_dst_v2_actual_engine_fixtures_validate_with_independent_zoneinfo(self):
+        fixture = json.loads((Path(__file__).parents[2] / 'tests/fixtures/schedule-dst.json').read_text())
+        for case in fixture['cases']:
+            if 'result' not in case:
+                continue
+            clean = g.public_schedule(case['result'], case['query'])
+            self.assertEqual(clean['version'], 2)
+            self.assertEqual(g.stamp(clean['referenceAt']), g.stamp(case['result']['referenceAt']))
+            self.assertEqual(clean['journeys'], case['result']['journeys'])
+            invalid = {**case['result'], 'referenceAt': '2026-01-01T00:00:00Z'}
+            with self.assertRaises(ValueError): g.public_schedule(invalid, case['query'])
+        for date in ['2026-03-29', '2026-10-25']:
+            query = {**Q, 'date': date, 'time': '01:30'}
+            body = {**result(), 'version': 2, 'serviceDate': date, 'referenceAt': g.iso(dt.datetime.fromisoformat(date).replace(tzinfo=g.ZoneInfo('Europe/Dublin')).astimezone(dt.timezone.utc))}
+            with self.assertRaisesRegex(ValueError, 'ambiguous_schedule_query'): g.public_schedule(body, query)
+
     def test_itinerary_identity_is_preserved_and_duplicates_or_invalid_ids_fail_closed(self):
         body = result(); body['journeys'][0]['id'] = 'j-' + 'a' * 64
         self.assertEqual(g.public_schedule(body, Q)['journeys'][0]['id'], body['journeys'][0]['id'])

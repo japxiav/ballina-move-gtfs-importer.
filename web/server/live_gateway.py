@@ -375,10 +375,12 @@ def public_stop(row):
 
 
 def public_schedule(value, params=None):
-    if not isinstance(value, dict) or value.get("version") != 1 or value.get("source") != "nta_gtfs" or value.get("timezone") != "Europe/Dublin" or value.get("scope") != "stop_to_stop_same_stop_transfers" or not stamp(value.get("loadedAt")) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", str(value.get("feedVersion", ""))):
+    if not isinstance(value, dict) or type(value.get("version")) is not int or value.get("version") not in {1, 2} or value.get("source") != "nta_gtfs" or value.get("timezone") != "Europe/Dublin" or value.get("scope") != "stop_to_stop_same_stop_transfers" or not stamp(value.get("loadedAt")) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", str(value.get("feedVersion", ""))):
         raise ValueError("invalid_schedule")
     base = {k: value[k] for k in ["version", "source", "timezone", "scope", "loadedAt", "feedVersion"]}
     if params is None:
+        if value["version"] != 1:
+            raise ValueError("invalid_catalog_version")
         stops = value.get("stops")
         if not isinstance(stops, list) or not 1 <= len(stops) <= 1000:
             raise ValueError("invalid_stops")
@@ -397,6 +399,20 @@ def public_schedule(value, params=None):
         raise ValueError("invalid_journeys")
     cleaned, journey_ids = [], set()
     depart = int(params["time"][:2]) * 3600 + int(params["time"][3:]) * 60
+    if value["version"] == 2:
+        zone = ZoneInfo("Europe/Dublin")
+        midnight = dt.datetime.fromisoformat(params["date"] + "T00:00").replace(tzinfo=zone).astimezone(UTC)
+        if stamp(value.get("referenceAt")) != midnight:
+            raise ValueError("invalid_schedule_reference")
+        civil = dt.datetime.fromisoformat(params["date"] + "T" + params["time"])
+        candidates = {civil.replace(tzinfo=zone, fold=fold).astimezone(UTC) for fold in [0, 1]
+                      if civil.replace(tzinfo=zone, fold=fold).astimezone(UTC).astimezone(zone).replace(tzinfo=None) == civil}
+        if len(candidates) != 1:
+            raise ValueError("ambiguous_schedule_query")
+        depart = int((candidates.pop() - midnight).total_seconds())
+        base["referenceAt"] = iso(midnight)
+    elif "referenceAt" in value:
+        raise ValueError("invalid_legacy_schedule_reference")
     for j in journeys:
         if not isinstance(j, dict) or not isinstance(j.get("rides"), list) or not 1 <= len(j["rides"]) <= int(params["changes"]) + 1:
             raise ValueError("invalid_journey")
@@ -415,7 +431,7 @@ def public_schedule(value, params=None):
             if (rides and (start["id"] != rides[-1]["to"]["id"] or board < rides[-1]["alightAt"] + 120)) or (not rides and start["id"] != params["from"]):
                 raise ValueError("invalid_connection")
             date = r.get("serviceDate")
-            if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or abs((dt.date.fromisoformat(date) - dt.date.fromisoformat(params["date"])).days) > 2 or (date, r["tripId"]) in trip_keys:
+            if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) or not (-3 if value["version"] == 2 else -2) <= (dt.date.fromisoformat(date) - dt.date.fromisoformat(params["date"])).days <= 2 or (date, r["tripId"]) in trip_keys:
                 raise ValueError("invalid_service_day")
             trip_keys.add((date, r["tripId"]))
             operational = {}

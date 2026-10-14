@@ -25,6 +25,7 @@ tsc --target es2022 --lib es2022,dom --strict --skipLibCheck --module commonjs -
 echo '[3/3] Simulated transport and importer API request tests'
 node tests/runtime/test_transport_api.cjs
 node --test tests/runtime/test_stop_journeys.cjs
+python scripts/test_schedule_dst.py
 node --test tests/runtime/test_schedule_topology.cjs
 node --test tests/runtime/test_schedule_selection.cjs
 node tests/runtime/test_schedule_oracle.cjs

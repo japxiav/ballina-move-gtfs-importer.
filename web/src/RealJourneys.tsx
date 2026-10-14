@@ -3,7 +3,8 @@ import { usePassengerPrefs } from "./passengerPrefs";
 import { StopPicker } from './StopPicker';
 import { decodePassengerSearch, pageSearch, expandSearch, searchChoices, orderOptions, itineraryLink, loadStopOptions, prefetchStopOptions, rememberStopOptions, type JourneyOption } from './passengerSearch';
 import React, { useEffect, useRef, useState } from 'react';
-import { clock, dateLabel, daySuffix, dublinToday, minutes } from './fixtures';
+import { dateLabel, dublinToday, minutes } from './fixtures';
+import { scheduleClock, scheduleDaySuffix } from './dublinTime';
 const lastSearchDate = () => new Date(Date.parse(dublinToday() + 'T00:00:00Z') + 14 * 86400000).toISOString().slice(0, 10);
 function upcomingDeparture(bufferMinutes = 5) {
   const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Dublin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(Date.now() + bufferMinutes * 60000));
@@ -50,12 +51,16 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
       if (page.back && !expandSearch(page.back, candidates).some(q => q.from === query.from && q.to === query.to)) throw Error('This itinerary return link is invalid.');
       setForm(query);
       const found: JourneyOption[] = [];
+      let basis: string | null = null;
       let failed = 0, failureMessage = '';
       for (const q of pairs) {
         if (controller.signal.aborted) break;
         try {
           const r = early ? rememberStopOptions(q, c, controller.signal, early) : await loadStopOptions(q, c, controller.signal, forceRefresh);
           if (controller.signal.aborted) break;
+          const incomingBasis = `${r.version}|${r.referenceAt ?? 'wall-clock'}`;
+          if (basis !== null && basis !== incomingBasis) throw Error('The timetable clock changed during this search. Please refresh.');
+          basis = incomingBasis;
           completed++; setResultSearch(encodeStopSearch(query)); setResult(previous => previous ?? r);
           found.push(...r.journeys.map(journey => ({ journey, query: q })));
           setOptions(orderOptions(found));
@@ -78,6 +83,8 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
     if (query && encodeStopSearch(query) === encodeStopSearch(form)) { retry(); return; }
     window.location.hash = `/plan?${encodeStopSearch(form)}`;
   }
+  const clock = (seconds: number) => scheduleClock(seconds, result?.referenceAt);
+  const daySuffix = (seconds: number) => scheduleDaySuffix(seconds, result?.referenceAt);
   const detail = detailId ? options.find(o => o.journey.id === detailId)?.journey : null;
   const shownSearch = query ?? form;
   const currentResults = !!query && resultSearch === encodeStopSearch(query);
@@ -106,7 +113,7 @@ export function RealJourneys({ search, detailId }: { search: string; detailId?: 
       {warning && <p role="status" className="source-warning">{warning}</p>}
       <p className="results-heading">{options.length} scheduled {options.length === 1 ? 'option' : 'options'} · sorted by stop arrival</p>
       {!options.length && <div className="empty-state" role="status"><h2>No scheduled options found.</h2><p>Try another stop, departure time or transport mode. This search excludes walking between stops and does not prove no service exists.</p></div>}
-      {(showAll ? options : options.slice(0, 6)).map(o => { const j = o.journey; return <article className="journey-card" key={`${o.query.from}|${o.query.to}|${j.id}`}><div className="card-label"><span>{j.changes ? `${j.changes} ${j.changes === 1 ? 'change' : 'changes'}` : 'Direct'}</span><span className="fixture-tag">NTA SCHEDULE</span></div><div className="card-main"><strong className="journey-times">{clock(j.departureAt)}{daySuffix(j.departureAt)} → {clock(j.arrivalAt)}{daySuffix(j.arrivalAt)}</strong><span>{minutes(j.arrivalAt - j.departureAt)} min</span></div><div className="card-bottom"><div><p>{j.rides.map(r => `${r.mode === 'rail' ? 'Train' : 'Bus'} ${r.route}`).join(' → ')}</p>{query?.from.startsWith('place:') && <p>Boards at {j.rides[0]!.from.name} · stop {j.rides[0]!.from.code || j.rides[0]!.from.id}</p>}<p>Arrives at {j.rides.at(-1)!.to.name} · stop {j.rides.at(-1)!.to.code || j.rides.at(-1)!.to.id}</p>{j.departureAt >= 86400 && <p className="next-day-notice">Departs on a later day {daySuffix(j.departureAt)}</p>}{j.rides.slice(1).map((r, i) => <p key={`${r.from.id}-${i}`}>Via {r.from.name} · {r.from.code || r.from.id} · {minutes(r.boardAt - j.rides[i]!.alightAt)} min wait</p>)}<p>No walking directions</p></div><a className="button secondary" href={itineraryLink(o, query!)}>View itinerary →</a></div></article>; })}
+      {(showAll ? options : options.slice(0, 6)).map(o => { const j = o.journey; return <article className="journey-card" key={`${o.query.from}|${o.query.to}|${j.id}`}><div className="card-label"><span>{j.changes ? `${j.changes} ${j.changes === 1 ? 'change' : 'changes'}` : 'Direct'}</span><span className="fixture-tag">NTA SCHEDULE</span></div><div className="card-main"><strong className="journey-times">{clock(j.departureAt)}{daySuffix(j.departureAt)} → {clock(j.arrivalAt)}{daySuffix(j.arrivalAt)}</strong><span>{minutes(j.arrivalAt - j.departureAt)} min</span></div><div className="card-bottom"><div><p>{j.rides.map(r => `${r.mode === 'rail' ? 'Train' : 'Bus'} ${r.route}`).join(' → ')}</p>{query?.from.startsWith('place:') && <p>Boards at {j.rides[0]!.from.name} · stop {j.rides[0]!.from.code || j.rides[0]!.from.id}</p>}<p>Arrives at {j.rides.at(-1)!.to.name} · stop {j.rides.at(-1)!.to.code || j.rides.at(-1)!.to.id}</p>{daySuffix(j.departureAt) && <p className="next-day-notice">Departs on a later day {daySuffix(j.departureAt)}</p>}{j.rides.slice(1).map((r, i) => <p key={`${r.from.id}-${i}`}>Via {r.from.name} · {r.from.code || r.from.id} · {minutes(r.boardAt - j.rides[i]!.alightAt)} min wait</p>)}<p>No walking directions</p></div><a className="button secondary" href={itineraryLink(o, query!)}>View itinerary →</a></div></article>; })}
       {options.length > 6 && <button className="button secondary" onClick={() => setShowAll(v => !v)}>{showAll ? 'Show fewer options' : `Show all ${options.length} options`}</button>}
     </div>}
     {!loading && !error && currentResults && detailId && (detail && query ? <article className="itinerary scheduled-itinerary"><a className="back-link" href={`#/plan?${encodeStopSearch(page.back ?? query)}`}>← Back to results</a><h2>{detail.rides[0]!.from.name} → {detail.rides.at(-1)!.to.name}</h2><p>{dateLabel(query.date)} · scheduled times</p><ol className="timeline">{detail.rides.map((r, i) => <li className="timeline-step ride" key={`${r.tripId}-${i}`}><div className="step-header"><strong>{r.mode === 'rail' ? 'Train' : 'Bus'} {r.route}</strong><span>{clock(r.boardAt)}{daySuffix(r.boardAt)} → {clock(r.alightAt)}{daySuffix(r.alightAt)}</span></div><p>Towards {r.destination || r.to.name}</p><p><strong>Get on:</strong> {r.from.name} · stop {r.from.code || r.from.id}</p><p><strong>Get off:</strong> {r.to.name} · stop {r.to.code || r.to.id}</p><p className="boarding-caveat">Official coordinates: {r.from.lat.toFixed(5)}, {r.from.lon.toFixed(5)}. Side of road, platform and accessibility unverified.</p>{i > 0 && <p>{minutes(r.boardAt - detail.rides[i - 1]!.alightAt)} min connection at the same stop ID; confirm the boarding bay.</p>}<details><summary>Service reference</summary><p>Trip {r.tripId} · GTFS service date {r.serviceDate}{r.boardSequence !== undefined && ` · sequences ${r.boardSequence}–${r.alightSequence}`} </p></details></li>)}</ol></article> : <div className="empty-state"><h2>Itinerary unavailable.</h2><a href={`#/plan?${search}`}>Refresh results</a></div>)}

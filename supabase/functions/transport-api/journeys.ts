@@ -19,6 +19,18 @@ const clean = (v: unknown, limit = 160) => String(v ?? '').replace(/[\x00-\x1f\x
 const publicIdentifier = (v: unknown): v is string => typeof v === 'string' && /^[A-Za-z0-9_ .:-]{1,120}$/.test(v);
 const dateValid = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s) && Number.isFinite(Date.parse(s + 'T00:00:00Z')) && new Date(s + 'T00:00:00Z').toISOString().slice(0, 10) === s;
 const dayAt = (day: string, offset: number) => new Date(Date.parse(day + 'T00:00:00Z') + offset * 86400000).toISOString().slice(0, 10);
+const civilFormatter = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Dublin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+/** Modern Ireland uses offsets 0/+1h. Round-trip both possibilities: never
+ * guess a missing spring hour or either occurrence of an autumn fold. */
+export function dublinInstant(date: string, time: string): number {
+  const wall = Date.parse(`${date}T${time}:00Z`);
+  const candidates = [wall, wall - 3600000].filter(epoch => {
+    const parts = civilFormatter.formatToParts(epoch), get = (type: string) => parts.find(p => p.type === type)!.value;
+    return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}` === `${date}T${time}`;
+  });
+  if (candidates.length !== 1) throw Error('clock_change_unsupported');
+  return candidates[0]!;
+}
 export function localToday(now = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Dublin', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
   const get = (type: string) => parts.find(p => p.type === type)!.value;
@@ -60,11 +72,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const data = catalog(snapshot), stops = new Map(data.stops.map(s => [s.id, s]));
   if (!stops.has(q.from) || !stops.has(q.to)) throw Error('unknown_stop');
   if (q.date < snapshot.start || q.date > snapshot.end) throw Error('date_outside_feed');
-  // This release fails explicitly at clock changes rather than inventing a UTC ETA.
-  for (let offset = -2; offset <= 2; offset++) {
-    const d = new Date(dayAt(q.date, offset) + 'T00:00:00Z'), m = d.getUTCMonth(), day = d.getUTCDate();
-    if ((m === 2 || m === 9) && d.getUTCDay() === 0 && day + 7 > new Date(Date.UTC(d.getUTCFullYear(), m + 1, 0)).getUTCDate()) throw Error('clock_change_unsupported');
-  }
+  const reference = dublinInstant(q.date, '00:00'), requested = dublinInstant(q.date, q.time);
   const routes = new Map(snapshot.tables.routes!.map(r => [r.route_id, r]));
   if (snapshot.tables.routes!.some(r => !publicIdentifier(r.route_id))) throw Error('unsupported_schedule_identifier');
   if (routes.size !== snapshot.tables.routes!.length) throw Error('duplicate_route');
@@ -80,7 +88,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   }
   const times = new Map<unknown, Row[]>();
   for (const row of snapshot.tables.times!) { const group = times.get(row.trip_id) ?? []; group.push(row); times.set(row.trip_id, group); }
-  const depart = Number(q.time.slice(0, 2)) * 3600 + Number(q.time.slice(3)) * 60, horizon = depart + 36 * 3600;
+  const depart = (requested - reference) / 1000, horizon = depart + 36 * 3600;
   type TripDetails = { tripId: string; routeId: string; routeLabel: string; destination: string; mode: 'bus' | 'rail' };
   type Event = { key: string; details: TripDetails; rows: Row[]; index: number; at: number; offset: number; date: string };
   type State = { stop: string; at: number; rides: Ride[]; used: string[] };
@@ -89,7 +97,12 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
   const destinationRows = new Map<unknown, number[]>();
   // Query-local reuse only: a version string does not guarantee that two
   // snapshots (or a mutable offline fixture) contain identical rows.
-  const days = [-2, -1, 0, 1, 2].map(offset => ({ offset, date: dayAt(q.date, offset) }));
+  // GTFS seconds start at local noon minus twelve ELAPSED hours, matching
+  // get_stop_departures_v2. This origin is not wall-clock midnight on DST days.
+  const days = [-3, -2, -1, 0, 1, 2].map(day => {
+    const date = dayAt(q.date, day);
+    return { date, offset: (dublinInstant(date, '12:00') - 12 * 3600000 - reference) / 1000 };
+  });
   const modes = new Set(q.modes.split(','));
   const activeServices = new Map<unknown, boolean[]>();
   for (const trip of snapshot.tables.trips!) {
@@ -124,7 +137,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
       const { offset, date } = days[dayIndex]!;
       if (!serviceDays[dayIndex]) continue;
       for (let index = 0; index < rows.length - 1; index++) {
-        const row = rows[index]!, at = Number(row.departure_seconds) + offset * 86400;
+        const row = rows[index]!, at = Number(row.departure_seconds) + offset;
         if (!seconds(row.departure_seconds) || !regular(row.pickup_type) || at < depart + 60 || at > horizon) continue;
         const id = String(row.stop_id), group = departures.get(id) ?? [];
         const event = { key: `${date}:${trip.trip_id}`, details, rows, index, at, offset, date };
@@ -170,7 +183,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
           const k = alights ? alights[cursor]! : cursor;
           if (k <= event.index) continue;
           if (++work > 150000) throw Error('search_capacity_reached');
-          const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset * 86400;
+          const row = event.rows[k]!, at = Number(row.arrival_seconds) + event.offset;
           if (!seconds(row.arrival_seconds) || at > horizon || !regular(row.drop_off_type)) continue;
           if (!reachable[Number(q.changes) - round]!.has(String(row.stop_id))) continue;
           const ride: Ride = { tripId: event.details.tripId, routeId: event.details.routeId, route: event.details.routeLabel, mode: event.details.mode, destination: event.details.destination, from: stops.get(state.stop)!, to: stops.get(String(row.stop_id))!, boardAt: event.at, alightAt: at, boardSequence: Number(event.rows[event.index]!.stop_sequence), alightSequence: Number(row.stop_sequence), serviceDate: event.date };
@@ -203,7 +216,7 @@ export function searchSchedules(snapshot: ScheduleSnapshot, q: StopQuery) {
     if (!best[changes] || departure > best[changes]!.departure) best[changes] = { departure, arrival };
     if (selected.length < 6) selected.push(rides);
   }
-  return { version: 1, source: 'nta_gtfs', feedVersion: snapshot.version, loadedAt: snapshot.loadedAt, serviceDate: q.date, timezone: 'Europe/Dublin', scope: data.scope,
+  return { version: 2, referenceAt: new Date(reference).toISOString(), source: 'nta_gtfs', feedVersion: snapshot.version, loadedAt: snapshot.loadedAt, serviceDate: q.date, timezone: 'Europe/Dublin', scope: data.scope,
     predictionType: 'scheduled', walkingIncluded: false, realTimeApplied: false, minBoardingSeconds: 60, minTransferSeconds: 120,
     journeys: selected.map((rides, index) => ({ id: String(index + 1), departureAt: rides[0]!.boardAt, arrivalAt: rides[rides.length - 1]!.alightAt, changes: rides.length - 1, rides })) };
 }
