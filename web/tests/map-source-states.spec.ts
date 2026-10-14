@@ -11,6 +11,8 @@ test('regional zero, national zero, source failure and expired GPS are distinct'
   data.sources.bus.status = 'empty'; expect(mapSourceStates(data, now, [], 'bus')[0]!.message).toBe('No recent bus GPS supplied by the source.');
   data.sources.bus.status = 'unavailable'; expect(mapSourceStates(data, now, [], 'bus')[0]!.message).toBe('Bus GPS feed unavailable.');
   expect(mapSourceStates(data, now, [], 'train')).toHaveLength(1);
+  data.sources.rail.status = 'ready'; data.vehicles = [{ ...data.vehicles[0]!, mode: 'train', source: 'irish_rail', quality: 'reported_location', observedAt: null }];
+  expect(mapSourceStates(data, now + 91000, [], 'train')[0]!.message).toBe('Train report retrieval expired; waiting for a fresh retrieval. Observation age is unknown.');
 });
 test('source notices and Show Ireland work while map tiles fail independently', async ({ page }) => {
   await page.clock.install({ time: now });
