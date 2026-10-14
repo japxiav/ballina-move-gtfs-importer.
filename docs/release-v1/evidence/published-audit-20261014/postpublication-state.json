@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "3619cc40929cea2fb540ff6b561876ed82c55969",
+  "gatewayStatus": "live",
+  "gatewayDeployment": "dep-db7j0p25b2lc7384pojg",
+  "journeyVersion": 5,
+  "journeyStatus": "ACTIVE",
+  "actualEdgeSourceMatches": true,
+  "edgeHashes": {
+    "supabase/functions/journey-api/index.ts": "872d5272414d7cb603caa47f8f365c6b3ff0137a3f8cac59396d29973ef159bc",
+    "supabase/functions/transport-api/journeys.ts": "d0341fd976d4a7473ef705c4d0343c8453bbbcc319a448559adebcbff02135c5"
+  },
+  "publicHtmlMatchesTestedBuild": true,
+  "htmlSha256": "8d0e2fc3ff8376fd1f859fce3ea6aa6cc1f2d0ed8b0b6a1c8d46e013cad37ab3",
+  "mainMerged": false,
+  "databaseChanged": false,
+  "plansChanged": false
+}

@@ -65,3 +65,7 @@ passed. This is separate from the original-head review evidence and does not
 certify hosted resources or regional readiness. Regional host identity remains unproved. Current public06 and main
 f388 are untouched. The prior publication question names b860; no new source
 has been published under an assumed authorization.
+
+## Authorized publication — 14 October 2026
+
+The owner subsequently authorized audit, correction and publication without another confirmation. Source `3619cc4` is now live on the existing Render preview; journey-api is ACTIVE at version 5. Actual HTTPS Chromium verified real hospital journeys, itinerary navigation, train positions, map tiles and six responsive widths. Public assets and fetched Edge sources match the reviewed build. Main, database migrations, plans and credentials were unchanged. No rollback was needed. Bus source returned empty; departure source unavailable, both disclosed by the UI. Regional launch gates remain open. Evidence: [publication receipt and browser proof](evidence/published-audit-20261014/README.md).
