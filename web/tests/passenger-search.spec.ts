@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import capture from './fixtures/official-hospital-2026-10-14.json' with { type: 'json' };
 import { decodeCatalog, decodeSchedules, encodeStopSearch, type StopSearch } from '../src/scheduleData';
 import { searchChoices, suggestions, expandSearch, decodePassengerSearch, pageSearch, orderOptions, itineraryLink, rememberStopOptions, prefetchStopOptions, loadStopOptions } from '../src/passengerSearch';
+import hostChecks from '../scripts/check-live-host.cjs';
 
 const catalog = decodeCatalog(capture.catalog), from = '8490B5550501';
 const place: StopSearch = { from, to: 'place:mayo-hospital', date: '2026-10-14', time: '07:55', modes: 'bus,rail', changes: '1' };
@@ -11,6 +12,30 @@ test.beforeEach(async ({ page }) => {
   // Retained official capture; all browser HTTP is replayed offline here.
   await page.clock.install({ time: new Date('2026-10-14T06:00:00Z') });
   await page.route('**/api/stops', route => route.fulfill({ json: catalog }));
+});
+
+test('host proof waits for the second place response and rejects a late partial failure', async ({ page }) => {
+  let finish!: () => void, requests = 0;
+  const held = new Promise<void>(resolve => { finish = resolve; });
+  const responses: Promise<{ value?: unknown; failed?: boolean }>[] = [];
+  page.on('response', response => {
+    if (new URL(response.url()).pathname !== '/api/journeys') return;
+    responses.push(response.status() === 200 ? response.json().then(value => ({ value })) : Promise.resolve({ failed: true }));
+  });
+  await page.route('**/api/journeys?*', async route => {
+    requests++;
+    if (requests === 1) return route.fulfill({ json: bodies['15108'] });
+    await held; return route.fulfill({ status: 503, json: { error: 'schedules_unavailable' } });
+  });
+  await page.goto(hash);
+  await expect.poll(() => requests).toBe(2);
+  await expect(page.locator('.journey-card')).toHaveCount(0);
+  await expect(page.locator('.loading-heading')).toBeVisible();
+  let settled = false;
+  const proof = hostChecks.completeScheduledBatch(page, responses).finally(() => { settled = true; });
+  await page.waitForTimeout(200);
+  expect(settled).toBe(false);
+  finish(); await expect(proof).rejects.toThrow('Incomplete scheduled search');
 });
 
 test('hospital associations use exact verified identities, never proximity or matching name alone', () => {
@@ -210,7 +235,8 @@ test('cache canonicalizes query order, prefers a validated new feed, expires and
   expect(await prefetchStopOptions(reordered, signal, false)).toBeNull();
   expect(await loadStopOptions(reordered, c1, signal, false)).toBe(r1);
   expect(await loadStopOptions(reordered, c2, signal, false)).toBe(r2);
-  expect(rememberStopOptions(q, c2, signal, r1)).toBe(r2);
+  expect(() => rememberStopOptions(q, c2, signal, r1)).toThrow('The timetable changed');
+  rememberStopOptions(q, c2, signal, r2);
   const originalNow = Date.now, originalFetch = globalThis.fetch;
   const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
   let calls = 0;
@@ -251,6 +277,27 @@ test('a fresh old-feed cache defers to the new catalog and performs one healthy 
     const result = await loadStopOptions(q, currentCatalog, signal, false);
     expect(result.feedVersion).toBe('transition-new'); expect(calls).toBe(1);
     expect(await loadStopOptions(q, currentCatalog, signal, false)).toBe(result); expect(calls).toBe(1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow); else Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('forced retry rejects a newly changed feed and invalidates the old-query cache', async () => {
+  const q = { ...place, to: '8490B151091', time: '07:53' }, signal = new AbortController().signal;
+  const old = { ...decodeSchedules(bodies['15109'], q), feedVersion: 'retry-old' }, next = { ...old, feedVersion: 'retry-new' };
+  const oldCatalog = { ...catalog, feedVersion: old.feedVersion };
+  rememberStopOptions(q, oldCatalog, signal, old);
+  const originalFetch = globalThis.fetch, originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  let calls = 0;
+  try {
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { href: 'http://127.0.0.1:4173/' } } });
+    globalThis.fetch = async () => { calls++; return Response.json(next); };
+    await expect(loadStopOptions(q, oldCatalog, signal, true)).rejects.toThrow('The timetable changed');
+    expect(calls).toBe(1);
+    globalThis.fetch = async () => { calls++; throw Error('uncached follow-up'); };
+    await expect(loadStopOptions(q, oldCatalog, signal, false)).rejects.toThrow('uncached follow-up');
+    expect(calls).toBe(2);
   } finally {
     globalThis.fetch = originalFetch;
     if (originalWindow) Object.defineProperty(globalThis, 'window', originalWindow); else Reflect.deleteProperty(globalThis, 'window');

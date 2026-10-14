@@ -78,7 +78,7 @@ def main():
             for f in metadata['functions']:
                 actual = sql(container, "SELECT pg_get_functiondef('" + f['signature'].replace("'", "''") + "'::regprocedure);")
                 require(actual == f['definition'].strip(), 'Restored RPC definition mismatch: ' + f['name'])
-            protected = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND c.relrowsecurity AND NOT has_table_privilege('anon',c.oid,'SELECT') AND NOT has_table_privilege('authenticated',c.oid,'SELECT');")
+            protected = sql(container, "SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND c.relrowsecurity AND NOT has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN') AND NOT has_table_privilege('authenticated',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN');")
             require(int(protected) == len(metadata['tables']), 'Restored table security mismatch')
             forbidden = sql(container, "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND (has_function_privilege('anon',p.oid,'EXECUTE') OR has_function_privilege('authenticated',p.oid,'EXECUTE'));")
             require(forbidden == '0', 'Restored privileged RPC became public')

@@ -16,7 +16,17 @@ function verifyLiveData(data, now = Date.now()) {
   for (const train of data.vehicles.filter(vehicle => vehicle.mode === "train")) assert(train.source === "irish_rail" && train.quality === "reported_location" && train.observedAt === null);
   return buses;
 }
-module.exports = { verifyLiveData };
+async function completeScheduledBatch(page, scheduleResponses) {
+  await page.locator('.scheduled-results').waitFor({ timeout: 30000 });
+  await page.locator('.loading-heading').waitFor({ state: 'detached', timeout: 30000 });
+  assert.equal(await page.locator('.empty-state[role="alert"]').count(), 0, 'Scheduled search failed');
+  assert.equal(await page.locator('.scheduled-results').count(), 1, 'Scheduled results disappeared');
+  assert.equal(await page.locator('.scheduled-results .source-warning').count(), 0, 'Incomplete scheduled search');
+  const observed = await Promise.all(scheduleResponses);
+  assert(observed.length > 0 && observed.every(r => !r.failed), 'Scheduled response failed');
+  return observed.map(r => r.value);
+}
+module.exports = { verifyLiveData, completeScheduledBatch };
 async function run() {
   const url = new URL(process.env.BALLINA_LIVE_URL);
   assert(url.protocol === "https:" && url.hostname.endsWith(".onrender.com") && !url.username && !url.password && !url.port && !url.search && !url.hash);
@@ -74,11 +84,7 @@ async function run() {
     await page.getByLabel('From stop', { exact: true }).waitFor({ timeout: 30000 });
     await page.getByLabel('Schedule time').fill('07:00');
     await page.getByRole('button', { name: 'Find scheduled journeys' }).click();
-    await page.locator('.scheduled-results').waitFor({ timeout: 30000 });
-    assert.equal(await page.locator('.scheduled-results .source-warning').count(), 0);
-    const observed = await Promise.all(scheduleResponses);
-    assert(observed.length > 0 && observed.every(r => !r.failed));
-    const schedules = observed.map(r => r.value);
+    const schedules = await completeScheduledBatch(page, scheduleResponses);
     for (const scheduled of schedules) {
       assert.equal(scheduled.source, 'nta_gtfs'); assert.equal(scheduled.predictionType, 'scheduled');
       assert.equal(scheduled.walkingIncluded, false); assert.equal(scheduled.realTimeApplied, false);
