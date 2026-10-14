@@ -14,7 +14,7 @@ provider request was made during these corrections. Regional release is NO-GO.
 | BM-AUD-04 | Europe/Dublin unique instants; GTFS noon-minus-12-elapsed-hour origin; schedule v2 reference; correct clocks/day suffix and fold offset. Only nonexistent/ambiguous query times fail. Twenty independent ZoneInfo cases cover adjacent dates, overnight, cross-service-day connections and72h boundary. | #54, #55 |
 | BM-AUD-09 | Public DDL baseline restores23tables/23RPCs/3sequences; full structural catalog/owners/ACL/identity parameters match; RPC replay passes.36 current migration hashes retained; audit's39 count unresolved. Complete hosted Supabase/collector recovery remains unproved. | #55 |
 | BM-AUD-03 | TCP peer shaping remains in force. Actual Render trusted consumer identity is NOT proved. No trust was added to client-supplied X-Forwarded-For/headers/cookies, and no budgets were disabled. Needs authenticated host-boundary evidence and a separately authorized bounded hosted test. | Open P1 |
-| BM-AUD-08 | Independent Codex reviews completed for implemented scopes. CodeRabbit's draft notices are NOT an approval. Manual external review requires explicit permission to post trigger comments; pending. | Open process gate |
+| BM-AUD-08 | Independent Codex reviews completed for implemented scopes. CodeRabbit's draft notices are NOT an approval. User authorized trigger comments on PRs45–56; full reviews requested and acknowledged by CodeRabbit. Processing is not a completed review or approval. | Open process gate |
 
 New inherited P2: anonymous/authenticated SELECT/USAGE/UPDATE grants on three
 sequences. A **proposed** revocation is tested after the faithful restore; denial

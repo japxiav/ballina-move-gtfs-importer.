@@ -1,0 +1,186 @@
+{
+  "scope": "User-authorized trigger comments on PR45\u201356, existing integration only; no deployment/main merge",
+  "requests": [
+    {
+      "pr": 45,
+      "headShaAtTrigger": "9d115a7d684cde85ef48a2b07572084b580f3161",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45#issuecomment-6162413245",
+      "commentId": 6162413245,
+      "createdAt": "2026-10-14T06:32:53Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45#issuecomment-6153850179",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/45#issuecomment-6162415248"
+      ]
+    },
+    {
+      "pr": 46,
+      "headShaAtTrigger": "7047f48da3ae51487585131da964dc5d49749c5f",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/46#issuecomment-6162413696",
+      "commentId": 6162413696,
+      "createdAt": "2026-10-14T06:32:55Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/46#issuecomment-6153983651",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/46#issuecomment-6162415548"
+      ]
+    },
+    {
+      "pr": 47,
+      "headShaAtTrigger": "39f30e68ca80bacff4a6556aa5c9e701018f7efa",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/47#issuecomment-6162414171",
+      "commentId": 6162414171,
+      "createdAt": "2026-10-14T06:32:57Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/47#issuecomment-6154301260",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/47#issuecomment-6162416250"
+      ]
+    },
+    {
+      "pr": 48,
+      "headShaAtTrigger": "06b72b428fa623e7daf4d244b4851683506b78d0",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/48#issuecomment-6162414548",
+      "commentId": 6162414548,
+      "createdAt": "2026-10-14T06:32:59Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/48#issuecomment-6154469278",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/48#issuecomment-6162416747"
+      ]
+    },
+    {
+      "pr": 49,
+      "headShaAtTrigger": "9598512cf6935f0be72290536d8a56032a88c0f5",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/49#issuecomment-6162414949",
+      "commentId": 6162414949,
+      "createdAt": "2026-10-14T06:33:00Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/49#issuecomment-6154901615",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/49#issuecomment-6162416807"
+      ]
+    },
+    {
+      "pr": 50,
+      "headShaAtTrigger": "a21c2dca134bdc7e1540e37d9e129c6908f8e19a",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/50#issuecomment-6162415351",
+      "commentId": 6162415351,
+      "createdAt": "2026-10-14T06:33:02Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/50#issuecomment-6159179873",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/50#issuecomment-6162417079"
+      ]
+    },
+    {
+      "pr": 51,
+      "headShaAtTrigger": "20f7030489db5364a3cd363be62926282440dab9",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/51#issuecomment-6162415773",
+      "commentId": 6162415773,
+      "createdAt": "2026-10-14T06:33:03Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/51#issuecomment-6159180061",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/51#issuecomment-6162417477"
+      ]
+    },
+    {
+      "pr": 52,
+      "headShaAtTrigger": "8342c740b171e3dfc6acb4f4a14bc5f47516ccb6",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52#issuecomment-6162416098",
+      "commentId": 6162416098,
+      "createdAt": "2026-10-14T06:33:05Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52#issuecomment-6159180647",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/52#issuecomment-6162417927"
+      ]
+    },
+    {
+      "pr": 53,
+      "headShaAtTrigger": "e369ee477e2caf9152744ffeb3ba17d506e79335",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/53#issuecomment-6162416475",
+      "commentId": 6162416475,
+      "createdAt": "2026-10-14T06:33:06Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": false,
+      "exactReviewCount": 1,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/53#issuecomment-6159180869",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/53#issuecomment-6162418186"
+      ]
+    },
+    {
+      "pr": 54,
+      "headShaAtTrigger": "5bb0cab806a76bceb4592cfe1ada2a3516d874c6",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/54#issuecomment-6162416796",
+      "commentId": 6162416796,
+      "createdAt": "2026-10-14T06:33:07Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/54#issuecomment-6159181353",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/54#issuecomment-6162418351"
+      ]
+    },
+    {
+      "pr": 55,
+      "headShaAtTrigger": "cc2087f30f7e3e341f397db7999b88237cdb9f67",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55#issuecomment-6162417101",
+      "commentId": 6162417101,
+      "createdAt": "2026-10-14T06:33:09Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55#issuecomment-6159181480",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/55#issuecomment-6162419126"
+      ]
+    },
+    {
+      "pr": 56,
+      "headShaAtTrigger": "b860f606696b89276464224c179916095e636cda",
+      "commentUrl": "https://github.com/japxiav/ballina-move-gtfs-importer./pull/56#issuecomment-6162417515",
+      "commentId": 6162417515,
+      "createdAt": "2026-10-14T06:33:11Z",
+      "alreadyPresent": false,
+      "acknowledged": true,
+      "processing": true,
+      "exactReviewCount": 0,
+      "botCommentUrls": [
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/56#issuecomment-6159182096",
+        "https://github.com/japxiav/ballina-move-gtfs-importer./pull/56#issuecomment-6162419228"
+      ]
+    }
+  ],
+  "concludedApprovalClaimed": false
+}
