@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--snapshot', required=True, type=Path)
     parser.add_argument('--out', required=True, type=Path)
     parser.add_argument('--candidate-ref', default='HEAD')
+    parser.add_argument('--request-path', action='store_true', help='Also measure cold module initialization and the real local-date query validation on every version.')
     parser.add_argument('--repeats', type=int, default=9)
     args = parser.parse_args()
     if not 9 <= args.repeats <= 31 or args.out.exists():
@@ -61,7 +62,7 @@ def main():
         for repeat in range(args.repeats):
             order = labels[repeat % 3:] + labels[:repeat % 3]
             for label in order:
-                output = subprocess.check_output(['node', str(ROOT / 'scripts/schedule_benchmark_worker.cjs'), str(modules[label]), str(args.snapshot.resolve())], cwd=ROOT, text=True, timeout=30)
+                output = subprocess.check_output(['node', str(ROOT / 'scripts/schedule_benchmark_worker.cjs'), str(modules[label]), str(args.snapshot.resolve()), 'request-path' if args.request_path else 'solve'], cwd=ROOT, text=True, timeout=30)
                 samples.append({'version': label, 'repeat': repeat + 1, **json.loads(output)})
     reference = next(row['journeys'] for row in samples if row['version'] == 'pr36')
     equal = all(row['journeys'] == reference for row in samples if row['version'] in {'pr36', 'candidate'})
@@ -69,7 +70,7 @@ def main():
                    for metric in ('cpuMs', 'wallMs', 'peakRssMb')
                    for values in [[r[metric] for r in samples if r['version'] == label]]} for label in labels}
     gate = performance_gate(summaries, equal)
-    report = {'scope': 'offline captured official snapshot; fresh serial rotated processes; no warmup or provider calls; not hosted performance',
+    report = {'measurement': 'cold_module_query_validation_solve' if args.request_path else 'solve', 'workerSha256': hashlib.sha256((ROOT / 'scripts/schedule_benchmark_worker.cjs').read_bytes()).hexdigest(), 'scope': 'offline captured official snapshot; fresh serial rotated processes; no warmup or provider calls; not hosted performance',
               'refs': versions, 'hashes': hashes, 'runtime': subprocess.check_output(['node', '--version'], text=True).strip(),
               'snapshotSha256': hashlib.sha256(raw).hexdigest(), 'snapshotVersion': snapshot['version'],
               'snapshotRows': {k: len(v) for k, v in snapshot['tables'].items()},

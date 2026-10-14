@@ -64,7 +64,7 @@ export function rememberStopOptions(q: StopSearch, catalog: StopCatalog, signal:
   const key = `${catalog.feedVersion}|${encodeStopSearch(q)}`;
   const existing = cache.get(key);
   if (result.feedVersion !== catalog.feedVersion) {
-    if (existing && fresh(existing)) return existing.result;
+    cache.delete(key);
     throw Error('The timetable changed during this search. Please refresh.');
   }
   // A navigation hit must not renew the source result's lifetime.

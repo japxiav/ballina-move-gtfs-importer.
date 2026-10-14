@@ -30,11 +30,14 @@ export function LiveMap() {
   const closeSelection = (preserveOutsideFocus = false) => { setSelectedId(null); setClusterIds([]); requestAnimationFrame(() => { if (preserveOutsideFocus && document.activeElement instanceof HTMLElement && document.activeElement !== document.body && !document.activeElement.closest(".vehicle-card")) return; const target = returnFocus.current; (target?.isConnected ? target : filterFallback.current)?.focus(); }); };
   const select = (id: string, target: HTMLElement | null) => { returnFocus.current = target; setClusterIds([]); setSelectedId(id); setSelectionNotice(""); };
   useEffect(() => {
-    if (selectedId && !active.some(v => v.id === selectedId) || clusterIds.length && !clusterIds.some(id => active.some(v => v.id === id))) {
+    if (selectedId && !active.some(v => v.id === selectedId) || clusterIds.length && !clusterIds.every(id => active.some(v => v.id === id))) {
       setSelectionNotice("Selection closed: the location expired, is unavailable or no longer matches this filter.");
       closeSelection(true);
+    } else if (clusterIds.length && !groups.some(g => g.vehicles.length === clusterIds.length && g.vehicles.every(v => clusterIds.includes(v.id)))) {
+      setSelectionNotice('Selection closed: map locations regrouped in this view.');
+      closeSelection(true);
     }
-  }, [selectedId, clusterIds, active]);
+  }, [selectedId, clusterIds, active, groups]);
   const departures = data ? visibleDepartures(data, now) : [];
   const sourceStates = data ? mapSourceStates(data, now, inView, mode) : [];
   const [nextAttempt, setNextAttempt] = useState<number | null>(null);
@@ -57,8 +60,7 @@ export function LiveMap() {
       } finally { window.clearTimeout(timeout); pending = false; if (!stopped) { setLoading(false); setNextAttempt(nextPoll); } }
     };
     void load();
-    setNextAttempt(Date.now() + 30000);
-    const poll = window.setInterval(() => { nextPoll = Date.now() + 30000; setNextAttempt(nextPoll); void load(); }, 30000);
+    const poll = window.setInterval(() => { nextPoll = Date.now() + 30000; if (!pending) setNextAttempt(nextPoll); void load(); }, 30000);
     const resume = () => { if (!document.hidden) void load(); };
     document.addEventListener("visibilitychange", resume);
     return () => { stopped = true; controller?.abort(); window.clearInterval(poll); document.removeEventListener("visibilitychange", resume); };
@@ -74,7 +76,15 @@ export function LiveMap() {
       cycleHadError = false;
       tileTimeout = window.setTimeout(() => setTilesDelayed(true), 15000);
     };
-    resetTileCycle.current = beginTileCycle;
+    resetTileCycle.current = () => {
+      window.clearTimeout(tileTimeout); cycleHadError = false;
+      setTilesLoading(false); setTileError(false); setTilesDelayed(false);
+      layer.redraw();
+      // Public layer DOM: completed/error images are not pending network work.
+      // A redraw with an empty range emits neither loading nor load.
+      const pending = [...(layer.getContainer()?.querySelectorAll<HTMLImageElement>('img.leaflet-tile') ?? [])].some(tile => !tile.complete);
+      if (pending) beginTileCycle();
+    };
     layer.on("loading", beginTileCycle);
     layer.on("load", () => { window.clearTimeout(tileTimeout); setTilesLoading(false); setTilesDelayed(false); setTileError(cycleHadError); });
     layer.on("tileerror", () => { cycleHadError = true; setTileError(true); });
@@ -123,7 +133,7 @@ export function LiveMap() {
     else if (cluster.length) map.current?.fitBounds(L.latLngBounds(cluster.map(v => [v.lat, v.lon])), { padding: [48, 48], maxZoom: 17, animate: false });
   };
   return <article className="live-page">
-    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); resetTileCycle.current(); tiles.current?.redraw(); }} disabled={loading}>Refresh</button></div>
+    <div className="live-heading"><div><div className="eyebrow">OFFICIAL TRANSPORT SOURCES</div><h1>Buses &amp; trains.</h1></div><button className="button secondary" onClick={() => { setLoading(true); setRefresh(v => v + 1); resetTileCycle.current(); }} disabled={loading}>Refresh</button></div>
     <div className="live-status" role="status">
       {loading && !data ? "Loading official transport data…" : data?.mode === "snapshot" ? `Published snapshot · retrieved ${time(data.generatedAt)}` : data ? `Auto-refresh every 30s · retrieved ${time(data.generatedAt)}` : "Transport feeds unavailable."}
     </div>

@@ -72,9 +72,9 @@ def reported_bus_service(row):
         value = row.get(name)
         return value if isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9_ .:-]{1,120}", value) else None
     operator = row.get("operator_name")
-    operator = operator if isinstance(operator, str) and 1 <= len(operator) <= 160 and not re.search(r"[\x00-\x1f\x7f]", operator) else None
+    operator = operator if isinstance(operator, str) and not re.search(r"[\x00-\x1f\x7f\ud800-\udfff]", operator) and 1 <= len(operator.encode('utf-16-le')) // 2 <= 160 else None
     mapping = row.get("mapping_status")
-    mapping = mapping if mapping in {"exact_trip", "route_only", "unmapped_trip", "route_mismatch", "realtime_only_trip"} else "unknown"
+    mapping = mapping if isinstance(mapping, str) and mapping in {"exact_trip", "route_only", "unmapped_trip", "route_mismatch", "realtime_only_trip"} else "unknown"
     direction = row.get("direction_id")
     service = {"routeId": identifier("route_id"), "tripId": identifier("trip_id") if mapping == "exact_trip" else None,
                "operator": operator, "directionId": direction if type(direction) is int and direction in {0, 1} else None,

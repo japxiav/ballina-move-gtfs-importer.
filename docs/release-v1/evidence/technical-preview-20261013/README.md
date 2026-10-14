@@ -17,3 +17,15 @@ The public index and its actual JS/CSS asset bytes matched the locally tested fr
 Independent security review approved the corrected controller, then the bounded smoke and cleanup. Final independent documentary cross-check also approved the manifest, deployed build equality, protected source preservation, bounded successful browser proof and retained limitations. Full frozen validation was182browser/95gateway/70rootPython/414routing/11staging, strict simulated API and1642oracle plus16module parity; no new application code was introduced during publication. Screenshots are emulated viewports, not physical devices or field walking. Regional launch remains NO-GO for the previously recorded physical/accessibility, host identity/resource/availability/recovery/legal/elapsed-pilot gates.
 
 These operational files preserve executed logic and receipts, not instructions to repeat a completed authorization. Do not run this historical publisher against the service without fresh specific approval and current source/rollback preconditions.
+
+Recovery of an ambiguous publication request: if `publish-intent.json` exists
+but `requested.json` does not, do not retry or remove the intent automatically.
+Inspect the current Render deploy history and its commit IDs/times for the
+recorded service/source intent first: the POST may have succeeded despite a
+missing or invalid response. If a matching deployment exists, reconcile its ID
+with the intent and continue read-only verification under the original grant;
+do not create another deployment. Remove the intent only after positively
+establishing that no matching request was accepted and checking fresh explicit
+authorization/preconditions. A network error is not proof that nothing changed.
+These are recovery instructions for operators, not permission to repeat this
+completed historical publication or to remove safeguards automatically.
