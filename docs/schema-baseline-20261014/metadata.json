@@ -1,0 +1,5071 @@
+{
+  "types": 0,
+  "tables": [
+    {
+      "rls": true,
+      "name": "api_rate_limits",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "rate_key",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "window_started_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "request_count",
+          "type": "integer",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "api_rate_limits_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (rate_key)"
+        },
+        {
+          "name": "api_rate_limits_request_count_check",
+          "type": "c",
+          "definition": "CHECK ((request_count >= 0))"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "collection_runs",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "channel",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "http_status",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_timestamp",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "total_entities",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "matched_entities",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stored_observations",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "error_code",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX collection_runs_started_idx ON public.collection_runs USING btree (started_at DESC)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "collection_runs_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "collection_runs_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['started'::text, 'ok'::text, 'http_error'::text, 'parse_error'::text, 'skipped'::text])))"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "collector_state",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "singleton",
+          "type": "boolean",
+          "default": "true",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "next_channel",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_claimed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "min_interval_seconds",
+          "type": "integer",
+          "default": "61",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "history_quality_cutoff",
+          "type": "timestamp with time zone",
+          "default": "'2026-10-06 08:37:00+00'::timestamp with time zone",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "collector_version",
+          "type": "text",
+          "default": "'v6'::text",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "collector_state_min_interval_check",
+          "type": "c",
+          "definition": "CHECK (((min_interval_seconds >= 60) AND (min_interval_seconds <= 300)))"
+        },
+        {
+          "name": "collector_state_next_channel_check",
+          "type": "c",
+          "definition": "CHECK ((next_channel = ANY (ARRAY['trip_update'::text, 'vehicle'::text])))"
+        },
+        {
+          "name": "collector_state_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (singleton)"
+        },
+        {
+          "name": "collector_state_singleton_check",
+          "type": "c",
+          "definition": "CHECK (singleton)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_agencies",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "agency_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "agency_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "agency_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "agency_timezone",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_agencies_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, agency_id)"
+        },
+        {
+          "name": "gtfs_agencies_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_calendar_dates",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "exception_type",
+          "type": "smallint",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_calendar_dates_exception_type_check",
+          "type": "c",
+          "definition": "CHECK ((exception_type = ANY (ARRAY[1, 2])))"
+        },
+        {
+          "name": "gtfs_calendar_dates_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, service_id, service_date)"
+        },
+        {
+          "name": "gtfs_calendar_dates_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_calendars",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "monday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "tuesday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "wednesday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "thursday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "friday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "saturday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "sunday",
+          "type": "boolean",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "start_date",
+          "type": "date",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "end_date",
+          "type": "date",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_calendars_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, service_id)"
+        },
+        {
+          "name": "gtfs_calendars_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_feed_info",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_publisher_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_publisher_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_lang",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_start_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_end_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_feed_version",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_contact_email",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_feed_info_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version)"
+        },
+        {
+          "name": "gtfs_feed_info_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_feed_versions",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "label",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "sha256",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_start_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_end_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX gtfs_one_active_label_idx ON public.gtfs_feed_versions USING btree (label) WHERE active"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_feed_versions_label_sha256_key",
+          "type": "u",
+          "definition": "UNIQUE (label, sha256)"
+        },
+        {
+          "name": "gtfs_feed_versions_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_import_runs",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_url",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_sha256",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_bytes",
+          "type": "bigint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_last_modified",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "importer_version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "config_sha256",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "active_before",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "active_after",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_time_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_point_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "monitored_stop_count",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "error_code",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_etag",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX gtfs_import_runs_started_idx ON public.gtfs_import_runs USING btree (started_at DESC)",
+        "CREATE INDEX gtfs_import_runs_version_idx ON public.gtfs_import_runs USING btree (version, started_at DESC)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_import_runs_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "gtfs_import_runs_status_check",
+          "type": "c",
+          "definition": "CHECK ((status = ANY (ARRAY['started'::text, 'unchanged'::text, 'validated'::text, 'deferred'::text, 'importing'::text, 'activated'::text, 'failed'::text])))"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_import_state",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "singleton",
+          "type": "boolean",
+          "default": "true",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "lock_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "locked_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "locked_until",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "owner",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_import_state_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (singleton)"
+        },
+        {
+          "name": "gtfs_import_state_singleton_check",
+          "type": "c",
+          "definition": "CHECK (singleton)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_import_targets",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "target_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "canonical_stop_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "expected_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "expected_lat",
+          "type": "double precision",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "expected_lon",
+          "type": "double precision",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "fallback_radius_m",
+          "type": "integer",
+          "default": "750",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "default": "true",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "notes",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_import_targets_lat_check",
+          "type": "c",
+          "definition": "CHECK (((expected_lat >= ('-90'::integer)::double precision) AND (expected_lat <= (90)::double precision)))"
+        },
+        {
+          "name": "gtfs_import_targets_lon_check",
+          "type": "c",
+          "definition": "CHECK (((expected_lon >= ('-180'::integer)::double precision) AND (expected_lon <= (180)::double precision)))"
+        },
+        {
+          "name": "gtfs_import_targets_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (target_id)"
+        },
+        {
+          "name": "gtfs_import_targets_radius_check",
+          "type": "c",
+          "definition": "CHECK (((fallback_radius_m >= 50) AND (fallback_radius_m <= 5000)))"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_routes",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "agency_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_short_name",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_long_name",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_type",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_desc",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_color",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_text_color",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_routes_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, route_id)"
+        },
+        {
+          "name": "gtfs_routes_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_shapes",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_pt_lat",
+          "type": "double precision",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_pt_lon",
+          "type": "double precision",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_pt_sequence",
+          "type": "integer",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_dist_traveled",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX gtfs_shapes_shape_idx ON public.gtfs_shapes USING btree (version, shape_id, shape_pt_sequence)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_shapes_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, shape_id, shape_pt_sequence)"
+        },
+        {
+          "name": "gtfs_shapes_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_stop_times",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_sequence",
+          "type": "integer",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "arrival_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "departure_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "pickup_type",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "drop_off_type",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "monitored",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_headsign",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "timepoint",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX gtfs_stop_times_stop_idx ON public.gtfs_stop_times USING btree (version, stop_id, trip_id)",
+        "CREATE INDEX gtfs_stop_times_monitored_idx ON public.gtfs_stop_times USING btree (version, trip_id) WHERE monitored"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_stop_times_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, trip_id, stop_sequence)"
+        },
+        {
+          "name": "gtfs_stop_times_version_stop_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version, stop_id) REFERENCES gtfs_stops(version, stop_id) ON DELETE CASCADE"
+        },
+        {
+          "name": "gtfs_stop_times_version_trip_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version, trip_id) REFERENCES gtfs_trips(version, trip_id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_stops",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_lat",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_lon",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "parent_station",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "location_type",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "monitored",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_code",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_desc",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "zone_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_url",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_stops_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, stop_id)"
+        },
+        {
+          "name": "gtfs_stops_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_translations",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a",
+          "sequence": "public.gtfs_translations_id_seq"
+        },
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "table_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "field_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "language",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "translation",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "record_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "field_value",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX gtfs_translations_lookup_idx ON public.gtfs_translations USING btree (version, table_name, field_name, language)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_translations_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "gtfs_translations_unique",
+          "type": "u",
+          "definition": "UNIQUE NULLS NOT DISTINCT (version, table_name, field_name, language, record_id, field_value)"
+        },
+        {
+          "name": "gtfs_translations_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "gtfs_trips",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_headsign",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_short_name",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "direction_id",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "shape_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "passes_monitored",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "selected_by_route",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "block_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX gtfs_trips_route_idx ON public.gtfs_trips USING btree (version, route_id)",
+        "CREATE INDEX gtfs_trips_shape_idx ON public.gtfs_trips USING btree (version, shape_id) WHERE (shape_id IS NOT NULL)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "gtfs_trips_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, trip_id)"
+        },
+        {
+          "name": "gtfs_trips_version_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version) REFERENCES gtfs_feed_versions(version) ON DELETE CASCADE"
+        },
+        {
+          "name": "gtfs_trips_version_route_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (version, route_id) REFERENCES gtfs_routes(version, route_id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "regional_routes",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "operator_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source",
+          "type": "text",
+          "default": "'nta_gtfs'::text",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "imported_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "default": "true",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "collection_scope",
+          "type": "text",
+          "default": "'local_trips'::text",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "regional_routes_collection_scope_check",
+          "type": "c",
+          "definition": "CHECK ((collection_scope = ANY (ARRAY['local_trips'::text, 'all_trips'::text])))"
+        },
+        {
+          "name": "regional_routes_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (route_id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "service_observations",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a",
+          "sequence": "public.service_observations_id_seq"
+        },
+        {
+          "name": "run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "observed_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "channel",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "entity_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "operator_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "vehicle_id",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "latitude",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "longitude",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_timestamp",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "delay_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "schedule_relationship",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "feed_version",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "mapping_status",
+          "type": "text",
+          "default": "'route_only'::text",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_headsign",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "direction_id",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX service_observations_route_time_idx ON public.service_observations USING btree (route_name, observed_at DESC)",
+        "CREATE INDEX service_observations_trip_time_idx ON public.service_observations USING btree (trip_id, observed_at DESC)",
+        "CREATE INDEX service_observations_position_idx ON public.service_observations USING btree (observed_at DESC) WHERE (latitude IS NOT NULL)",
+        "CREATE INDEX service_observations_route_id_time_idx ON public.service_observations USING btree (route_id, observed_at DESC)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "service_observations_channel_check",
+          "type": "c",
+          "definition": "CHECK ((channel = ANY (ARRAY['trip_update'::text, 'vehicle'::text])))"
+        },
+        {
+          "name": "service_observations_mapping_status_check",
+          "type": "c",
+          "definition": "CHECK ((mapping_status = ANY (ARRAY['exact_trip'::text, 'route_only'::text, 'unmapped_trip'::text, 'route_mismatch'::text, 'realtime_only_trip'::text])))"
+        },
+        {
+          "name": "service_observations_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "service_observations_route_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (route_id) REFERENCES regional_routes(route_id)"
+        },
+        {
+          "name": "service_observations_run_id_channel_entity_id_key",
+          "type": "u",
+          "definition": "UNIQUE (run_id, channel, entity_id)"
+        },
+        {
+          "name": "service_observations_run_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (run_id) REFERENCES collection_runs(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "stop_predictions",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "a",
+          "sequence": "public.stop_predictions_id_seq"
+        },
+        {
+          "name": "run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "observed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "entity_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_sequence",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "scheduled_arrival_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "scheduled_departure_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "predicted_arrival",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "predicted_departure",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "arrival_delay_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "departure_delay_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "schedule_relationship",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_timestamp",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "prediction_source",
+          "type": "text",
+          "default": "'explicit'::text",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "source_stop_sequence",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_schedule_relationship",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "direction_id",
+          "type": "smallint",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX stop_predictions_stop_time_idx ON public.stop_predictions USING btree (stop_id, observed_at DESC)",
+        "CREATE INDEX stop_predictions_trip_time_idx ON public.stop_predictions USING btree (trip_id, observed_at DESC)",
+        "CREATE INDEX stop_predictions_source_time_idx ON public.stop_predictions USING btree (stop_id, source_timestamp DESC) WHERE (source_timestamp IS NOT NULL)",
+        "CREATE INDEX stop_predictions_realtime_only_idx ON public.stop_predictions USING btree (stop_id, trip_schedule_relationship, source_timestamp DESC) WHERE (trip_schedule_relationship = ANY (ARRAY['ADDED'::text, 'UNSCHEDULED'::text, 'REPLACEMENT'::text, 'DUPLICATED'::text]))"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "stop_predictions_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "stop_predictions_prediction_source_check",
+          "type": "c",
+          "definition": "CHECK ((prediction_source = ANY (ARRAY['explicit'::text, 'propagated'::text, 'trip_delay'::text, 'no_data'::text, 'unknown'::text])))"
+        },
+        {
+          "name": "stop_predictions_run_id_entity_id_stop_id_stop_sequence_key",
+          "type": "u",
+          "definition": "UNIQUE (run_id, entity_id, stop_id, stop_sequence)"
+        },
+        {
+          "name": "stop_predictions_run_id_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (run_id) REFERENCES collection_runs(id) ON DELETE CASCADE"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "transport_function_backups",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "release_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "function_name",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "definition",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "saved_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": null,
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "transport_function_backups_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (release_id, function_name)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "transport_trip_stop_history",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "stop_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "first_observed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_observed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_source_timestamp",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "evidence_count",
+          "type": "bigint",
+          "default": "0",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_prediction_source",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_stop_relationship",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_trip_relationship",
+          "type": "text",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_delay_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_predicted_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "scheduled_seconds",
+          "type": "integer",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "ever_no_data",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "ever_skipped",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "ever_canceled",
+          "type": "boolean",
+          "default": "false",
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX transport_trip_stop_history_route_day_idx ON public.transport_trip_stop_history USING btree (route_id, service_date, stop_id)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "transport_trip_stop_history_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, service_date, trip_id, stop_id)"
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "transport_vehicle_trip_history",
+      "owner": "postgres",
+      "forced": false,
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "INSERT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "DELETE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRUNCATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "REFERENCES"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "TRIGGER"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "MAINTAIN"
+        }
+      ],
+      "columns": [
+        {
+          "name": "version",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "route_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "trip_id",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "vehicle_key",
+          "type": "text",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "first_observed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_observed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "gps_samples",
+          "type": "bigint",
+          "default": null,
+          "notNull": true,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_latitude",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        },
+        {
+          "name": "last_longitude",
+          "type": "double precision",
+          "default": null,
+          "notNull": false,
+          "identity": "",
+          "sequence": null
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX transport_vehicle_trip_history_route_day_idx ON public.transport_vehicle_trip_history USING btree (route_id, service_date)"
+      ],
+      "policies": null,
+      "triggers": null,
+      "constraints": [
+        {
+          "name": "transport_vehicle_trip_history_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (version, service_date, route_id, trip_id, vehicle_key)"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "get_collector_secret",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_collector_secret(text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_collector_secret(secret_name text)\n RETURNS text\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select decrypted_secret\n  from vault.decrypted_secrets\n  where name = secret_name\n  limit 1\n$function$\n"
+    },
+    {
+      "name": "assert_gtfs_import_token",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "assert_gtfs_import_token(text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.assert_gtfs_import_token(p_token text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare expected_token text;\nbegin\n  select decrypted_secret into expected_token\n  from vault.decrypted_secrets where name='gtfs_import_token';\n  if expected_token is null or p_token is null or p_token<>expected_token then\n    raise exception 'unauthorized' using errcode='42501';\n  end if;\nend;\n$function$\n"
+    },
+    {
+      "name": "get_gtfs_import_http_state",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_gtfs_import_http_state(text,text,text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_gtfs_import_http_state(p_token text, p_source_url text, p_config_sha256 text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  result jsonb;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select jsonb_build_object(\n    'source_last_modified',source_last_modified,\n    'source_etag',source_etag,\n    'active_after',active_after,\n    'config_sha256',config_sha256\n  )\n  into result\n  from public.gtfs_import_runs\n  where source_url=p_source_url\n    and config_sha256=p_config_sha256\n    and active_after is not null\n    and status in ('activated','unchanged')\n  order by started_at desc\n  limit 1;\n\n  return coalesce(result,'{}'::jsonb);\nend;\n$function$\n"
+    },
+    {
+      "name": "get_gtfs_feed_state",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_gtfs_feed_state(text,text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_gtfs_feed_state(p_token text, p_version text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  result jsonb;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select jsonb_build_object(\n    'version',version,\n    'active',active,\n    'feed_start_date',feed_start_date,\n    'feed_end_date',feed_end_date,\n    'metadata',metadata\n  )\n  into result\n  from public.gtfs_feed_versions\n  where version=p_version\n  limit 1;\n\n  return result;\nend;\n$function$\n"
+    },
+    {
+      "name": "import_gtfs_batch",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "import_gtfs_batch(text,text,text,jsonb)",
+      "definition": "CREATE OR REPLACE FUNCTION public.import_gtfs_batch(p_token text, p_version text, p_kind text, p_rows jsonb)\n RETURNS integer\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare inserted_count integer;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  if not exists(\n    select 1\n    from public.gtfs_feed_versions\n    where version=p_version and not active\n  ) then\n    raise exception 'feed_not_importable';\n  end if;\n\n  if jsonb_typeof(p_rows)<>'array' or jsonb_array_length(p_rows)>500 then\n    raise exception 'invalid_batch';\n  end if;\n\n  if p_kind='agencies' then\n    insert into public.gtfs_agencies(\n      version,agency_id,agency_name,agency_url,agency_timezone\n    )\n    select p_version,x.agency_id,x.agency_name,x.agency_url,x.agency_timezone\n    from jsonb_to_recordset(p_rows) as x(\n      agency_id text,agency_name text,agency_url text,agency_timezone text\n    )\n    on conflict(version,agency_id) do update set\n      agency_name=excluded.agency_name,\n      agency_url=excluded.agency_url,\n      agency_timezone=excluded.agency_timezone;\n\n  elsif p_kind='feed_info' then\n    insert into public.gtfs_feed_info(\n      version,feed_publisher_name,feed_publisher_url,feed_lang,\n      feed_start_date,feed_end_date,source_feed_version,feed_contact_email\n    )\n    select\n      p_version,x.feed_publisher_name,x.feed_publisher_url,x.feed_lang,\n      x.feed_start_date,x.feed_end_date,x.feed_version,x.feed_contact_email\n    from jsonb_to_recordset(p_rows) as x(\n      feed_publisher_name text,feed_publisher_url text,feed_lang text,\n      feed_start_date date,feed_end_date date,feed_version text,feed_contact_email text\n    )\n    on conflict(version) do update set\n      feed_publisher_name=excluded.feed_publisher_name,\n      feed_publisher_url=excluded.feed_publisher_url,\n      feed_lang=excluded.feed_lang,\n      feed_start_date=excluded.feed_start_date,\n      feed_end_date=excluded.feed_end_date,\n      source_feed_version=excluded.source_feed_version,\n      feed_contact_email=excluded.feed_contact_email;\n\n  elsif p_kind='routes' then\n    insert into public.gtfs_routes(\n      version,route_id,agency_id,route_short_name,route_long_name,route_type,\n      route_desc,route_url,route_color,route_text_color\n    )\n    select\n      p_version,x.route_id,x.agency_id,x.route_short_name,x.route_long_name,x.route_type,\n      x.route_desc,x.route_url,x.route_color,x.route_text_color\n    from jsonb_to_recordset(p_rows) as x(\n      route_id text,agency_id text,route_short_name text,route_long_name text,route_type integer,\n      route_desc text,route_url text,route_color text,route_text_color text\n    )\n    on conflict(version,route_id) do update set\n      agency_id=excluded.agency_id,\n      route_short_name=excluded.route_short_name,\n      route_long_name=excluded.route_long_name,\n      route_type=excluded.route_type,\n      route_desc=excluded.route_desc,\n      route_url=excluded.route_url,\n      route_color=excluded.route_color,\n      route_text_color=excluded.route_text_color;\n\n  elsif p_kind='stops' then\n    insert into public.gtfs_stops(\n      version,stop_id,stop_name,stop_lat,stop_lon,parent_station,location_type,monitored,\n      stop_code,stop_desc,zone_id,stop_url\n    )\n    select\n      p_version,x.stop_id,x.stop_name,x.stop_lat,x.stop_lon,x.parent_station,x.location_type,\n      coalesce(x.monitored,false),x.stop_code,x.stop_desc,x.zone_id,x.stop_url\n    from jsonb_to_recordset(p_rows) as x(\n      stop_id text,stop_name text,stop_lat double precision,stop_lon double precision,\n      parent_station text,location_type integer,monitored boolean,\n      stop_code text,stop_desc text,zone_id text,stop_url text\n    )\n    on conflict(version,stop_id) do update set\n      stop_name=excluded.stop_name,\n      stop_lat=excluded.stop_lat,\n      stop_lon=excluded.stop_lon,\n      parent_station=excluded.parent_station,\n      location_type=excluded.location_type,\n      monitored=excluded.monitored,\n      stop_code=excluded.stop_code,\n      stop_desc=excluded.stop_desc,\n      zone_id=excluded.zone_id,\n      stop_url=excluded.stop_url;\n\n  elsif p_kind='trips' then\n    insert into public.gtfs_trips(\n      version,trip_id,route_id,service_id,trip_headsign,trip_short_name,direction_id,\n      shape_id,passes_monitored,selected_by_route,block_id\n    )\n    select\n      p_version,x.trip_id,x.route_id,x.service_id,x.trip_headsign,x.trip_short_name,\n      x.direction_id,x.shape_id,coalesce(x.passes_monitored,false),\n      coalesce(x.selected_by_route,false),x.block_id\n    from jsonb_to_recordset(p_rows) as x(\n      trip_id text,route_id text,service_id text,trip_headsign text,trip_short_name text,\n      direction_id smallint,shape_id text,passes_monitored boolean,\n      selected_by_route boolean,block_id text\n    )\n    on conflict(version,trip_id) do update set\n      route_id=excluded.route_id,\n      service_id=excluded.service_id,\n      trip_headsign=excluded.trip_headsign,\n      trip_short_name=excluded.trip_short_name,\n      direction_id=excluded.direction_id,\n      shape_id=excluded.shape_id,\n      passes_monitored=excluded.passes_monitored,\n      selected_by_route=excluded.selected_by_route,\n      block_id=excluded.block_id;\n\n  elsif p_kind='stop_times' then\n    insert into public.gtfs_stop_times(\n      version,trip_id,stop_sequence,stop_id,arrival_seconds,departure_seconds,\n      pickup_type,drop_off_type,monitored,stop_headsign,timepoint\n    )\n    select\n      p_version,x.trip_id,x.stop_sequence,x.stop_id,x.arrival_seconds,x.departure_seconds,\n      x.pickup_type,x.drop_off_type,coalesce(x.monitored,false),x.stop_headsign,x.timepoint\n    from jsonb_to_recordset(p_rows) as x(\n      trip_id text,stop_sequence integer,stop_id text,arrival_seconds integer,\n      departure_seconds integer,pickup_type smallint,drop_off_type smallint,\n      monitored boolean,stop_headsign text,timepoint smallint\n    )\n    on conflict(version,trip_id,stop_sequence) do update set\n      stop_id=excluded.stop_id,\n      arrival_seconds=excluded.arrival_seconds,\n      departure_seconds=excluded.departure_seconds,\n      pickup_type=excluded.pickup_type,\n      drop_off_type=excluded.drop_off_type,\n      monitored=excluded.monitored,\n      stop_headsign=excluded.stop_headsign,\n      timepoint=excluded.timepoint;\n\n  elsif p_kind='calendars' then\n    insert into public.gtfs_calendars(\n      version,service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date\n    )\n    select\n      p_version,x.service_id,x.monday,x.tuesday,x.wednesday,x.thursday,x.friday,\n      x.saturday,x.sunday,x.start_date,x.end_date\n    from jsonb_to_recordset(p_rows) as x(\n      service_id text,monday boolean,tuesday boolean,wednesday boolean,thursday boolean,\n      friday boolean,saturday boolean,sunday boolean,start_date date,end_date date\n    )\n    on conflict(version,service_id) do update set\n      monday=excluded.monday,\n      tuesday=excluded.tuesday,\n      wednesday=excluded.wednesday,\n      thursday=excluded.thursday,\n      friday=excluded.friday,\n      saturday=excluded.saturday,\n      sunday=excluded.sunday,\n      start_date=excluded.start_date,\n      end_date=excluded.end_date;\n\n  elsif p_kind='calendar_dates' then\n    insert into public.gtfs_calendar_dates(version,service_id,service_date,exception_type)\n    select p_version,x.service_id,x.service_date,x.exception_type\n    from jsonb_to_recordset(p_rows) as x(\n      service_id text,service_date date,exception_type smallint\n    )\n    on conflict(version,service_id,service_date) do update set\n      exception_type=excluded.exception_type;\n\n  elsif p_kind='shapes' then\n    insert into public.gtfs_shapes(\n      version,shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled\n    )\n    select\n      p_version,x.shape_id,x.shape_pt_lat,x.shape_pt_lon,x.shape_pt_sequence,x.shape_dist_traveled\n    from jsonb_to_recordset(p_rows) as x(\n      shape_id text,shape_pt_lat double precision,shape_pt_lon double precision,\n      shape_pt_sequence integer,shape_dist_traveled double precision\n    )\n    on conflict(version,shape_id,shape_pt_sequence) do update set\n      shape_pt_lat=excluded.shape_pt_lat,\n      shape_pt_lon=excluded.shape_pt_lon,\n      shape_dist_traveled=excluded.shape_dist_traveled;\n\n  elsif p_kind='translations' then\n    insert into public.gtfs_translations(\n      version,table_name,field_name,language,translation,record_id,field_value\n    )\n    select\n      p_version,x.table_name,x.field_name,x.language,x.translation,x.record_id,x.field_value\n    from jsonb_to_recordset(p_rows) as x(\n      table_name text,field_name text,language text,translation text,record_id text,field_value text\n    )\n    on conflict on constraint gtfs_translations_unique do update set\n      translation=excluded.translation;\n\n  else\n    raise exception 'unknown_import_kind';\n  end if;\n\n  get diagnostics inserted_count=row_count;\n  return inserted_count;\nend;\n$function$\n"
+    },
+    {
+      "name": "get_stop_departures",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_stop_departures(text[],timestamp with time zone,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_stop_departures(p_stop_ids text[], p_from timestamp with time zone DEFAULT now(), p_limit integer DEFAULT 40)\n RETURNS TABLE(stop_id text, stop_name text, route_id text, route_name text, route_long_name text, operator_name text, trip_id text, trip_headsign text, direction_id smallint, scheduled_at timestamp with time zone, expected_at timestamp with time zone, delay_seconds integer, realtime_observed_at timestamp with time zone, realtime_age_seconds integer, data_status text)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nwith params as (\n  select\n    coalesce(p_from, now())::timestamptz as from_ts,\n    (coalesce(p_from, now()) at time zone 'Europe/Dublin')::date as local_date,\n    coalesce(p_stop_ids, array[]::text[]) as stop_ids,\n    greatest(1, least(coalesce(p_limit, 40), 100)) as row_limit\n),\nfeed as (\n  select version\n  from public.gtfs_feed_versions\n  where active and label='nta-realtime'\n  order by imported_at desc\n  limit 1\n),\nservice_days as (\n  select gs::date as service_date\n  from params p,\n       generate_series(p.local_date - 1, p.local_date + 1, interval '1 day') gs\n),\nbase_services as (\n  select sd.service_date, c.service_id\n  from service_days sd\n  join feed f on true\n  join public.gtfs_calendars c\n    on c.version=f.version\n   and sd.service_date between c.start_date and c.end_date\n   and case extract(isodow from sd.service_date)::int\n     when 1 then c.monday\n     when 2 then c.tuesday\n     when 3 then c.wednesday\n     when 4 then c.thursday\n     when 5 then c.friday\n     when 6 then c.saturday\n     when 7 then c.sunday\n   end\n  where not exists (\n    select 1\n    from public.gtfs_calendar_dates cd\n    where cd.version=f.version\n      and cd.service_id=c.service_id\n      and cd.service_date=sd.service_date\n      and cd.exception_type=2\n  )\n),\nadded_services as (\n  select sd.service_date, cd.service_id\n  from service_days sd\n  join feed f on true\n  join public.gtfs_calendar_dates cd\n    on cd.version=f.version\n   and cd.service_date=sd.service_date\n   and cd.exception_type=1\n),\nactive_services as (\n  select * from base_services\n  union\n  select * from added_services\n),\nlatest_rt as (\n  select distinct on (sp.version,sp.trip_id,sp.stop_id,sp.service_date)\n    sp.version,\n    sp.trip_id,\n    sp.stop_id,\n    sp.service_date,\n    sp.predicted_arrival,\n    sp.predicted_departure,\n    sp.arrival_delay_seconds,\n    sp.departure_delay_seconds,\n    sp.observed_at\n  from public.stop_predictions sp\n  join feed f on f.version=sp.version\n  join params p on true\n  where sp.observed_at >= p.from_ts - interval '15 minutes'\n  order by\n    sp.version,\n    sp.trip_id,\n    sp.stop_id,\n    sp.service_date,\n    sp.observed_at desc\n),\nscheduled as (\n  select\n    s.stop_id,\n    s.stop_name,\n    r.route_id,\n    coalesce(rr.route_name,r.route_short_name,r.route_long_name) as route_name,\n    r.route_long_name,\n    rr.operator_name,\n    t.trip_id,\n    t.trip_headsign,\n    t.direction_id,\n    a.service_date,\n    (\n      (\n        a.service_date::timestamp\n        + make_interval(secs=>coalesce(st.departure_seconds,st.arrival_seconds,0))\n      )\n      at time zone 'Europe/Dublin'\n    ) as scheduled_at,\n    rt.predicted_arrival,\n    rt.predicted_departure,\n    rt.arrival_delay_seconds,\n    rt.departure_delay_seconds,\n    rt.observed_at as realtime_observed_at\n  from active_services a\n  join feed f on true\n  join public.gtfs_trips t\n    on t.version=f.version\n   and t.service_id=a.service_id\n  join public.gtfs_stop_times st\n    on st.version=t.version\n   and st.trip_id=t.trip_id\n  join public.gtfs_stops s\n    on s.version=st.version\n   and s.stop_id=st.stop_id\n  join public.gtfs_routes r\n    on r.version=t.version\n   and r.route_id=t.route_id\n  join public.regional_routes rr\n    on rr.route_id=t.route_id\n   and rr.enabled\n  join params p\n    on s.stop_id=any(p.stop_ids)\n  left join latest_rt rt\n    on rt.version=t.version\n   and rt.trip_id=t.trip_id\n   and rt.stop_id=st.stop_id\n   and rt.service_date=a.service_date\n),\nresolved as (\n  select\n    s.*,\n    coalesce(s.departure_delay_seconds,s.arrival_delay_seconds) as resolved_delay_seconds,\n    case\n      when coalesce(s.predicted_departure,s.predicted_arrival) is not null\n        then coalesce(s.predicted_departure,s.predicted_arrival)\n      when s.realtime_observed_at is not null\n           and coalesce(s.departure_delay_seconds,s.arrival_delay_seconds) is not null\n        then s.scheduled_at\n             + make_interval(\n                 secs=>coalesce(s.departure_delay_seconds,s.arrival_delay_seconds)\n               )\n      else s.scheduled_at\n    end as resolved_expected_at,\n    case\n      when coalesce(s.predicted_departure,s.predicted_arrival) is not null\n        then 'realtime_explicit'\n      when s.realtime_observed_at is not null\n           and coalesce(s.departure_delay_seconds,s.arrival_delay_seconds) is not null\n        then 'realtime_derived'\n      else 'scheduled'\n    end as resolved_data_status\n  from scheduled s\n)\nselect\n  r.stop_id,\n  r.stop_name,\n  r.route_id,\n  r.route_name,\n  r.route_long_name,\n  r.operator_name,\n  r.trip_id,\n  r.trip_headsign,\n  r.direction_id,\n  r.scheduled_at,\n  r.resolved_expected_at as expected_at,\n  r.resolved_delay_seconds as delay_seconds,\n  r.realtime_observed_at,\n  case\n    when r.realtime_observed_at is null then null\n    else greatest(\n      0,\n      extract(epoch from (p.from_ts-r.realtime_observed_at))::integer\n    )\n  end as realtime_age_seconds,\n  r.resolved_data_status as data_status\nfrom resolved r\njoin params p on true\nwhere r.resolved_expected_at >= p.from_ts - interval '3 minutes'\norder by r.resolved_expected_at, r.route_name, r.trip_id\nlimit (select row_limit from params);\n$function$\n"
+    },
+    {
+      "name": "update_gtfs_import_run",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "update_gtfs_import_run(text,uuid,jsonb)",
+      "definition": "CREATE OR REPLACE FUNCTION public.update_gtfs_import_run(p_token text, p_run_id uuid, p_patch jsonb)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  if p_patch is null or jsonb_typeof(p_patch) <> 'object' then\n    raise exception 'invalid_import_run_patch';\n  end if;\n\n  update public.gtfs_import_runs\n  set\n    status = case when p_patch ? 'status' then p_patch->>'status' else status end,\n    completed_at = case\n      when p_patch ? 'completed_at'\n        then nullif(p_patch->>'completed_at','')::timestamptz\n      else completed_at\n    end,\n    source_sha256 = case when p_patch ? 'source_sha256' then p_patch->>'source_sha256' else source_sha256 end,\n    version = case when p_patch ? 'version' then p_patch->>'version' else version end,\n    source_bytes = case\n      when p_patch ? 'source_bytes' then nullif(p_patch->>'source_bytes','')::bigint\n      else source_bytes\n    end,\n    source_last_modified = case\n      when p_patch ? 'source_last_modified' then p_patch->>'source_last_modified'\n      else source_last_modified\n    end,\n    source_etag = case\n      when p_patch ? 'source_etag' then p_patch->>'source_etag'\n      else source_etag\n    end,\n    active_after = case when p_patch ? 'active_after' then p_patch->>'active_after' else active_after end,\n    route_count = case\n      when p_patch ? 'route_count' then nullif(p_patch->>'route_count','')::integer\n      else route_count\n    end,\n    stop_count = case\n      when p_patch ? 'stop_count' then nullif(p_patch->>'stop_count','')::integer\n      else stop_count\n    end,\n    trip_count = case\n      when p_patch ? 'trip_count' then nullif(p_patch->>'trip_count','')::integer\n      else trip_count\n    end,\n    stop_time_count = case\n      when p_patch ? 'stop_time_count' then nullif(p_patch->>'stop_time_count','')::integer\n      else stop_time_count\n    end,\n    shape_point_count = case\n      when p_patch ? 'shape_point_count' then nullif(p_patch->>'shape_point_count','')::integer\n      else shape_point_count\n    end,\n    monitored_stop_count = case\n      when p_patch ? 'monitored_stop_count' then nullif(p_patch->>'monitored_stop_count','')::integer\n      else monitored_stop_count\n    end,\n    error_code = case when p_patch ? 'error_code' then p_patch->>'error_code' else error_code end,\n    metadata = case when p_patch ? 'metadata' then coalesce(p_patch->'metadata','{}'::jsonb) else metadata end\n  where id=p_run_id;\n\n  return found;\nend;\n$function$\n"
+    },
+    {
+      "name": "begin_gtfs_import",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "begin_gtfs_import(text,text,text,text,text,date,date,jsonb)",
+      "definition": "CREATE OR REPLACE FUNCTION public.begin_gtfs_import(p_token text, p_version text, p_label text, p_sha256 text, p_source_url text, p_feed_start_date date, p_feed_end_date date, p_metadata jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  existing_active boolean;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select active into existing_active\n  from public.gtfs_feed_versions\n  where version=p_version\n  for update;\n\n  if found and existing_active then\n    return jsonb_build_object(\n      'version',p_version,\n      'exists',true,\n      'active',true\n    );\n  end if;\n\n  if found and not existing_active then\n    delete from public.gtfs_feed_versions\n    where version=p_version\n      and not active;\n  end if;\n\n  insert into public.gtfs_feed_versions(\n    version,label,sha256,source_url,feed_start_date,feed_end_date,metadata\n  ) values (\n    p_version,p_label,p_sha256,p_source_url,p_feed_start_date,p_feed_end_date,\n    coalesce(p_metadata,'{}'::jsonb)\n  );\n\n  return jsonb_build_object(\n    'version',p_version,\n    'exists',false,\n    'active',false\n  );\nend;\n$function$\n"
+    },
+    {
+      "name": "claim_transport_collection",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "claim_transport_collection(text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_transport_collection(p_token text)\n RETURNS TABLE(channel text, run_id uuid)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  selected_channel text;\n  selected_run uuid;\n  last_claim timestamptz;\n  expected_token text;\n  min_interval integer;\n  current_collector_version text;\n  quality_cutoff timestamptz;\n  elapsed_seconds double precision;\n  remaining_seconds double precision;\n  claim_ts timestamptz;\nbegin\n  select decrypted_secret into expected_token\n  from vault.decrypted_secrets\n  where name='collector_cron_token';\n\n  if expected_token is null or p_token is null or p_token <> expected_token then\n    raise exception 'unauthorized' using errcode='42501';\n  end if;\n\n  select\n    next_channel,\n    last_claimed_at,\n    min_interval_seconds,\n    collector_version,\n    history_quality_cutoff\n  into\n    selected_channel,\n    last_claim,\n    min_interval,\n    current_collector_version,\n    quality_cutoff\n  from public.collector_state\n  where singleton=true\n  for update;\n\n  if selected_channel is null then\n    raise exception 'collector_state_missing';\n  end if;\n\n  min_interval := greatest(coalesce(min_interval,61),60);\n  current_collector_version := coalesce(current_collector_version,'unknown');\n\n  if last_claim is not null then\n    elapsed_seconds := extract(epoch from(clock_timestamp()-last_claim));\n    remaining_seconds := min_interval-elapsed_seconds;\n\n    if remaining_seconds > 0 then\n      if remaining_seconds <= 5 then\n        perform pg_catalog.pg_sleep(remaining_seconds);\n      else\n        return;\n      end if;\n    end if;\n  end if;\n\n  claim_ts := clock_timestamp();\n\n  update public.collector_state\n  set next_channel = case selected_channel when 'trip_update' then 'vehicle' else 'trip_update' end,\n      last_claimed_at=claim_ts,\n      updated_at=claim_ts\n  where singleton=true;\n\n  insert into public.collection_runs(\n    source,channel,started_at,status,metadata\n  )\n  values(\n    'nta',\n    selected_channel,\n    claim_ts,\n    'started',\n    jsonb_build_object(\n      'collector_version',current_collector_version,\n      'history_quality_eligible',\n      claim_ts >= coalesce(quality_cutoff,'infinity'::timestamptz),\n      'claim_timestamp',claim_ts\n    )\n  )\n  returning id into selected_run;\n\n  return query select selected_channel,selected_run;\nend;\n$function$\n"
+    },
+    {
+      "name": "get_realtime_trip_context",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_realtime_trip_context(text,text[])",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_realtime_trip_context(p_version text, p_trip_ids text[])\n RETURNS jsonb\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select coalesce(jsonb_agg(\n    jsonb_build_object(\n      'trip_id',t.trip_id,\n      'route_id',t.route_id,\n      'trip_headsign',t.trip_headsign,\n      'direction_id',t.direction_id,\n      'passes_monitored',t.passes_monitored,\n      'selected_by_route',t.selected_by_route,\n      'stops',coalesce((\n        select jsonb_agg(\n          jsonb_build_object(\n            'stop_id',st.stop_id,\n            'stop_name',s.stop_name,\n            'stop_sequence',st.stop_sequence,\n            'arrival_seconds',st.arrival_seconds,\n            'departure_seconds',st.departure_seconds\n          ) order by st.stop_sequence\n        )\n        from public.gtfs_stop_times st\n        join public.gtfs_stops s\n          on s.version=st.version and s.stop_id=st.stop_id\n        where st.version=t.version\n          and st.trip_id=t.trip_id\n          and st.monitored\n      ),'[]'::jsonb),\n      'all_stops',coalesce((\n        select jsonb_agg(\n          jsonb_build_object(\n            'stop_id',st.stop_id,\n            'stop_sequence',st.stop_sequence,\n            'arrival_seconds',st.arrival_seconds,\n            'departure_seconds',st.departure_seconds,\n            'monitored',st.monitored\n          ) order by st.stop_sequence\n        )\n        from public.gtfs_stop_times st\n        where st.version=t.version\n          and st.trip_id=t.trip_id\n      ),'[]'::jsonb)\n    ) order by t.trip_id\n  ),'[]'::jsonb)\n  from public.gtfs_trips t\n  where t.version=p_version\n    and t.trip_id=any(p_trip_ids);\n$function$\n"
+    },
+    {
+      "name": "consume_transport_api_rate_limit",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "consume_transport_api_rate_limit(text,integer,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.consume_transport_api_rate_limit(p_key text, p_limit integer DEFAULT 90, p_window_seconds integer DEFAULT 60)\n RETURNS TABLE(allowed boolean, retry_after_seconds integer, remaining integer)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  now_ts timestamptz := clock_timestamp();\n  row_window timestamptz;\n  row_count integer;\n  max_count integer := greatest(1, least(coalesce(p_limit,90),1000));\n  window_seconds integer := greatest(10, least(coalesce(p_window_seconds,60),3600));\n  elapsed double precision;\nbegin\n  if p_key is null or length(p_key) < 16 then\n    raise exception 'invalid_rate_key';\n  end if;\n\n  insert into public.api_rate_limits(rate_key,window_started_at,request_count,updated_at)\n  values(p_key,now_ts,0,now_ts)\n  on conflict(rate_key) do nothing;\n\n  select window_started_at,request_count\n    into row_window,row_count\n  from public.api_rate_limits\n  where rate_key=p_key\n  for update;\n\n  elapsed := extract(epoch from (now_ts-row_window));\n\n  if elapsed >= window_seconds then\n    update public.api_rate_limits\n    set window_started_at=now_ts,\n        request_count=1,\n        updated_at=now_ts\n    where rate_key=p_key;\n\n    return query select true,0,max_count-1;\n    return;\n  end if;\n\n  if row_count >= max_count then\n    return query select\n      false,\n      greatest(1,ceil(window_seconds-elapsed)::integer),\n      0;\n    return;\n  end if;\n\n  update public.api_rate_limits\n  set request_count=request_count+1,\n      updated_at=now_ts\n  where rate_key=p_key;\n\n  return query select true,0,greatest(0,max_count-row_count-1);\nend;\n$function$\n"
+    },
+    {
+      "name": "prune_transport_history",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "prune_transport_history()",
+      "definition": "CREATE OR REPLACE FUNCTION public.prune_transport_history()\n RETURNS TABLE(payloads_cleared bigint, runs_deleted bigint)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  cleared bigint;\n  deleted bigint;\nbegin\n  update public.service_observations\n  set payload=null\n  where observed_at < clock_timestamp()-interval '24 hours'\n    and payload is not null;\n  get diagnostics cleared=row_count;\n\n  perform public.capture_transport_prediction_history();\n  perform public.capture_transport_vehicle_history();\n\n  delete from public.collection_runs\n  where coalesce(completed_at,started_at)\n        < clock_timestamp()-interval '14 days';\n  get diagnostics deleted=row_count;\n\n  delete from public.gtfs_feed_versions\n  where not active\n    and imported_at < clock_timestamp()-interval '21 days';\n\n  delete from cron.job_run_details\n  where coalesce(end_time,start_time)\n        < clock_timestamp()-interval '30 days';\n\n  delete from public.api_rate_limits\n  where updated_at < clock_timestamp()-interval '1 day';\n\n  return query select cleared,deleted;\nend;\n$function$\n"
+    },
+    {
+      "name": "release_gtfs_import_worker",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "release_gtfs_import_worker(text,uuid)",
+      "definition": "CREATE OR REPLACE FUNCTION public.release_gtfs_import_worker(p_token text, p_lock_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  released boolean := false;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  update public.gtfs_import_state\n  set lock_id=null,\n      locked_at=null,\n      locked_until=null,\n      owner=null,\n      updated_at=clock_timestamp()\n  where singleton=true\n    and lock_id=p_lock_id;\n\n  released := found;\n  return released;\nend;\n$function$\n"
+    },
+    {
+      "name": "validate_gtfs_import",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "validate_gtfs_import(text,text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.validate_gtfs_import(p_token text, p_version text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  target_label text;\n  target_active boolean;\n  target_metadata jsonb;\n  config_sha text;\n\n  route_count integer;\n  stop_count integer;\n  trip_count integer;\n  stop_time_count integer;\n  monitored_time_count integer;\n  monitored_stop_count integer;\n  expected_target_count integer;\n  expected_route_count integer;\n\n  calendar_count integer;\n  calendar_date_count integer;\n  agency_count integer;\n  feed_info_count integer;\n  shape_count integer;\n  translation_count integer;\n\n  missing_service_count integer;\n  missing_agency_count integer;\n  missing_shape_count integer;\n  short_trip_count integer;\n\n  info_start date;\n  info_end date;\n  info_source_version text;\n  local_today date := (clock_timestamp() at time zone 'Europe/Dublin')::date;\n\n  missing_upcoming_stops text[];\n  missing_upcoming_count integer := 0;\n\n  baseline_version text;\n  baseline_trip_count integer;\n  baseline_stop_time_count integer;\n  baseline_stop_count integer;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select label,active,coalesce(metadata,'{}'::jsonb),metadata->>'config_sha256'\n    into target_label,target_active,target_metadata,config_sha\n  from public.gtfs_feed_versions\n  where version=p_version;\n\n  if target_label is null then\n    raise exception 'unknown_feed_version';\n  end if;\n\n  select count(*) into route_count\n  from public.gtfs_routes where version=p_version;\n\n  select count(*) into stop_count\n  from public.gtfs_stops where version=p_version;\n\n  select count(*) into trip_count\n  from public.gtfs_trips where version=p_version;\n\n  select count(*) into stop_time_count\n  from public.gtfs_stop_times where version=p_version;\n\n  select count(*) into monitored_time_count\n  from public.gtfs_stop_times\n  where version=p_version and monitored;\n\n  select count(*) into monitored_stop_count\n  from public.gtfs_stops\n  where version=p_version and monitored;\n\n  select count(*) into expected_target_count\n  from public.gtfs_import_targets\n  where enabled;\n\n  select count(*) into expected_route_count\n  from public.regional_routes\n  where enabled;\n\n  select count(*) into calendar_count\n  from public.gtfs_calendars where version=p_version;\n\n  select count(*) into calendar_date_count\n  from public.gtfs_calendar_dates where version=p_version;\n\n  select count(*) into agency_count\n  from public.gtfs_agencies where version=p_version;\n\n  select count(*) into feed_info_count\n  from public.gtfs_feed_info where version=p_version;\n\n  select count(*) into shape_count\n  from public.gtfs_shapes where version=p_version;\n\n  select count(*) into translation_count\n  from public.gtfs_translations where version=p_version;\n\n  select count(distinct t.service_id) into missing_service_count\n  from public.gtfs_trips t\n  where t.version=p_version\n    and not exists (\n      select 1\n      from public.gtfs_calendars c\n      where c.version=t.version\n        and c.service_id=t.service_id\n    )\n    and not exists (\n      select 1\n      from public.gtfs_calendar_dates cd\n      where cd.version=t.version\n        and cd.service_id=t.service_id\n    );\n\n  select count(*) into missing_agency_count\n  from public.gtfs_routes r\n  where r.version=p_version\n    and r.agency_id is not null\n    and not exists (\n      select 1\n      from public.gtfs_agencies a\n      where a.version=r.version\n        and a.agency_id=r.agency_id\n    );\n\n  select count(distinct t.shape_id) into missing_shape_count\n  from public.gtfs_trips t\n  where t.version=p_version\n    and t.shape_id is not null\n    and not exists (\n      select 1\n      from public.gtfs_shapes s\n      where s.version=t.version\n        and s.shape_id=t.shape_id\n    );\n\n  select count(*) into short_trip_count\n  from (\n    select t.trip_id\n    from public.gtfs_trips t\n    left join public.gtfs_stop_times st\n      on st.version=t.version\n     and st.trip_id=t.trip_id\n    where t.version=p_version\n    group by t.trip_id\n    having count(st.stop_sequence)<2\n  ) q;\n\n  if route_count<1\n     or stop_count<1\n     or trip_count<1\n     or stop_time_count<trip_count\n     or monitored_time_count<1\n     or monitored_stop_count<1\n     or (calendar_count<1 and calendar_date_count<1)\n     or agency_count<1\n     or feed_info_count<>1\n     or missing_service_count>0\n     or missing_agency_count>0\n     or missing_shape_count>0\n     or short_trip_count>0 then\n    raise exception\n      'invalid_gtfs_subset routes=% stops=% trips=% stop_times=% monitored_times=% monitored_stops=% calendars=% calendar_dates=% agencies=% feed_info=% missing_services=% missing_agencies=% missing_shapes=% short_trips=%',\n      route_count,stop_count,trip_count,stop_time_count,monitored_time_count,\n      monitored_stop_count,calendar_count,calendar_date_count,\n      agency_count,feed_info_count,missing_service_count,\n      missing_agency_count,missing_shape_count,short_trip_count;\n  end if;\n\n  if expected_target_count < 1 or monitored_stop_count <> expected_target_count then\n    raise exception\n      'gtfs_monitored_target_count_mismatch expected=% actual=%',\n      expected_target_count,monitored_stop_count;\n  end if;\n\n  if expected_route_count < 1 or route_count <> expected_route_count then\n    raise exception\n      'gtfs_enabled_route_count_mismatch expected=% actual=%',\n      expected_route_count,route_count;\n  end if;\n\n  select feed_start_date,feed_end_date,source_feed_version\n    into info_start,info_end,info_source_version\n  from public.gtfs_feed_info\n  where version=p_version;\n\n  if info_start is null\n     or info_end is null\n     or info_start > info_end\n     or local_today < info_start\n     or local_today > info_end then\n    raise exception\n      'gtfs_feed_not_current today=% start=% end=%',\n      local_today,info_start,info_end;\n  end if;\n\n  with service_days as (\n    select gs::date as service_date\n    from generate_series(local_today, local_today + 7, interval '1 day') gs\n  ),\n  base_services as (\n    select sd.service_date,c.service_id\n    from service_days sd\n    join public.gtfs_calendars c\n      on c.version=p_version\n     and sd.service_date between c.start_date and c.end_date\n     and case extract(isodow from sd.service_date)::int\n       when 1 then c.monday\n       when 2 then c.tuesday\n       when 3 then c.wednesday\n       when 4 then c.thursday\n       when 5 then c.friday\n       when 6 then c.saturday\n       when 7 then c.sunday\n     end\n    where not exists (\n      select 1\n      from public.gtfs_calendar_dates cd\n      where cd.version=p_version\n        and cd.service_id=c.service_id\n        and cd.service_date=sd.service_date\n        and cd.exception_type=2\n    )\n  ),\n  added_services as (\n    select sd.service_date,cd.service_id\n    from service_days sd\n    join public.gtfs_calendar_dates cd\n      on cd.version=p_version\n     and cd.service_date=sd.service_date\n     and cd.exception_type=1\n  ),\n  active_services as (\n    select * from base_services\n    union\n    select * from added_services\n  ),\n  monitored as (\n    select stop_id\n    from public.gtfs_stops\n    where version=p_version and monitored\n  ),\n  served as (\n    select distinct st.stop_id\n    from public.gtfs_stop_times st\n    join public.gtfs_trips t\n      on t.version=st.version\n     and t.trip_id=st.trip_id\n    join active_services a\n      on a.service_id=t.service_id\n    where st.version=p_version\n      and st.monitored\n      and coalesce(st.departure_seconds,st.arrival_seconds) is not null\n  )\n  select\n    coalesce(array_agg(m.stop_id order by m.stop_id),array[]::text[]),\n    count(*)::integer\n  into missing_upcoming_stops,missing_upcoming_count\n  from monitored m\n  where not exists (\n    select 1 from served s where s.stop_id=m.stop_id\n  );\n\n  if missing_upcoming_count > 0 then\n    raise exception\n      'gtfs_monitored_targets_without_service_next_7_days:%',\n      array_to_string(missing_upcoming_stops,',');\n  end if;\n\n  select f.version\n    into baseline_version\n  from public.gtfs_feed_versions f\n  where f.label=target_label\n    and f.active\n    and f.version<>p_version\n    and f.metadata->>'schema_completeness'='complete_nta_feed'\n    and config_sha is not null\n    and f.metadata->>'config_sha256'=config_sha\n  order by f.imported_at desc\n  limit 1;\n\n  if baseline_version is not null then\n    select count(*) into baseline_stop_count\n    from public.gtfs_stops where version=baseline_version;\n\n    select count(*) into baseline_trip_count\n    from public.gtfs_trips where version=baseline_version;\n\n    select count(*) into baseline_stop_time_count\n    from public.gtfs_stop_times where version=baseline_version;\n\n    if stop_count * 2 < greatest(baseline_stop_count,1)\n       or trip_count * 2 < greatest(baseline_trip_count,1)\n       or stop_time_count * 2 < greatest(baseline_stop_time_count,1) then\n      raise exception\n        'gtfs_regression_gate_failed baseline=% old_stops=% new_stops=% old_trips=% new_trips=% old_stop_times=% new_stop_times=%',\n        baseline_version,baseline_stop_count,stop_count,\n        baseline_trip_count,trip_count,\n        baseline_stop_time_count,stop_time_count;\n    end if;\n  end if;\n\n  return jsonb_build_object(\n    'version',p_version,\n    'active',target_active,\n    'routes',route_count,\n    'expected_routes',expected_route_count,\n    'stops',stop_count,\n    'trips',trip_count,\n    'stop_times',stop_time_count,\n    'monitored_stop_times',monitored_time_count,\n    'monitored_stops',monitored_stop_count,\n    'expected_monitored_stops',expected_target_count,\n    'calendars',calendar_count,\n    'calendar_dates',calendar_date_count,\n    'agencies',agency_count,\n    'shape_points',shape_count,\n    'translations',translation_count,\n    'source_feed_version',info_source_version,\n    'feed_start_date',info_start,\n    'feed_end_date',info_end,\n    'service_horizon_days',7,\n    'baseline_version',baseline_version,\n    'validated_at',clock_timestamp()\n  );\nend;\n$function$\n"
+    },
+    {
+      "name": "abort_gtfs_import",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "abort_gtfs_import(text,text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.abort_gtfs_import(p_token text, p_version text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  deleted_count integer;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  delete from public.gtfs_feed_versions\n  where version=p_version\n    and not active;\n\n  get diagnostics deleted_count=row_count;\n  return deleted_count>0;\nend;\n$function$\n"
+    },
+    {
+      "name": "claim_gtfs_import_worker",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "claim_gtfs_import_worker(text,text,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.claim_gtfs_import_worker(p_token text, p_owner text DEFAULT NULL::text, p_ttl_seconds integer DEFAULT 2700)\n RETURNS TABLE(lock_id uuid, locked_until timestamp with time zone)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  ttl_seconds integer := greatest(300,least(coalesce(p_ttl_seconds,2700),7200));\n  new_lock uuid := gen_random_uuid();\n  now_ts timestamptz := clock_timestamp();\n  current_until timestamptz;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select s.locked_until\n    into current_until\n  from public.gtfs_import_state s\n  where s.singleton=true\n  for update;\n\n  if current_until is not null and current_until > now_ts then\n    return;\n  end if;\n\n  update public.gtfs_import_state\n  set lock_id=new_lock,\n      locked_at=now_ts,\n      locked_until=now_ts+make_interval(secs=>ttl_seconds),\n      owner=left(coalesce(p_owner,'unknown'),200),\n      updated_at=now_ts\n  where singleton=true;\n\n  return query\n  select new_lock,now_ts+make_interval(secs=>ttl_seconds);\nend;\n$function$\n"
+    },
+    {
+      "name": "get_gtfs_import_config",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_gtfs_import_config(text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_gtfs_import_config(p_token text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  result jsonb;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select jsonb_build_object(\n    'targets',\n      coalesce((\n        select jsonb_agg(\n          jsonb_build_object(\n            'target_id',target_id,\n            'canonical_stop_id',canonical_stop_id,\n            'expected_name',expected_name,\n            'expected_lat',expected_lat,\n            'expected_lon',expected_lon,\n            'fallback_radius_m',fallback_radius_m\n          )\n          order by target_id\n        )\n        from public.gtfs_import_targets\n        where enabled\n      ),'[]'::jsonb),\n    'routes',\n      coalesce((\n        select jsonb_agg(\n          jsonb_build_object(\n            'route_id',route_id,\n            'route_name',route_name,\n            'collection_scope',collection_scope\n          )\n          order by route_id\n        )\n        from public.regional_routes\n        where enabled\n      ),'[]'::jsonb),\n    'active_version',\n      (\n        select version\n        from public.gtfs_feed_versions\n        where label='nta-realtime' and active\n        order by imported_at desc\n        limit 1\n      )\n  ) into result;\n\n  return result;\nend;\n$function$\n"
+    },
+    {
+      "name": "start_gtfs_import_run",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "start_gtfs_import_run(text,text,text,text,text,jsonb)",
+      "definition": "CREATE OR REPLACE FUNCTION public.start_gtfs_import_run(p_token text, p_source_url text, p_importer_version text, p_config_sha256 text, p_active_before text, p_metadata jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  new_id uuid;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  insert into public.gtfs_import_runs(\n    status,source_url,importer_version,config_sha256,active_before,metadata\n  )\n  values(\n    'started',\n    p_source_url,\n    p_importer_version,\n    p_config_sha256,\n    p_active_before,\n    coalesce(p_metadata,'{}'::jsonb)\n  )\n  returning id into new_id;\n\n  return new_id;\nend;\n$function$\n"
+    },
+    {
+      "name": "capture_transport_prediction_history",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "capture_transport_prediction_history()",
+      "definition": "CREATE OR REPLACE FUNCTION public.capture_transport_prediction_history()\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare stored_rows bigint := 0;\nbegin\n  with snapshots as (\n    select\n      version,service_date,trip_id,stop_id,\n      (array_agg(route_id order by observed_at desc, id desc))[1] as route_id,\n      min(observed_at) as first_observed_at,\n      max(observed_at) as last_observed_at,\n      (array_agg(source_timestamp order by observed_at desc, id desc))[1] as last_source_timestamp,\n      count(*) as evidence_count,\n      (array_agg(prediction_source order by observed_at desc,id desc))[1] as last_prediction_source,\n      (array_agg(schedule_relationship order by observed_at desc,id desc))[1] as last_stop_relationship,\n      (array_agg(trip_schedule_relationship order by observed_at desc,id desc))[1] as last_trip_relationship,\n      (array_agg(coalesce(departure_delay_seconds,arrival_delay_seconds) order by observed_at desc,id desc))[1] as last_delay_seconds,\n      (array_agg(coalesce(predicted_departure,predicted_arrival) order by observed_at desc,id desc))[1] as last_predicted_at,\n      (array_agg(coalesce(scheduled_departure_seconds,scheduled_arrival_seconds) order by observed_at desc,id desc))[1] as scheduled_seconds,\n      bool_or(upper(coalesce(schedule_relationship,''))='NO_DATA') as ever_no_data,\n      bool_or(upper(coalesce(schedule_relationship,''))='SKIPPED') as ever_skipped,\n      bool_or(upper(coalesce(trip_schedule_relationship,''))='CANCELED') as ever_canceled\n    from public.stop_predictions\n    where service_date is not null and version is not null\n    group by version,service_date,trip_id,stop_id\n  )\n  insert into public.transport_trip_stop_history as h (\n    version,service_date,trip_id,stop_id,route_id,\n    first_observed_at,last_observed_at,last_source_timestamp,evidence_count,\n    last_prediction_source,last_stop_relationship,last_trip_relationship,\n    last_delay_seconds,last_predicted_at,scheduled_seconds,\n    ever_no_data,ever_skipped,ever_canceled\n  )\n  select version,service_date,trip_id,stop_id,route_id,\n    first_observed_at,last_observed_at,last_source_timestamp,evidence_count,\n    last_prediction_source,last_stop_relationship,last_trip_relationship,\n    last_delay_seconds,last_predicted_at,scheduled_seconds,\n    ever_no_data,ever_skipped,ever_canceled\n  from snapshots\n  on conflict(version,service_date,trip_id,stop_id) do update set\n    route_id=case when excluded.last_observed_at >= h.last_observed_at then excluded.route_id else h.route_id end,\n    first_observed_at=least(h.first_observed_at,excluded.first_observed_at),\n    last_observed_at=greatest(h.last_observed_at,excluded.last_observed_at),\n    last_source_timestamp=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_source_timestamp else h.last_source_timestamp end,\n    evidence_count=greatest(h.evidence_count,excluded.evidence_count),\n    last_prediction_source=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_prediction_source else h.last_prediction_source end,\n    last_stop_relationship=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_stop_relationship else h.last_stop_relationship end,\n    last_trip_relationship=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_trip_relationship else h.last_trip_relationship end,\n    last_delay_seconds=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_delay_seconds else h.last_delay_seconds end,\n    last_predicted_at=case when excluded.last_observed_at >= h.last_observed_at then excluded.last_predicted_at else h.last_predicted_at end,\n    scheduled_seconds=case when excluded.last_observed_at >= h.last_observed_at then excluded.scheduled_seconds else h.scheduled_seconds end,\n    ever_no_data=h.ever_no_data or excluded.ever_no_data,\n    ever_skipped=h.ever_skipped or excluded.ever_skipped,\n    ever_canceled=h.ever_canceled or excluded.ever_canceled;\n  get diagnostics stored_rows = row_count;\n  return stored_rows;\nend;\n$function$\n"
+    },
+    {
+      "name": "capture_transport_vehicle_history",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "capture_transport_vehicle_history()",
+      "definition": "CREATE OR REPLACE FUNCTION public.capture_transport_vehicle_history()\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare stored_rows bigint := 0;\nbegin\n  with sightings as (\n    select\n      o.feed_version as version,\n      coalesce(o.service_date,(o.observed_at at time zone 'Europe/Dublin')::date) as service_date,\n      o.route_id,\n      coalesce(o.trip_id,'') as trip_id,\n      coalesce(o.vehicle_id,o.entity_id,'') as vehicle_key,\n      min(o.observed_at) as first_observed_at,\n      max(o.observed_at) as last_observed_at,\n      count(*) as gps_samples,\n      (array_agg(o.latitude order by o.observed_at desc, o.id desc))[1] as last_latitude,\n      (array_agg(o.longitude order by o.observed_at desc, o.id desc))[1] as last_longitude\n    from public.service_observations o\n    where o.channel='vehicle' and o.feed_version is not null\n      and o.latitude is not null and o.longitude is not null\n    group by o.feed_version,\n      coalesce(o.service_date,(o.observed_at at time zone 'Europe/Dublin')::date),\n      o.route_id,coalesce(o.trip_id,''),coalesce(o.vehicle_id,o.entity_id,'')\n  )\n  insert into public.transport_vehicle_trip_history as h (\n    version,service_date,route_id,trip_id,vehicle_key,first_observed_at,last_observed_at,\n    gps_samples,last_latitude,last_longitude\n  )\n  select version,service_date,route_id,trip_id,vehicle_key,first_observed_at,last_observed_at,\n    gps_samples,last_latitude,last_longitude from sightings\n  on conflict(version,service_date,route_id,trip_id,vehicle_key) do update set\n    first_observed_at=least(h.first_observed_at,excluded.first_observed_at),\n    last_observed_at=greatest(h.last_observed_at,excluded.last_observed_at),\n    gps_samples=greatest(h.gps_samples,excluded.gps_samples),\n    last_latitude=case when excluded.last_observed_at>=h.last_observed_at then excluded.last_latitude else h.last_latitude end,\n    last_longitude=case when excluded.last_observed_at>=h.last_observed_at then excluded.last_longitude else h.last_longitude end;\n  get diagnostics stored_rows = row_count;\n  return stored_rows;\nend;\n$function$\n"
+    },
+    {
+      "name": "get_stop_departures_v2",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_stop_departures_v2(text[],timestamp with time zone,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_stop_departures_v2(p_stop_ids text[], p_from timestamp with time zone DEFAULT now(), p_limit integer DEFAULT 40)\n RETURNS TABLE(stop_id text, stop_name text, route_id text, route_name text, route_long_name text, operator_name text, trip_id text, trip_headsign text, direction_id smallint, scheduled_at timestamp with time zone, expected_at timestamp with time zone, delay_seconds integer, realtime_observed_at timestamp with time zone, realtime_source_timestamp timestamp with time zone, realtime_age_seconds integer, data_status text, service_status text, prediction_source text, source_stop_sequence integer)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nwith params as (\n  select\n    coalesce(p_from,now())::timestamptz as from_ts,\n    (coalesce(p_from,now()) at time zone 'Europe/Dublin')::date as local_date,\n    coalesce(p_stop_ids,array[]::text[]) as stop_ids,\n    greatest(1,least(coalesce(p_limit,40),100)) as row_limit\n),\nfeed as (\n  select version\n  from public.gtfs_feed_versions\n  where active and label='nta-realtime'\n  order by imported_at desc\n  limit 1\n),\nservice_days as (\n  select gs::date as service_date\n  from params p,\n       generate_series(p.local_date-1,p.local_date+1,interval '1 day') gs\n),\nbase_services as (\n  select sd.service_date,c.service_id\n  from service_days sd\n  join feed f on true\n  join public.gtfs_calendars c\n    on c.version=f.version\n   and sd.service_date between c.start_date and c.end_date\n   and case extract(isodow from sd.service_date)::int\n     when 1 then c.monday\n     when 2 then c.tuesday\n     when 3 then c.wednesday\n     when 4 then c.thursday\n     when 5 then c.friday\n     when 6 then c.saturday\n     when 7 then c.sunday\n   end\n  where not exists (\n    select 1\n    from public.gtfs_calendar_dates cd\n    where cd.version=f.version\n      and cd.service_id=c.service_id\n      and cd.service_date=sd.service_date\n      and cd.exception_type=2\n  )\n),\nadded_services as (\n  select sd.service_date,cd.service_id\n  from service_days sd\n  join feed f on true\n  join public.gtfs_calendar_dates cd\n    on cd.version=f.version\n   and cd.service_date=sd.service_date\n   and cd.exception_type=1\n),\nactive_services as (\n  select * from base_services\n  union\n  select * from added_services\n),\nlatest_rt as (\n  select distinct on (sp.version,sp.trip_id,sp.stop_id,sp.service_date)\n    sp.version,\n    sp.trip_id,\n    sp.stop_id,\n    sp.service_date,\n    sp.predicted_arrival,\n    sp.predicted_departure,\n    sp.arrival_delay_seconds,\n    sp.departure_delay_seconds,\n    sp.schedule_relationship as stop_schedule_relationship,\n    sp.trip_schedule_relationship,\n    sp.prediction_source,\n    sp.source_stop_sequence,\n    sp.observed_at,\n    sp.source_timestamp\n  from public.stop_predictions sp\n  join feed f on f.version=sp.version\n  join params p on true\n  where coalesce(sp.source_timestamp,sp.observed_at)\n        >= p.from_ts - interval '15 minutes'\n    and exists (select 1 from public.collection_runs cr\n        where cr.channel='trip_update' and cr.status='ok'\n        and cr.started_at >= clock_timestamp() - interval '4 minutes')\n  order by\n    sp.version,sp.trip_id,sp.stop_id,sp.service_date,\n    coalesce(sp.source_timestamp,sp.observed_at) desc,\n    sp.observed_at desc\n),\nlatest_trip as (\n  select distinct on (o.feed_version,o.trip_id,o.service_date)\n    o.feed_version as version,\n    o.trip_id,\n    o.service_date,\n    o.schedule_relationship as trip_schedule_relationship,\n    o.observed_at,\n    o.source_timestamp\n  from public.service_observations o\n  join feed f on f.version=o.feed_version\n  join params p on true\n  where o.channel='trip_update'\n    and o.mapping_status='exact_trip'\n    and o.trip_id is not null\n    and o.service_date is not null\n    and coalesce(o.source_timestamp,o.observed_at)\n        >= p.from_ts - interval '15 minutes'\n    and exists (select 1 from public.collection_runs cr\n        where cr.channel='trip_update' and cr.status='ok'\n        and cr.started_at >= clock_timestamp() - interval '4 minutes')\n  order by\n    o.feed_version,o.trip_id,o.service_date,\n    coalesce(o.source_timestamp,o.observed_at) desc,\n    o.observed_at desc\n),\nscheduled as (\n  select\n    s.stop_id,\n    s.stop_name,\n    r.route_id,\n    coalesce(rr.route_name,r.route_short_name,r.route_long_name) as route_name,\n    r.route_long_name,\n    rr.operator_name,\n    t.trip_id,\n    t.trip_headsign,\n    t.direction_id,\n    a.service_date,\n    (\n      (\n        (\n          (a.service_date::timestamp + interval '12 hours')\n          at time zone 'Europe/Dublin'\n        )\n        - interval '12 hours'\n        + make_interval(secs=>coalesce(st.departure_seconds,st.arrival_seconds,0))\n      )\n    ) as scheduled_at,\n    rt.predicted_arrival,\n    rt.predicted_departure,\n    rt.arrival_delay_seconds,\n    rt.departure_delay_seconds,\n    rt.stop_schedule_relationship,\n    coalesce(\n      lt.trip_schedule_relationship,\n      rt.trip_schedule_relationship\n    ) as trip_schedule_relationship,\n    rt.prediction_source,\n    rt.source_stop_sequence,\n    rt.observed_at as prediction_observed_at,\n    rt.source_timestamp as prediction_source_timestamp,\n    lt.observed_at as trip_observed_at,\n    lt.source_timestamp as trip_source_timestamp,\n    exists (\n      select 1\n      from public.stop_predictions sp_stale\n      join params p_stale on true\n      where sp_stale.version=t.version\n        and sp_stale.trip_id=t.trip_id\n        and sp_stale.stop_id=st.stop_id\n        and sp_stale.service_date=a.service_date\n        and coalesce(sp_stale.source_timestamp,sp_stale.observed_at)\n            < p_stale.from_ts - interval '15 minutes'\n        and coalesce(sp_stale.source_timestamp,sp_stale.observed_at)\n            >= p_stale.from_ts - interval '2 hours'\n    ) or exists (\n      select 1 from public.service_observations obs_stale\n      join params p_stale on true\n      where obs_stale.feed_version=t.version\n        and obs_stale.trip_id=t.trip_id\n        and obs_stale.service_date=a.service_date\n        and obs_stale.channel='trip_update'\n        and obs_stale.mapping_status='exact_trip'\n        and coalesce(obs_stale.source_timestamp,obs_stale.observed_at) < p_stale.from_ts - interval '15 minutes'\n        and coalesce(obs_stale.source_timestamp,obs_stale.observed_at) >= p_stale.from_ts - interval '2 hours'\n    ) as stale_realtime_seen\n  from active_services a\n  join feed f on true\n  join public.gtfs_trips t\n    on t.version=f.version and t.service_id=a.service_id\n  join public.gtfs_stop_times st\n    on st.version=t.version and st.trip_id=t.trip_id\n  join public.gtfs_stops s\n    on s.version=st.version and s.stop_id=st.stop_id\n  join public.gtfs_routes r\n    on r.version=t.version and r.route_id=t.route_id\n  join public.regional_routes rr\n    on rr.route_id=t.route_id and rr.enabled\n  join params p\n    on s.stop_id=any(p.stop_ids)\n  left join latest_rt rt\n    on rt.version=t.version\n   and rt.trip_id=t.trip_id\n   and rt.stop_id=st.stop_id\n   and rt.service_date=a.service_date\n  left join latest_trip lt\n    on lt.version=t.version\n   and lt.trip_id=t.trip_id\n   and lt.service_date=a.service_date\n  where coalesce(st.pickup_type,0) <> 1\n),\nclassified as (\n  select\n    s.*,\n    case\n      when upper(coalesce(s.trip_schedule_relationship,''))='CANCELED' then 'canceled'\n      when upper(coalesce(s.stop_schedule_relationship,''))='SKIPPED' then 'skipped'\n      when upper(coalesce(s.stop_schedule_relationship,''))='NO_DATA' then 'no_data'\n      else 'scheduled'\n    end as service_status,\n    coalesce(s.departure_delay_seconds,s.arrival_delay_seconds) as resolved_delay_seconds\n  from scheduled s\n),\nresolved as (\n  select\n    c.*,\n    case\n      when c.service_status in ('canceled','skipped','no_data')\n        then c.scheduled_at\n      when coalesce(c.predicted_departure,c.predicted_arrival) is not null\n        then coalesce(c.predicted_departure,c.predicted_arrival)\n      when c.prediction_observed_at is not null\n           and c.resolved_delay_seconds is not null\n        then c.scheduled_at + make_interval(secs=>c.resolved_delay_seconds)\n      else c.scheduled_at\n    end as resolved_expected_at,\n    case\n      when c.service_status='canceled' then 'realtime_canceled'\n      when c.service_status='skipped' then 'realtime_skipped'\n      when c.service_status='no_data' then 'scheduled_no_realtime'\n      when coalesce(c.predicted_departure,c.predicted_arrival) is not null\n        then 'realtime_explicit'\n      when c.prediction_observed_at is not null\n           and c.resolved_delay_seconds is not null\n           and c.prediction_source='propagated'\n        then 'realtime_propagated'\n      when c.prediction_observed_at is not null\n           and c.resolved_delay_seconds is not null\n           and c.prediction_source='trip_delay'\n        then 'realtime_trip_delay'\n      when c.prediction_observed_at is not null\n           and c.resolved_delay_seconds is not null\n        then 'realtime_derived'\n      when c.stale_realtime_seen or not exists (select 1 from public.collection_runs cr where cr.channel='trip_update' and cr.status='ok' and cr.started_at >= clock_timestamp() - interval '4 minutes') then 'scheduled_no_realtime'\n      else 'scheduled'\n    end as resolved_data_status,\n    case\n      when c.service_status='canceled'\n        then coalesce(c.trip_observed_at,c.prediction_observed_at)\n      else c.prediction_observed_at\n    end as resolved_observed_at,\n    case\n      when c.service_status='canceled'\n        then coalesce(c.trip_source_timestamp,c.trip_observed_at)\n      else coalesce(c.prediction_source_timestamp,c.prediction_observed_at)\n    end as resolved_source_timestamp\n  from classified c\n)\nselect\n  r.stop_id,\n  r.stop_name,\n  r.route_id,\n  r.route_name,\n  r.route_long_name,\n  r.operator_name,\n  r.trip_id,\n  r.trip_headsign,\n  r.direction_id,\n  r.scheduled_at,\n  r.resolved_expected_at as expected_at,\n  case\n    when r.service_status in ('canceled','skipped','no_data') then null\n    else r.resolved_delay_seconds\n  end as delay_seconds,\n  r.resolved_observed_at as realtime_observed_at,\n  r.resolved_source_timestamp as realtime_source_timestamp,\n  case\n    when r.resolved_source_timestamp is null then null\n    else greatest(\n      0,\n      extract(epoch from (p.from_ts-r.resolved_source_timestamp))::integer\n    )\n  end as realtime_age_seconds,\n  r.resolved_data_status as data_status,\n  r.service_status,\n  r.prediction_source,\n  r.source_stop_sequence\nfrom resolved r\njoin params p on true\nwhere r.resolved_expected_at >= p.from_ts - interval '3 minutes'\norder by r.resolved_expected_at,r.route_name,r.trip_id\nlimit (select row_limit from params);\n$function$\n"
+    },
+    {
+      "name": "get_live_vehicles",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "get_live_vehicles(integer,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.get_live_vehicles(p_max_age_seconds integer DEFAULT 600, p_limit integer DEFAULT 100)\n RETURNS TABLE(vehicle_key text, vehicle_id text, entity_id text, route_id text, route_name text, operator_name text, trip_id text, trip_headsign text, direction_id smallint, latitude double precision, longitude double precision, position_timestamp timestamp with time zone, observed_at timestamp with time zone, age_seconds integer, freshness text, mapping_status text)\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nwith params as (\n  select\n    greatest(30, least(coalesce(p_max_age_seconds,600),3600)) as max_age,\n    greatest(1, least(coalesce(p_limit,100),250)) as row_limit,\n    now() as now_ts\n),\nlatest as (\n  select distinct on (\n    coalesce(o.vehicle_id,o.entity_id,o.trip_id,o.route_id)\n  )\n    coalesce(o.vehicle_id,o.entity_id,o.trip_id,o.route_id) as vehicle_key,\n    o.vehicle_id,\n    o.entity_id,\n    o.route_id,\n    o.route_name,\n    o.operator_name,\n    o.trip_id,\n    o.trip_headsign,\n    o.direction_id,\n    o.latitude,\n    o.longitude,\n    coalesce(o.source_timestamp,o.observed_at) as position_timestamp,\n    o.observed_at,\n    o.mapping_status\n  from public.service_observations o\n  join public.regional_routes rr\n    on rr.route_id=o.route_id\n   and rr.enabled\n  join params p on true\n  where o.channel='vehicle'\n    and o.feed_version = (select version from public.gtfs_feed_versions where label='nta-realtime' and active limit 1)\n    and o.latitude is not null\n    and o.longitude is not null\n    and (\n      rr.collection_scope='all_trips'\n      or o.mapping_status='exact_trip'\n    )\n    and coalesce(o.source_timestamp,o.observed_at)\n        >= p.now_ts - make_interval(secs=>p.max_age)\n  order by\n    coalesce(o.vehicle_id,o.entity_id,o.trip_id,o.route_id),\n    coalesce(o.source_timestamp,o.observed_at) desc,\n    o.observed_at desc\n)\nselect\n  l.vehicle_key,\n  l.vehicle_id,\n  l.entity_id,\n  l.route_id,\n  l.route_name,\n  l.operator_name,\n  l.trip_id,\n  l.trip_headsign,\n  l.direction_id,\n  l.latitude,\n  l.longitude,\n  l.position_timestamp,\n  l.observed_at,\n  greatest(\n    0,\n    extract(epoch from (p.now_ts-l.position_timestamp))::integer\n  ) as age_seconds,\n  case\n    when p.now_ts-l.position_timestamp <= interval '2 minutes' then 'live'\n    when p.now_ts-l.position_timestamp <= interval '5 minutes' then 'aging'\n    else 'stale'\n  end as freshness,\n  l.mapping_status\nfrom latest l\njoin params p on true\norder by\n  case\n    when p.now_ts-l.position_timestamp <= interval '2 minutes' then 0\n    when p.now_ts-l.position_timestamp <= interval '5 minutes' then 1\n    else 2\n  end,\n  l.route_name,\n  l.trip_headsign nulls last,\n  l.position_timestamp desc\nlimit (select row_limit from params);\n$function$\n"
+    },
+    {
+      "name": "finalize_gtfs_import",
+      "owner": "postgres",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "signature": "finalize_gtfs_import(text,text)",
+      "definition": "CREATE OR REPLACE FUNCTION public.finalize_gtfs_import(p_token text, p_version text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  target_label text;\n  validation jsonb;\nbegin\n  perform public.assert_gtfs_import_token(p_token);\n\n  select label into target_label\n  from public.gtfs_feed_versions\n  where version=p_version\n  for update;\n\n  if target_label is null then\n    raise exception 'unknown_feed_version';\n  end if;\n\n  validation := public.validate_gtfs_import(p_token,p_version);\n\n  update public.gtfs_feed_versions\n  set feed_start_date=coalesce((validation->>'feed_start_date')::date,feed_start_date),\n      feed_end_date=coalesce((validation->>'feed_end_date')::date,feed_end_date),\n      metadata=coalesce(metadata,'{}'::jsonb)\n        || validation\n        || jsonb_build_object(\n          'schema_completeness','complete_nta_feed', 'active',true,\n          'validated_at',clock_timestamp()\n        )\n  where version=p_version;\n\n  update public.gtfs_feed_versions\n  set active=false\n  where label=target_label\n    and active\n    and version<>p_version;\n\n  update public.gtfs_feed_versions\n  set active=true\n  where version=p_version;\n\n  update public.regional_routes rr\n  set feed_version=p_version\n  where exists (\n    select 1\n    from public.gtfs_routes r\n    where r.version=p_version\n      and r.route_id=rr.route_id\n  );\n\n  delete from public.gtfs_feed_versions\n  where label=target_label\n    and not active\n    and imported_at < clock_timestamp()-interval '21 days';\n\n  return validation || jsonb_build_object(\n    'version',p_version,\n    'activated',true\n  );\nend;\n$function$\n"
+    }
+  ],
+  "sequences": [
+    {
+      "max": "9223372036854775807",
+      "min": "1",
+      "name": "gtfs_translations_id_seq",
+      "type": "bigint",
+      "cache": "1",
+      "cycle": false,
+      "owner": "postgres",
+      "start": "1",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "USAGE"
+        }
+      ],
+      "increment": "1"
+    },
+    {
+      "max": "9223372036854775807",
+      "min": "1",
+      "name": "service_observations_id_seq",
+      "type": "bigint",
+      "cache": "1",
+      "cycle": false,
+      "owner": "postgres",
+      "start": "1",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "USAGE"
+        }
+      ],
+      "increment": "1"
+    },
+    {
+      "max": "9223372036854775807",
+      "min": "1",
+      "name": "stop_predictions_id_seq",
+      "type": "bigint",
+      "cache": "1",
+      "cycle": false,
+      "owner": "postgres",
+      "start": "1",
+      "grants": [
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "postgres",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "anon",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "authenticated",
+          "grantable": false,
+          "privilege": "USAGE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "SELECT"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "UPDATE"
+        },
+        {
+          "role": "service_role",
+          "grantable": false,
+          "privilege": "USAGE"
+        }
+      ],
+      "increment": "1"
+    }
+  ]
+}
