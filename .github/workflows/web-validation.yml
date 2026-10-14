@@ -10,6 +10,7 @@ on:
       - "scripts/update_live_gateway_render.py"
       - "scripts/schedule_admission_guard.py"
       - "scripts/publisher_admission_binding.py"
+      - "scripts/test_departures_rpc_contract.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   pull_request:
@@ -22,6 +23,7 @@ on:
       - "scripts/update_live_gateway_render.py"
       - "scripts/schedule_admission_guard.py"
       - "scripts/publisher_admission_binding.py"
+      - "scripts/test_departures_rpc_contract.py"
       - "routing/src/types.ts"
       - ".github/workflows/web-validation.yml"
   workflow_dispatch:
@@ -80,6 +82,9 @@ jobs:
           python-version: "3.13"
       - name: Test read-only gateway without external queries
         run: npm run test:gateway
+      - name: Execute captured departure RPC in network-isolated disposable Postgres
+        working-directory: .
+        run: python scripts/test_departures_rpc_contract.py
       - name: Build browser application
         run: npm run build:standalone
       - name: Install test browser

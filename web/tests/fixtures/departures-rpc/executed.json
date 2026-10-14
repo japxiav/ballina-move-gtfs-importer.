@@ -1,0 +1,190 @@
+{
+  "scope": "Synthetic rows executed by actual captured active SQL, then production gateway; not live cancellations",
+  "definitionSha256": "6db145906e479bc37f0fa46275437c0507f54790fc965ba4875b7dce8e5afdd8",
+  "now": "2026-10-12T20:00:00Z",
+  "sqlEnums": {
+    "cancel-fresh": "canceled",
+    "cancel-missing": "canceled",
+    "cancel-stale": "canceled",
+    "no-data": "no_data",
+    "no-realtime-stale": "scheduled",
+    "scheduled": "scheduled",
+    "skip-fresh": "skipped",
+    "skip-stale": "skipped",
+    "prediction-fresh": "scheduled",
+    "prediction-stale": "scheduled"
+  },
+  "gateway": {
+    "version": 2,
+    "mode": "live",
+    "generatedAt": "2026-10-12T20:00:00Z",
+    "collectorHealthy": true,
+    "sources": {
+      "bus": {
+        "status": "empty",
+        "retrievedAt": "2026-10-12T20:00:00Z"
+      },
+      "rail": {
+        "status": "empty",
+        "retrievedAt": "2026-10-12T20:00:00Z"
+      },
+      "departures": {
+        "status": "ready",
+        "retrievedAt": "2026-10-12T20:00:00Z"
+      }
+    },
+    "vehicles": [],
+    "departures": [
+      {
+        "id": "departure:6581aeeba4203c302da7e14fe30b1ff941b29b57dc07468121befd1e3e1e953d",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture cancel-fresh",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": "2026-10-12T19:59:00Z",
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "cancel-fresh",
+        "status": "cancelled"
+      },
+      {
+        "id": "departure:496cfec28cedad60f1c38e8c3eb304a4a622692cf93424cb7c580a0c84d56f53",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture cancel-missing",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "cancel-missing",
+        "status": "cancelled"
+      },
+      {
+        "id": "departure:381b32ff3462e3ee9f44319a831c8cb3e285e3236fca9d3c96ba3c90d90736e0",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture cancel-stale",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": "2026-10-12T19:50:00Z",
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "cancel-stale",
+        "status": "cancelled"
+      },
+      {
+        "id": "departure:8755c26dc9d548ac76c1b001cbc17a2da6c836a21329b75bd130b0ed17ed97e1",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture no-data",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "no-data",
+        "status": "no_data"
+      },
+      {
+        "id": "departure:1b31c26c2e1eda55b4c29736d407d1c46c2ad075bfa1ae4dbdbd0edadcdc4631",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture no-realtime-stale",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "no-realtime-stale",
+        "status": "no_data"
+      },
+      {
+        "id": "departure:9ff57ec0328781875372c407cb3dde15e9ed01b25dfcdce9d582cbd9a9daabd4",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture scheduled",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "scheduled",
+        "status": "scheduled"
+      },
+      {
+        "id": "departure:084ec86e8db383344cf377aa5edeab16e0659a0e3404bd28a83f7d4670d757c4",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture skip-fresh",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": "2026-10-12T19:59:00Z",
+        "stopId": "fixture-stop",
+        "tripId": "skip-fresh",
+        "status": "skipped"
+      },
+      {
+        "id": "departure:7c2433f1bd5ee3522e29f711a060ceffe1624036ea609595904753b3d91f86a5",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture skip-stale",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "none",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": "2026-10-12T19:50:00Z",
+        "stopId": "fixture-stop",
+        "tripId": "skip-stale",
+        "status": "skipped"
+      },
+      {
+        "id": "departure:fe20b439a6f62650dda2958ae32b3f4afbc62008a73a27b32ca7d8681425f34a",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture prediction-fresh",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": "2026-10-12T20:35:00Z",
+        "predictionObservedAt": "2026-10-12T19:59:00Z",
+        "predictionState": "fresh",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "prediction-fresh",
+        "status": "predicted"
+      },
+      {
+        "id": "departure:f22511210916c52cb438ea957ac489ec729593a24bc4dbba635ccece5d3b5cc8",
+        "stop": "Ballina SQL fixture",
+        "route": "Fixture route",
+        "destination": "SQL fixture prediction-stale",
+        "scheduledAt": "2026-10-12T20:30:00Z",
+        "expectedAt": null,
+        "predictionObservedAt": null,
+        "predictionState": "expired",
+        "cancellationObservedAt": null,
+        "skippingObservedAt": null,
+        "stopId": "fixture-stop",
+        "tripId": "prediction-stale",
+        "status": "scheduled"
+      }
+    ]
+  }
+}

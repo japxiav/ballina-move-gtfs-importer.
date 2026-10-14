@@ -18,11 +18,15 @@ export interface Departure {
   scheduledAt: string;
   expectedAt: string | null;
   predictionObservedAt: string | null;
+  predictionState?: "none" | "fresh" | "expired" | "unconfirmed";
   cancellationObservedAt?: string | null;
-  status: "scheduled" | "predicted" | "cancelled" | "cancellation_unconfirmed";
+  skippingObservedAt?: string | null;
+  stopId?: string | null;
+  tripId?: string | null;
+  status: "scheduled" | "predicted" | "cancelled" | "cancellation_unconfirmed" | "skipped" | "skipping_unconfirmed" | "no_data";
 }
 export interface LiveData {
-  version: 1;
+  version: 1 | 2;
   mode: "live" | "snapshot";
   generatedAt: string;
   collectorHealthy: boolean;
@@ -37,7 +41,7 @@ const nullableDate = (v: unknown) => v === null || date(v);
 const includes = (values: string[], v: unknown) => typeof v === "string" && values.includes(v);
 
 export function decodeLiveData(value: unknown): LiveData {
-  if (!object(value) || value.version !== 1 || !includes(["live", "snapshot"], value.mode) || !date(value.generatedAt) || typeof value.collectorHealthy !== "boolean" || !object(value.sources) || !Array.isArray(value.vehicles) || value.vehicles.length > 550 || !Array.isArray(value.departures) || value.departures.length > 30)
+  if (!object(value) || ![1, 2].includes(value.version as number) || !includes(["live", "snapshot"], value.mode) || !date(value.generatedAt) || typeof value.collectorHealthy !== "boolean" || !object(value.sources) || !Array.isArray(value.vehicles) || value.vehicles.length > 550 || !Array.isArray(value.departures) || value.departures.length > 30)
     throw Error("Invalid live-data response.");
   for (const key of ["bus", "rail", "departures"]) {
     const source = value.sources[key];
@@ -49,9 +53,15 @@ export function decodeLiveData(value: unknown): LiveData {
     if (!(v.mode === "bus" && v.source === "nta" && v.quality === "gps_observation" && date(v.observedAt)) && !(v.mode === "train" && v.source === "irish_rail" && v.quality === "reported_location" && v.observedAt === null)) throw Error("Invalid position provenance.");
     ids.add(v.id);
   }
+  const departureIds = new Set<string>();
   for (const d of value.departures) {
-    if (!object(d) || !string(d.id) || !string(d.stop) || !string(d.route) || !string(d.destination) || !date(d.scheduledAt) || !nullableDate(d.expectedAt) || !nullableDate(d.predictionObservedAt) || !includes(["scheduled", "predicted", "cancelled"], d.status) || d.status === "predicted" && (!date(d.expectedAt) || !date(d.predictionObservedAt))) throw Error("Invalid departure.");
+    if (!object(d) || !string(d.id) || !string(d.stop) || !string(d.route) || !string(d.destination) || !date(d.scheduledAt) || !nullableDate(d.expectedAt) || !nullableDate(d.predictionObservedAt) || !includes(value.version === 2 ? ["scheduled", "predicted", "cancelled", "skipped", "no_data"] : ["scheduled", "predicted", "cancelled"], d.status) || d.status === "predicted" && (!date(d.expectedAt) || !date(d.predictionObservedAt))) throw Error("Invalid departure.");
     if (d.cancellationObservedAt !== undefined && !nullableDate(d.cancellationObservedAt) || d.status === "cancelled" && (d.expectedAt !== null || d.predictionObservedAt !== null) || d.status !== "cancelled" && d.cancellationObservedAt != null) throw Error("Invalid departure.");
+    if (d.skippingObservedAt !== undefined && !nullableDate(d.skippingObservedAt) || d.status !== "skipped" && d.skippingObservedAt != null || ["skipped", "no_data"].includes(d.status as string) && (d.expectedAt !== null || d.predictionObservedAt !== null)) throw Error("Invalid departure state.");
+    if (departureIds.has(d.id as string)) throw Error('Duplicate departure identity.');
+    departureIds.add(d.id as string);
+    if (value.version === 2 && (!/^departure:[a-f0-9]{64}$/.test(d.id as string) || [d.stopId, d.tripId].some(id => !(typeof id === "string" && /^[A-Za-z0-9_ .:-]{1,120}$/.test(id))))) throw Error("Invalid departure identity.");
+    if (value.version === 2 && (!includes(['none', 'fresh', 'expired', 'unconfirmed'], d.predictionState) || (d.status === 'predicted') !== (d.predictionState === 'fresh') || ['cancelled', 'skipped', 'no_data'].includes(d.status as string) && d.predictionState !== 'none')) throw Error('Invalid prediction freshness.');
   }
   return value as unknown as LiveData;
 }
@@ -105,10 +115,20 @@ export function visibleDepartures(data: LiveData, now: number): Departure[] {
       const age = d.cancellationObservedAt ? (now - Date.parse(d.cancellationObservedAt)) / 1000 : Infinity;
       if (age < -15 || age > 180) return { ...d, status: "cancellation_unconfirmed" as const, expectedAt: null, predictionObservedAt: null };
     }
+    if (d.status === "skipped") {
+      const age = d.skippingObservedAt ? (now - Date.parse(d.skippingObservedAt)) / 1000 : Infinity;
+      if (age < -15 || age > 180) return { ...d, status: "skipping_unconfirmed" as const, expectedAt: null, predictionObservedAt: null };
+    }
     const age = d.predictionObservedAt ? (now - Date.parse(d.predictionObservedAt)) / 1000 : Infinity;
     // A captured prediction must expire even when a static snapshot is unchanged.
     if (d.status === "predicted" && (age < -15 || age > 180))
-      return { ...d, status: "scheduled" as const, expectedAt: null, predictionObservedAt: null };
+      return { ...d, status: "scheduled" as const, predictionState: age > 180 ? 'expired' as const : 'unconfirmed' as const, expectedAt: null, predictionObservedAt: null };
     return d;
   }).filter(d => Date.parse(d.status === "predicted" ? d.expectedAt! : d.scheduledAt) >= now - 120000);
+}
+
+export function departureStatusLabel(departure: Departure): string {
+  if (departure.status === 'scheduled' && departure.predictionState === 'expired') return 'Scheduled · prediction expired';
+  if (departure.status === 'scheduled' && departure.predictionState === 'unconfirmed') return 'Scheduled · prediction unconfirmed';
+  return { scheduled: 'Scheduled', predicted: 'Prediction', cancelled: 'Cancelled', cancellation_unconfirmed: 'Cancellation unconfirmed · check operator', skipped: 'Stop skipped · do not board here', skipping_unconfirmed: 'Stop skip unconfirmed · check operator', no_data: 'Scheduled · no realtime data' }[departure.status];
 }
