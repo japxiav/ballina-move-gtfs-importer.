@@ -1,0 +1,29 @@
+import { test, expect } from '@playwright/test';
+import { mapSourceStates } from '../src/mapSourceState';
+import type { LiveData } from '../src/liveData';
+const at = '2026-10-12T20:00:00Z', now = Date.parse(at);
+const fixture = (): LiveData => ({ version: 2, mode: 'live', generatedAt: at, collectorHealthy: true, departures: [], sources: { bus: { status: 'ready', retrievedAt: at }, rail: { status: 'empty', retrievedAt: at }, departures: { status: 'empty', retrievedAt: at } }, vehicles: [{ id: 'offline:Dublin', mode: 'bus', label: 'Fixture Dublin', destination: 'Dublin', lat: 53.35, lon: -6.26, observedAt: at, retrievedAt: at, quality: 'gps_observation', source: 'nta' }] });
+test('regional zero, national zero, source failure and expired GPS are distinct', () => {
+  const data = fixture();
+  expect(mapSourceStates(data, now, [], 'bus')[0]).toMatchObject({ message: 'No recent bus GPS in this view · 1 available across Ireland.', showIreland: true });
+  expect(mapSourceStates(data, now, data.vehicles, 'bus')[0]!.message).toContain('1 bus GPS observations in this view');
+  expect(mapSourceStates(data, now + 181000, [], 'bus')[0]).toMatchObject({ message: 'Bus GPS expired; waiting for a fresh source observation.', showIreland: false });
+  data.sources.bus.status = 'empty'; expect(mapSourceStates(data, now, [], 'bus')[0]!.message).toBe('No recent bus GPS supplied by the source.');
+  data.sources.bus.status = 'unavailable'; expect(mapSourceStates(data, now, [], 'bus')[0]!.message).toBe('Bus GPS feed unavailable.');
+  expect(mapSourceStates(data, now, [], 'train')).toHaveLength(1);
+});
+test('source notices and Show Ireland work while map tiles fail independently', async ({ page }) => {
+  await page.clock.install({ time: now });
+  await page.route('**/api/live', route => route.fulfill({ json: fixture() }));
+  await page.route('https://tile.openstreetmap.org/**', route => route.abort());
+  await page.goto('/#/live');
+  await page.getByText('Transport source status', { exact: true }).click();
+  const sources = page.locator('.source-details');
+  await expect(sources).toContainText('No recent bus GPS in this view · 1 available across Ireland.');
+  await expect(sources).toContainText('No train reports supplied by the source.');
+  await expect(sources).toContainText('Next automatic attempt:');
+  await page.getByRole('button', { name: 'Show Ireland', exact: true }).click();
+  await expect(page.locator('.vehicle-bus')).toHaveCount(1);
+  await expect(sources).toContainText('1 bus GPS observations in this view');
+  await expect(page.getByText('Some map tiles could not load. Use the vehicle list or refresh to retry.', { exact: true })).toBeVisible();
+});
