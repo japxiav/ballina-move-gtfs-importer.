@@ -1,0 +1,16 @@
+{
+  "initialFrontendBuild": "passed",
+  "initialDesktopMobileSuite": {
+    "passed": 208,
+    "failed": 0
+  },
+  "finalStandaloneBuild": "passed",
+  "finalAffectedDesktopMobileSuite": {
+    "passed": 48,
+    "failed": 0
+  },
+  "finalReview": "No remaining findings",
+  "backendChanged": false,
+  "freshnessChanged": false,
+  "productionPublished": false
+}

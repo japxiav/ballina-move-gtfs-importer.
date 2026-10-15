@@ -23,6 +23,8 @@ export function LiveMap() {
   const [loading, setLoading] = useState(true), [refresh, setRefresh] = useState(0), [now, setNow] = useState(Date.now());
   const [mode, setMode] = useState<"all" | "bus" | "train">("all"), [selectedId, setSelectedId] = useState<string | null>(null);
   const active = useMemo(() => data ? visibleVehicles(data, now).filter(v => mode === "all" || v.mode === mode) : [], [data, now, mode]);
+  const busCount = active.filter(v => v.mode === "bus").length;
+  const trainCount = active.filter(v => v.mode === "train").length;
   const selected = active.find(v => v.id === selectedId);
   const inView = useMemo(() => active.filter(v => map.current?.getBounds().contains([v.lat, v.lon])), [active, viewVersion]);
   const groups = useMemo(() => map.current ? groupVehicles(inView, v => map.current!.latLngToContainerPoint([v.lat, v.lon])) : [], [inView, viewVersion]);
@@ -141,9 +143,9 @@ export function LiveMap() {
     {error && <p className="form-error" role="alert">{error}</p>}
     {data && Object.values(data.sources).some(s => s.status === "unavailable") && <p className="source-warning" role="status">Some official feeds are unavailable. No example vehicles are substituted.</p>}
     <div className="map-toolbar"><fieldset aria-label="Vehicle filter"><legend className="sr-only">Vehicle filter</legend>{(["all", "bus", "train"] as const).map(value => <button ref={value === "all" ? filterFallback : undefined} key={value} type="button" aria-pressed={mode === value} onClick={() => setMode(value)}>{value === "all" ? "All" : value === "bus" ? "Buses" : "Trains"}</button>)}</fieldset><div><button onClick={() => map.current?.fitBounds(mayo, { animate: false })}>Mayo</button><button onClick={() => map.current?.fitBounds(ireland, { animate: false })}>Ireland</button></div></div>
-    <p className="map-count" role="status">{inView.length} locations in this view · {active.length} available with this filter</p>
+    <p className="map-count" role="status">{inView.length} locations in this view · {busCount} {busCount === 1 ? "bus" : "buses"} · {trainCount} {trainCount === 1 ? "train" : "trains"} with this filter</p>
     {sourceStates.some(s => s.showIreland) && <button className="button secondary" onClick={() => map.current?.fitBounds(ireland, { animate: false })}>Show Ireland</button>}
-    <details className="source-details"><summary>Transport source status</summary>{sourceStates.map(s => <p key={s.mode}>{s.message} Retrieved: {s.retrievedAt ? `${time(s.retrievedAt)} Ireland time` : 'no successful retrieval'}.</p>)}<p>{document.hidden ? 'Auto-refresh paused while this page is hidden.' : nextAttempt ? `Next automatic attempt: ${time(new Date(nextAttempt).toISOString())} Ireland time.` : 'Refresh in progress.'} Train observation age is unknown. Map tile loading is separate from transport feeds.</p></details>
+    <details className="source-details"><summary>Transport source status</summary>{sourceStates.map(s => <p key={s.mode}>{s.message} Retrieved: {s.retrievedAt ? `${time(s.retrievedAt)} Ireland time` : 'no successful retrieval'}.</p>)}<p>Bus GPS covers selected routes serving Ballina and Mayo, not every bus in Ireland. Bus GPS positions older than 3 minutes are hidden; an empty feed does not mean no buses are running.</p><p>{document.hidden ? 'Auto-refresh paused while this page is hidden.' : nextAttempt ? `Next automatic attempt: ${time(new Date(nextAttempt).toISOString())} Ireland time.` : 'Refresh in progress.'} Train observation age is unknown. Map tile loading is separate from transport feeds.</p></details>
     {selectionNotice && <p className="selection-notice" role="status">{selectionNotice}</p>}
     <div className="map-stage"><div ref={container} className="live-map" role="region" aria-label="Map of reported bus and train locations" />
     {(selected || cluster.length > 0) && <VehicleCard vehicle={selected} cluster={cluster} now={now} snapshot={data?.mode === "snapshot"} inView={!!selected && inView.some(v => v.id === selected.id)} onClose={() => closeSelection()} onSelect={v => { setSelectedId(v.id); setClusterIds([]); }} onZoom={focusSelection} />}

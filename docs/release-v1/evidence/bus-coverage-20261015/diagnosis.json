@@ -1,0 +1,47 @@
+{
+  "scope": "Stored collector rows and existing public gateway only; no NTA provider request, collector trigger or configuration change",
+  "previousPublishedSource": "3619cc40929cea2fb540ff6b561876ed82c55969",
+  "checkedAt": "2026-10-15T00:32:31.751297Z",
+  "currentPublicSources": {
+    "bus": {
+      "status": "ready",
+      "retrievedAt": "2026-10-15T00:32:31.751297Z"
+    },
+    "rail": {
+      "status": "empty",
+      "retrievedAt": "2026-10-15T00:32:31.751297Z"
+    },
+    "departures": {
+      "status": "ready",
+      "retrievedAt": "2026-10-15T00:32:31.751297Z"
+    }
+  },
+  "collectorHealthy": true,
+  "currentBuses": [
+    {
+      "route": "22",
+      "destination": "Ballina",
+      "observedAt": "2026-10-15T00:30:52Z",
+      "retrievedAt": "2026-10-15T00:32:31.751297Z",
+      "lat": 53.7633,
+      "lon": -8.02779579
+    }
+  ],
+  "historicalPublicResponseAt": "2026-10-14T07:35:33.114919+00:00",
+  "historicalLatestStoredBatchAt": "2026-10-14 07:33:04.581+00",
+  "historicalLatestBatchCount": 6,
+  "historicalGpsAgesSeconds": [
+    191.115,
+    185.115,
+    190.115,
+    191.115,
+    188.115,
+    188.115
+  ],
+  "gpsLimitSeconds": 180,
+  "interpretation": "All latest stored GPS observations exceeded 180 seconds at the historical public response. Current bus22 toward Ballina is supplied by the gateway but outside the initial Mayo map bounds. No evidence of collector failure or frontend suppression of valid coordinates in these observations.",
+  "remainingLimits": "Snapshot diagnosis, not continuous coverage; selected regional routes only. No attempt to infer vehicle operation from absence of positions.",
+  "productionWrites": 0,
+  "providerCalls": 0,
+  "managementRpcReadDenied": true
+}
