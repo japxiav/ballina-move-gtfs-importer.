@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/",
+    "sha256": "ea70cd4449d316179352055be671b9ee43d5ce81391a4792ca1af46d55fdf73f",
+    "matchesTestedBuild": true
+  },
+  {
+    "path": "/assets/index-COE3dvBj.js",
+    "sha256": "267068f58994f2db7c89742f32b2d513c9e7aff3275ad13103b48a10ae8f57d7",
+    "matchesTestedBuild": true
+  },
+  {
+    "path": "/assets/index-CIqBe2Fm.css",
+    "sha256": "5c558365cbda86020977d26f1c6590b06847185f8844dcc4fadfcf787807cd6b",
+    "matchesTestedBuild": true
+  }
+]
