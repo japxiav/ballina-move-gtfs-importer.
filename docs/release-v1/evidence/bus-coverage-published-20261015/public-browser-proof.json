@@ -1,0 +1,98 @@
+{
+  "scope": "Actual published HTTPS frontend and actual public API responses; no fixtures or clock override. Map PNGs fetched with native verified TLS through bounded image dispatcher.",
+  "sourceCommit": "dd29efe8a52be5ec65759f971c61520e88ff0638",
+  "observedAt": "2026-10-15T00:42:13.208Z",
+  "target": "https://ballina-move-live.onrender.com",
+  "browserVerified": true,
+  "tlsVerification": true,
+  "pageErrors": [],
+  "credentialHeaderCount": 0,
+  "foreignRequestCount": 0,
+  "caps": {
+    "journeys": 4,
+    "live": 8,
+    "uniqueTiles": 32,
+    "tileConcurrency": 2
+  },
+  "calls": {
+    "journeys": 2,
+    "live": 1,
+    "stops": 5
+  },
+  "stage": "final-contracts",
+  "httpStatus": 200,
+  "mobileHomeReady": true,
+  "hospitalQueryDate": "2026-10-16",
+  "hospitalFirst": "DirectNTA SCHEDULE08:00 → 08:5252 minBus 420Arrives at Mayo Hospital · stop 15109No walking directionsView itinerary →",
+  "itineraryVerified": true,
+  "backVerified": true,
+  "liveLocations": 1,
+  "liveGeneratedAt": "2026-10-15T00:42:37.717732Z",
+  "sources": {
+    "bus": {
+      "status": "ready",
+      "retrievedAt": "2026-10-15T00:42:37.717732Z"
+    },
+    "rail": {
+      "status": "empty",
+      "retrievedAt": "2026-10-15T00:42:37.717732Z"
+    },
+    "departures": {
+      "status": "ready",
+      "retrievedAt": "2026-10-15T00:42:37.717732Z"
+    }
+  },
+  "collectorHealthy": true,
+  "realMapTilesLoaded": true,
+  "realBusFilterVerified": true,
+  "vehicleCardVerified": true,
+  "cardText": "BUS LOCATION22×Reported direction: BallinaGPS observation · 135s agoSourceNTARetrieved01:42:37 · Ireland timeCoordinates53.76893, -8.15574Focus on mapService detailsReported operatorBus ÉireannReported route ID2 22 dReported trip ID5940_48556Source mappingexact_tripGTFS direction ID0References reported by NTA. Feed version and service date are not supplied here, so the exact operating trip, stop sequence and route path remain unverified.Times, delay and cancellation are unknown for this vehicle. Location reports do not confirm boarding or arrival.",
+  "realBusCardVerified": true,
+  "mapCount": "1 locations in this view · 1 bus · 0 trains with this filter",
+  "layouts": [
+    {
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "width": 430,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "desktopHomeReady": true,
+  "scheduleResponses": [
+    {
+      "status": 200,
+      "options": 6,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3"
+    },
+    {
+      "status": 200,
+      "options": 6,
+      "feed": "768b4b82327a1b83eb7f9365e4dd4495417df14163e5980889f0df2b223088d3"
+    }
+  ],
+  "uniqueTiles": 12,
+  "maximumTileConcurrency": 2,
+  "tileFailures": 0,
+  "tileCancelledAtShutdown": 0,
+  "tileJobsRemaining": 0,
+  "tileBudgetExceeded": false,
+  "apiBudgetExceeded": false
+}

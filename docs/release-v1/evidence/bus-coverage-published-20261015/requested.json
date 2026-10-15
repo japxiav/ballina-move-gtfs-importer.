@@ -1,0 +1,11 @@
+{
+  "requestedAtUtc": "2026-10-15T00:41:05.555050+00:00",
+  "serviceId": "srv-db6nhvrbc2fs739pb7mg",
+  "deploymentId": "dep-db82289srm7s738dtn90",
+  "sourceCommit": "dd29efe8a52be5ec65759f971c61520e88ff0638",
+  "initialStatus": "build_in_progress",
+  "plan": "free",
+  "onlyMutation": "POST existing service deploys with exact commitId",
+  "mainMerged": false,
+  "supabasePublished": false
+}

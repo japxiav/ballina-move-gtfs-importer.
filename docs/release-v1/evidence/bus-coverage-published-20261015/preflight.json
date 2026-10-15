@@ -1,0 +1,33 @@
+{
+  "observedAtUtc": "2026-10-15T00:41:04.603240+00:00",
+  "candidateSource": "dd29efe8a52be5ec65759f971c61520e88ff0638",
+  "previousSource": "3619cc40929cea2fb540ff6b561876ed82c55969",
+  "rollbackDeployment": "dep-db7j0p25b2lc7384pojg",
+  "rollbackProtocol": "POST /services/{serviceId}/rollback with deployId, documented in Render official generated CLI schema",
+  "currentRollbackImageAvailable": true,
+  "plan": "free",
+  "autoDeploy": false,
+  "mainUnchanged": true,
+  "edge": {
+    "functions": {
+      "journey-api": {
+        "version": 5,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      },
+      "transport-api": {
+        "version": 11,
+        "status": "ACTIVE",
+        "verify_jwt": false
+      }
+    },
+    "actualJourneySourceHashes": {
+      "functions/journey-api/index.ts": "872d5272414d7cb603caa47f8f365c6b3ff0137a3f8cac59396d29973ef159bc",
+      "functions/transport-api/journeys.ts": "d0341fd976d4a7473ef705c4d0343c8453bbbcc319a448559adebcbff02135c5"
+    }
+  },
+  "canonicalBindingConfirmedWithoutExposure": true,
+  "deploymentPerformed": false,
+  "paidCalls": 0,
+  "path": "Existing reviewed API/service/canonical-binding helpers, local operational controller; not a GitHub Actions deployment"
+}

@@ -1,0 +1,22 @@
+{
+  "source": "Official render-oss/cli pkg/client generated REST schema; retained file Git blob hashes matched fresh public GitHub contents metadata",
+  "references": [
+    {
+      "retainedPath": "/workspace/.ballina-execution/live-map/render-client.go",
+      "sha256": "0815f4d3b4cf71aa0bdbdf608a6fbe81a9155c21f30b76378d4244a25d62d380",
+      "officialGithubBlob": "d6cb95126ac6fb097ad9dc333f5ddf052fd5b0b1"
+    },
+    {
+      "retainedPath": "/workspace/.ballina-execution/live-map/render-types.go",
+      "sha256": "5571c6f21f32918600bbecda9fa247291ca9a50e814542da1b730813a1dcd922",
+      "officialGithubBlob": "265686dc9cc5775b9be6b54f2274ce181bde934d"
+    }
+  ],
+  "endpoint": "POST /services/{serviceId}/rollback",
+  "jsonBody": {
+    "deployId": "dep-db7j0p25b2lc7384pojg"
+  },
+  "schemaExcerpt": "Trigger a rollback to a previous deploy of the specified service.",
+  "limits": "No rollback POST or rehearsal executed. Actual API does not expose a separate canRollback/eligibility flag; current successful image is serving and the documented rollback operation is available.",
+  "autoDeployRemainsOff": true
+}
