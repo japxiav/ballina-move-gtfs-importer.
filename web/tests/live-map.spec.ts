@@ -277,18 +277,22 @@ test('viewport list and counters distinguish Mayo from the whole feed and follow
   data.vehicles.push({ ...data.vehicles[0]!, id: 'fixture:dublin', label: 'Fixture Dublin bus', lat: 53.35, lon: -6.26 });
   await page.route('**/api/live', route => route.fulfill({ json: data }));
   await page.goto('/#/live');
-  await expect(page.locator('.map-count')).toHaveText('2 locations in this view · 3 available with this filter');
+  await expect(page.locator('.map-count')).toHaveText('2 locations in this view · 2 buses · 1 train with this filter');
   await page.getByText('2 locations in this view · vehicle list', { exact: true }).click();
   await expect(page.locator('.live-list').first().getByRole('button')).toHaveCount(2);
   await page.getByRole('button', { name: 'Ireland', exact: true }).click();
-  await expect(page.locator('.map-count')).toHaveText('3 locations in this view · 3 available with this filter');
+  await expect(page.locator('.map-count')).toHaveText('3 locations in this view · 2 buses · 1 train with this filter');
   await page.locator('.live-list').first().getByRole('button', { name: /Fixture Dublin bus/ }).click();
   await expect(page.getByRole('region', { name: 'Selected vehicle' })).toContainText('53.35000, -6.26000');
-  await expect(page.locator('.map-count')).toHaveText('1 locations in this view · 3 available with this filter');
+  await expect(page.locator('.map-count')).toHaveText('1 locations in this view · 2 buses · 1 train with this filter');
   await page.getByRole('button', { name: 'Mayo', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Selected vehicle' })).toContainText('outside the current map view');
   await page.getByRole('button', { name: 'Focus on map', exact: true }).click();
-  await expect(page.locator('.map-count')).toHaveText('1 locations in this view · 3 available with this filter');
+  await expect(page.locator('.map-count')).toHaveText('1 locations in this view · 2 buses · 1 train with this filter');
+  await page.getByRole('button', { name: 'Buses', exact: true }).click();
+  await expect(page.locator('.map-count')).toContainText('2 buses · 0 trains with this filter');
+  await page.getByRole('button', { name: 'Trains', exact: true }).click();
+  await expect(page.locator('.map-count')).toContainText('0 buses · 1 train with this filter');
 });
 
 test('selection closes when its source expires; refresh is not a new GPS observation', async ({ page }) => {

@@ -5,7 +5,7 @@ const at = '2026-10-12T20:00:00Z', now = Date.parse(at);
 const fixture = (): LiveData => ({ version: 2, mode: 'live', generatedAt: at, collectorHealthy: true, departures: [], sources: { bus: { status: 'ready', retrievedAt: at }, rail: { status: 'empty', retrievedAt: at }, departures: { status: 'empty', retrievedAt: at } }, vehicles: [{ id: 'offline:Dublin', mode: 'bus', label: 'Fixture Dublin', destination: 'Dublin', lat: 53.35, lon: -6.26, observedAt: at, retrievedAt: at, quality: 'gps_observation', source: 'nta' }] });
 test('regional zero, national zero, source failure and expired GPS are distinct', () => {
   const data = fixture();
-  expect(mapSourceStates(data, now, [], 'bus')[0]).toMatchObject({ message: 'No recent bus GPS in this view · 1 available across Ireland.', showIreland: true });
+  expect(mapSourceStates(data, now, [], 'bus')[0]).toMatchObject({ message: 'No recent bus GPS in this view · 1 available in this feed.', showIreland: true });
   expect(mapSourceStates(data, now, data.vehicles, 'bus')[0]!.message).toContain('1 bus GPS observations in this view');
   expect(mapSourceStates(data, now + 181000, [], 'bus')[0]).toMatchObject({ message: 'Bus GPS expired; waiting for a fresh source observation.', showIreland: false });
   data.sources.bus.status = 'empty'; expect(mapSourceStates(data, now, [], 'bus')[0]!.message).toBe('No recent bus GPS supplied by the source.');
@@ -27,8 +27,11 @@ test('source notices and Show Ireland work while map tiles fail independently', 
   await page.goto('/#/live');
   await page.getByText('Transport source status', { exact: true }).click();
   const sources = page.locator('.source-details');
-  await expect(sources).toContainText('No recent bus GPS in this view · 1 available across Ireland.');
+  await expect(sources).toContainText('No recent bus GPS in this view · 1 available in this feed.');
   await expect(sources).toContainText('No train reports supplied by the source.');
+  await expect(sources).toContainText('Bus GPS covers selected routes serving Ballina and Mayo, not every bus in Ireland.');
+  await expect(sources).toContainText('Bus GPS positions older than 3 minutes are hidden; an empty feed does not mean no buses are running.');
+  await expect(page.locator('.map-count')).toHaveText('0 locations in this view · 1 bus · 0 trains with this filter');
   await expect(sources).toContainText('Next automatic attempt: 21:00 Ireland time.');
   expect(requests).toBe(1);
   await page.clock.fastForward(30000);

@@ -1,0 +1,25 @@
+{
+  "reviewer": "Existing independent Codex reviewer /root/independent_review",
+  "scope": "Frontend diff and offline map source/freshness logic; no network or edits by reviewer",
+  "findings": [
+    {
+      "severity": "P2",
+      "finding": "Filtered bus/train counts incorrectly described as whole feed counts",
+      "resolution": "Use with this filter and exercise Buses/Trains transitions"
+    },
+    {
+      "severity": "copy",
+      "finding": "Three-minute expiry wording could be read as applying to rail",
+      "resolution": "Name Bus GPS positions explicitly"
+    }
+  ],
+  "offlineChecksPassed": [
+    "mode and viewport filtering",
+    "Show Ireland requires supplied positions outside viewport",
+    "ready/empty/unavailable remain distinct",
+    "GPS180.000s accepted,180.001s hidden",
+    "historical GPS185\u2013191s correctly hidden"
+  ],
+  "isCodeRabbitReview": false,
+  "followup": "Both findings resolved; reviewer confirmed no remaining findings on final diff by read-only inspection."
+}
